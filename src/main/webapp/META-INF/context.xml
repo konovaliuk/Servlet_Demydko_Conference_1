@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resource name="jdbc/EPAMdb"
+              auth="Container"
+              type="javax.sql.DataSource"
+              username="root"
+              password="root"
+              driverClassName="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/ConferenceDb?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=UTF-8"
+
+              validationQuery="select 1"
+              maxTotal="10"
+              maxIdle="4"
+              maxWaitMillis="10000"/>
+</Context>
+
+
+
+

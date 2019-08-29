@@ -1,0 +1,33 @@
+a img, form, fieldset {
+    height: content-box;
+    width: content-box;
+    border: 6pt;
+    background: burlywood;
+}
+
+h1 {
+    background: aqua;
+    font-family: "Arial Black";
+    color: blue;
+}
+
+body {
+    background: beige;
+}
+
+div {
+    /*margin: auto;*/
+    border: solid 2px black;
+    width: 200px;
+    padding: 5px;
+    display: inline-block;
+}
+
+.block1 {
+    width: 300px;
+    background: #ccc;
+    padding: 5px;
+    padding-right: 20px;
+    border: solid 1px black;
+    /*float: left;*/
+}
