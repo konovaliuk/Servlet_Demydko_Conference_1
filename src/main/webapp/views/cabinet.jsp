@@ -61,13 +61,25 @@
         </div>
 
         <div class="block1">
-            <form method="post" action="/Conference_war/controller?command=futurereports">
+            <form method="post" action="/Conference_war/controller?command=futureReports">
                 <p><input type="submit" value="Посмотреть запланированные доклады"></p>
+            </form>
+        </div>
+        <div class="block1">
+            <form method="post" action="/Conference_war/controller?command=showOfferedReports">
+                <p><input type="submit" value="Посмотреть предложенные доклады"></p>
             </form>
         </div>
     </c:when>
     <c:when test="${sessionScope.user.position=='Speaker'}">
-
+        <div class="block1">
+            <form method="post" action="/Conference_war/controller?command=offerReport">
+                <p><textarea name="theme" placeholder="Тема" required></textarea></p>
+                    ${successfulChanges}
+                    ${noActionDone}
+                <p><input type="submit" value="Предложить доклад"></p>
+            </form>
+        </div>
     </c:when>
     <c:otherwise>
 

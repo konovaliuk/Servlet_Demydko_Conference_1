@@ -19,10 +19,6 @@
 <p>
 <h2 align="center">Запланированные конференции</h2>
 <c:forEach items="${sessionScope.reportList}" var="report" varStatus="loop">
-<%--    <br/>--%>
-<%--    <hr>--%>
-
-
     <div><p>id : ${report.id}</p>
         <p>Тема доклада: ${report.name}</p>
         <p>Дата: ${report.date}</p>

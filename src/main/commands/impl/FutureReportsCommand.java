@@ -18,7 +18,6 @@ public class FutureReportsCommand implements Command {
         List<Report> list = reportDao.getFutureConference();
         reportDao.closeConnection();
         request.getSession().setAttribute("reportList", list);
-
         return ConfigManager.getProperty("futureReports");
     }
 }

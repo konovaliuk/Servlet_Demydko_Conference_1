@@ -37,7 +37,7 @@ public class UpdateReportCommand implements Command {
 
         request.setAttribute("reportIndex", index);
 
-        if (ParameterManager.isEmpty(theme, sDate, sTime, city, street, building, room, email)) {
+        if (ParameterManager.isAllEmpty(theme, sDate, sTime, city, street, building, room, email)) {
             request.setAttribute("noActionDone", MessageManager.getProperty("noAction"));
             return page;
         }

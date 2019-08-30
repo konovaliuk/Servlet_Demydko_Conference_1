@@ -12,6 +12,9 @@
 <html>
 <head>
     <title>Title</title>
+    <style>
+        <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>
+    </style>
 </head>
 <body>
 <h1 align="center">Редактирование доклада</h1>
@@ -25,6 +28,7 @@
 </c:choose>
 
 <c:set var="report" value="${sessionScope.reportList[index]}"/>
+<jsp:useBean id="now" class="java.util.Date" />
 <p>"${sessionScope.reportList}"</p>
 <form method="post" action="/Conference_war/controller?command=updateReport">
     <input type="hidden" name="index" value="${index}">
@@ -36,7 +40,7 @@
        | Изменить тему: <textarea name="theme"></textarea></p>
 
     <p>Дата: <c:out value="${report.date}"/>
-       | Изменить дату: <input type="date" name="date"/></p>
+       | Изменить дату: <input type="date" name="date" min="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd"/>"/></p>
 
     <p>Время: <fmt:formatDate value="${report.time}" type="time" timeStyle="short" />
        | Изменить время: <input type="time" name="time"/></p>
@@ -60,6 +64,6 @@
     ${noActionDone}
     <p><input type="submit" value="Изменить доклад"/></p>
 </form>
-
+<p><a href="/Conference_war/views/cabinet.jsp">Кабинет</a></p>
 </body>
 </html>

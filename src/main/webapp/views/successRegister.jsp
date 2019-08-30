@@ -10,7 +10,9 @@
 <html>
 <head>
     <title>Успех</title>
-
+    <style>
+        <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>
+    </style>
 </head>
 <body>
 

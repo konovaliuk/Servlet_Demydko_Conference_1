@@ -24,7 +24,7 @@ public class RegisterCommand implements Command {
         String userType = request.getParameter("userType");
 
 //        if (name.isEmpty()||surname.isEmpty()||userType.isEmpty()) {
-        if (ParameterManager.isEmpty(name,surname,userType)) {
+        if (ParameterManager.isAllEmpty(name,surname,userType)) {
             request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
             return page;
         }

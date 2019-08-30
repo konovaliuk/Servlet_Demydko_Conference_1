@@ -32,7 +32,7 @@ public class AddReportCommand implements Command {
         String room = request.getParameter("room");
         String email = request.getParameter("speakerEmail");
 
-        if (ParameterManager.isEmpty(sDate, sTime, theme, city, street, building, room, email)) {
+        if (ParameterManager.isAllEmpty(sDate, sTime, theme, city, street, building, room, email)) {
             request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
             return page;
         }
@@ -62,11 +62,13 @@ public class AddReportCommand implements Command {
 
         if (result != 0) {
             request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
+
             MailThread mailOperator = new MailThread(email, MessageManager.getProperty("conferenceAppointment"),
                     BuildMessageManager.buildMessage(MessageManager.getProperty("speakerAppointment"),
-                            speaker.getName(), theme, sDate, DateTimeManager.fromTimeToString(time))+"\n"+
-                    BuildMessageManager.buildMessage(MessageManager.getProperty("location"),
-                            address.getCity(),address.getStreet(),address.getBuilding(),address.getRoom()));
+                            speaker.getName(), theme, sDate, DateTimeManager.fromTimeToString(time))
+                            + "\n" +
+                            BuildMessageManager.buildMessage(MessageManager.getProperty("location"),
+                                    address.getCity(), address.getStreet(), address.getBuilding(), address.getRoom()));
             mailOperator.start();
         }
 

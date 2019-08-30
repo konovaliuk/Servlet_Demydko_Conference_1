@@ -38,8 +38,22 @@ public enum CommandEnum {
         {
             this.command = new UpdateReportCommand();
         }
+    },
+    OFFERREPORT {
+        {
+            this.command = new OfferReportCommand();
+        }
+    },
+    SHOWOFFEREDREPORTS {
+        {
+            this.command = new ShowOfferedReportsCommand();
+        }
+    },
+    EDITREPORT {
+        {
+            this.command = new EditReportCommand();
+        }
     };
-
 
     Command command;
 

@@ -10,6 +10,9 @@
 <html>
 <head>
     <title>Регистрация</title>
+    <style>
+        <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>
+    </style>
 </head>
 <body>
 <h1>Регистрация</h1>

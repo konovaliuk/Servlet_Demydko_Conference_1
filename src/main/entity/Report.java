@@ -72,7 +72,7 @@ public class Report {
             ", name='" + name + '\'' +
             ", address=" + address +
             ", date=" + date +
-          " "+  DateTimeManager.fromTimeToString(time) +
+//          " "+  DateTimeManager.fromTimeToString(time) +
             " , speaker=" + speaker +
             '}';
   }

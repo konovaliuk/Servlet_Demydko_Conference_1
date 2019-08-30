@@ -24,7 +24,6 @@ public class ControllerFilter implements Filter {
         String position = user == null ? null : user.getPosition();               // todo
         String command = httpRequest.getParameter("command");
 
-
         if (user == null && (!command.equals("login") && !command.equals("register"))) {
             RequestDispatcher dispatcher = request.getServletContext()
                     .getRequestDispatcher(ConfigManager.getProperty("login"));
