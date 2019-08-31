@@ -59,14 +59,8 @@
                 <p><input type="submit" value="Добавить доклад"></p>
             </form>
         </div>
-
         <div class="block1">
-            <form method="post" action="/Conference_war/controller?command=futureReports">
-                <p><input type="submit" value="Посмотреть запланированные доклады"></p>
-            </form>
-        </div>
-        <div class="block1">
-            <form method="post" action="/Conference_war/controller?command=showOfferedReports">
+        <form method="post" action="/Conference_war/controller?command=showOfferedReports">
                 <p><input type="submit" value="Посмотреть предложенные доклады"></p>
             </form>
         </div>
@@ -89,6 +83,11 @@
 <form method="post" action="/Conference_war/controller?command=logout">
     <p><input type="submit" value="Выход"/></p>
 </form>
+<div class="block1">
+    <form method="post" action="/Conference_war/controller?command=futureReports">
+        <p><input type="submit" value="Посмотреть запланированные доклады"></p>
+    </form>
+</div>
 
 </body>
 </html>

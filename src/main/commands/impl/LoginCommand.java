@@ -45,4 +45,4 @@ public class LoginCommand implements Command {
         return ConfigManager.getProperty("cabinet");
     }
 }
-//   List l = reportList.stream().filter(r -> r.getDate().getTime() > new Date().getTime()).collect(Collectors.toList());
+

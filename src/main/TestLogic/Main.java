@@ -8,6 +8,7 @@ import servises.dateTimeManager.DateTimeManager;
 import servises.mailManager.MailManager;
 import servises.messageManager.BuildMessageManager;
 import servises.messageManager.MessageManager;
+import servises.parameterManager.ParameterManager;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -16,8 +17,7 @@ import java.util.Date;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
-        System.out.println(BuildMessageManager.buildMessage(MessageManager.getProperty("speakerAppointment"),
-                "Иван", "Java", "2019-08-17", "10:00"));
+        System.out.println(ParameterManager.isAllEmpty("", "", "", "hj"));
 
 
 //        UserDao userDao = DaoFactory.getUserDao();

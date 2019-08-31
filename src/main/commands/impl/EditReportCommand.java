@@ -2,7 +2,6 @@ package commands.impl;
 
 import commands.Command;
 import databaseLogic.dao.ReportDao;
-import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Address;
 import entity.Report;
@@ -10,59 +9,55 @@ import entity.Speaker;
 import servises.configManager.ConfigManager;
 import servises.dateTimeManager.DateTimeManager;
 import servises.mailManager.MailManager;
+import servises.mailManager.MailThread;
+import servises.messageManager.BuildMessageManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Time;
 import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
-public class AddReportCommand implements Command {
-
+public class EditReportCommand implements Command {
     @Override
     public String execute(HttpServletRequest request) {
-        String page = ConfigManager.getProperty("cabinet");
+        String page = ConfigManager.getProperty("editReport");
 
+        String index = request.getParameter("index");
         String sDate = request.getParameter("date");
         String sTime = request.getParameter("time");
-        String theme = request.getParameter("theme");
         String city = request.getParameter("city");
         String street = request.getParameter("street");
         String building = request.getParameter("building");
         String room = request.getParameter("room");
-        String email = request.getParameter("speakerEmail");
 
-        if (ParameterManager.isAllEmpty(sDate, sTime, theme, city, street, building, room, email)) {
+        request.setAttribute("reportIndex", index);
+
+        if (ParameterManager.isEmpty(sDate, sTime, city, street, building, room)) {
             request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
             return page;
         }
 
-        Date date = DateTimeManager.fromStringToSqlDate(sDate);
+        List<Report> reportList = (List) request.getSession().getAttribute("offeredReportList");
+        Report report = reportList.get(Integer.parseInt(index));
 
-        if (new java.util.Date().getTime() > date.getTime()) {
-            request.setAttribute("errorDate", MessageManager.getProperty("incorrectDate"));
-            return page;
-        }
 
         Address address = new Address(city, street, building, room);
+        Date date = DateTimeManager.fromStringToSqlDate(sDate);
         Time time = DateTimeManager.fromStringToTime(sTime);
 
-        UserDao userDao = DaoFactory.getUserDao();
-        Speaker speaker = userDao.getSpeakerByEmail(email);
-        userDao.closeConnection();
-
-        if (speaker == null) {
-            request.setAttribute("errorSpeakerNotExists", MessageManager.getProperty("speakerNotExists"));
-            return page;
-        }
-        Report report = new Report(theme, address, date, time, speaker);
+        report.setTime(time);
+        report.setDate(date);
+        report.setAddress(address);
 
         ReportDao reportDao = DaoFactory.getReportDao();
-        int result = reportDao.addReport(report);
+        int result = reportDao.updateReport(report.getId(), report);
         reportDao.closeConnection();
 
         if (result != 0) {
             request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
+            Speaker speaker = report.getSpeaker();
             MailManager.notifySpeakerAppointment(speaker, report);
         }
 

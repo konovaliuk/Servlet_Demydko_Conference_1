@@ -15,7 +15,17 @@ public class Report {
   private Date date;
   private Time time;
   private Speaker speaker;
+  private boolean isUserRegistered;
 
+  public Report(String name, Address address, Date date, Time time, Speaker speaker) {
+    this.name = name;
+    this.address = address;
+    this.date = date;
+    this.time = time;
+    this.speaker = speaker;
+  }
+
+  public Report(){}
 
   public Time getTime() {
     return time;
@@ -63,6 +73,14 @@ public class Report {
 
   public void setSpeaker(Speaker speaker) {
     this.speaker = speaker;
+  }
+
+  public boolean getIsUserRegistered() {
+    return isUserRegistered;
+  }
+
+  public void setIsUserRegistered(boolean userRegistered) {
+    isUserRegistered = userRegistered;
   }
 
   @Override

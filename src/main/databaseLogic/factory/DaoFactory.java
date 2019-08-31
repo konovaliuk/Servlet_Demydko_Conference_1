@@ -1,9 +1,11 @@
 package databaseLogic.factory;
 
 import databaseLogic.dao.AddressDao;
+import databaseLogic.dao.RegisterDao;
 import databaseLogic.dao.ReportDao;
 import databaseLogic.dao.UserDao;
 import databaseLogic.dao.impl.AddressDaoImpl;
+import databaseLogic.dao.impl.RegisterDaoImpl;
 import databaseLogic.dao.impl.ReportDaoImpl;
 import databaseLogic.dao.impl.UserDaoImpl;
 
@@ -25,5 +27,9 @@ public class DaoFactory {
 
     public static ReportDao getReportDao() {
         return new ReportDaoImpl();
+    }
+
+    public static RegisterDao getRegisterDao() {
+        return new RegisterDaoImpl();
     }
 }

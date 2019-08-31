@@ -18,12 +18,14 @@
 </head>
 <p>
 <h2 align="center">Запланированные конференции</h2>
+<p> Вы зашли как ${sessionScope.user.name} ${sessionScope.user.surname} </p>
 <c:forEach items="${sessionScope.reportList}" var="report" varStatus="loop">
     <div><p>id : ${report.id}</p>
         <p>Тема доклада: ${report.name}</p>
         <p>Дата: ${report.date}</p>
-        <p>Время: <fmt:formatDate value="${report.time}" type="time" timeStyle="short" /></p>
-        <p>Адрес: г.${report.address.city}, ул.${report.address.street}, дом ${report.address.building}, каб.${report.address.room}</p>
+        <p>Время: <fmt:formatDate value="${report.time}" type="time" timeStyle="short"/></p>
+        <p>Адрес: г.${report.address.city}, ул.${report.address.street}, дом ${report.address.building},
+            каб.${report.address.room}</p>
         <p>Спикер: ${report.speaker.name} ${report.speaker.surname}</p>
         <p>loop index = "${loop.index}"</p>
         <c:choose>
@@ -32,6 +34,26 @@
                     <input type="hidden" name="index" value="${loop.index}">
                     <input type="submit" value="Внести изменения">
                 </form>
+            </c:when>
+            <c:when test="${sessionScope.user.position=='User'}">
+                <c:choose>
+                    <c:when test="${report.isUserRegistered==true}">
+                        <c:choose>
+                            <c:when test="${report.id==reportId}">
+                                ${errorAlreadyRegistered}
+                            </c:when>
+                            <c:otherwise>
+                                <p>Вы зарегистрированы</p>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:when>
+                    <c:otherwise>
+                        <form method="post" action="/Conference_war/controller?command=conferenceRegister">
+                            <input type="hidden" name="index" value="${loop.index}">
+                            <input type="submit" value="Зарегистрироваться">
+                        </form>
+                    </c:otherwise>
+                </c:choose>
             </c:when>
         </c:choose>
     </div>

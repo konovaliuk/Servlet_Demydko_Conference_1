@@ -15,16 +15,15 @@ import javax.servlet.http.HttpSession;
 public class RegisterCommand implements Command {
     @Override
     public String execute(HttpServletRequest request) {
-        String page = ConfigManager.getProperty("register");;
+        String page = ConfigManager.getProperty("register");
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String name = request.getParameter("name");
         String surname = request.getParameter("surname");
-        String userType = request.getParameter("userType");
+        String position = request.getParameter("userType");
 
-//        if (name.isEmpty()||surname.isEmpty()||userType.isEmpty()) {
-        if (ParameterManager.isAllEmpty(name,surname,userType)) {
+        if (ParameterManager.isAllEmpty(name, surname, position)) {
             request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
             return page;
         }
@@ -41,12 +40,8 @@ public class RegisterCommand implements Command {
             return page;
         }
 
-        User user = new User();
-        user.setName(name);
-        user.setSurname(surname);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setPosition(userType);
+        User user = new User(name, surname, email, password, position);
+
         UserDao userDao = DaoFactory.getUserDao();
         userDao.addUser(user);
         userDao.closeConnection();

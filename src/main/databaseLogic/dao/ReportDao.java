@@ -10,13 +10,15 @@ import java.util.List;
 
 public interface ReportDao {
 
-    int addReport(String name, Address address, Date date, Time time, Speaker speaker);
+    int addReport(Report report);
     int addReport(String name,Speaker speaker);
 
     List<Report> getFutureConference();
     List<Report> getOfferedConference();
 
-    int updateReport(long reportId, String name, Address address, Date date, Time time, Speaker speaker);
+    int updateReport(long reportId, Report report);
+
+    int deleteReport(long reportId);
 
     void closeConnection();
 }

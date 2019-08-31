@@ -10,6 +10,15 @@ public class User {
   private String password;
   private String position;
 
+  public User(String name, String surname, String email, String password, String position) {
+    this.name = name;
+    this.surname = surname;
+    this.email = email;
+    this.password = password;
+    this.position = position;
+  }
+
+  public User(){}
 
   public long getId() {
     return id;

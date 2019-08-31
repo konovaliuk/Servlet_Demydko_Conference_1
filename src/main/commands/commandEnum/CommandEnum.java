@@ -53,6 +53,16 @@ public enum CommandEnum {
         {
             this.command = new EditReportCommand();
         }
+    },
+    DELETEREPORT {
+        {
+            this.command = new DeleteReportCommand();
+        }
+    },
+    CONFERENCEREGISTER {
+        {
+            this.command = new ConferenceRegisterCommand();
+        }
     };
 
     Command command;

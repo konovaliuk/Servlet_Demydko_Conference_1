@@ -9,6 +9,7 @@ import databaseLogic.factory.DaoFactory;
 import entity.Address;
 import entity.Report;
 import entity.Speaker;
+import servises.dateTimeManager.DateTimeManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -27,16 +28,17 @@ public class ReportDaoImpl implements ReportDao {
     }
 
     @Override
-    public int addReport(String name, Address address, Date date, Time time, Speaker speaker) {
+    public int addReport(Report report) {
         PreparedStatement statement = null;
         int result = 0;
         AddressDao addressDao = DaoFactory.getAddressDao(connection);
         try {
             connection.setAutoCommit(false);
-            long addressId = addressDao.getAddressId(address);
+            long addressId = addressDao.getAddressId(report.getAddress());
             if (addressId == -1) {
-                addressDao.addAddress(address.getCity(),
-                        address.getStreet(), address.getBuilding(), address.getRoom());
+                addressDao.addAddress(report.getAddress().getCity(),
+                        report.getAddress().getStreet(), report.getAddress()
+                                .getBuilding(), report.getAddress().getRoom());
                 statement = connection.prepareStatement("SELECT LAST_INSERT_ID()");
                 ResultSet rs = statement.executeQuery();
                 rs.next();
@@ -44,11 +46,11 @@ public class ReportDaoImpl implements ReportDao {
             }
             statement = connection.prepareStatement("INSERT reports" +
                     "(name, addressId, date, time, speakerId)values (?,?,?,?,?)");
-            statement.setString(1, name);
+            statement.setString(1, report.getName());
             statement.setLong(2, addressId);
-            statement.setDate(3, date);
-            statement.setTime(4, time);
-            statement.setLong(5, speaker.getId());
+            statement.setDate(3, DateTimeManager.fromUtilDateToSqlDate(report.getDate()));
+            statement.setTime(4, report.getTime());
+            statement.setLong(5, report.getSpeaker().getId());
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
@@ -159,27 +161,29 @@ public class ReportDaoImpl implements ReportDao {
     }
 
     @Override
-    public int updateReport(long reportId, String name, Address address, Date date, Time time, Speaker speaker) {
+    public int updateReport(long reportId, Report report) {
         PreparedStatement statement = null;
         int result = 0;
         AddressDao addressDao = DaoFactory.getAddressDao(connection);
         try {
             connection.setAutoCommit(false);
-            long addressId = addressDao.getAddressId(address);
+            long addressId = addressDao.getAddressId(report.getAddress());
             if (addressId == -1) {
-                addressDao.addAddress(address.getCity(),
-                        address.getStreet(), address.getBuilding(), address.getRoom());
+                addressDao.addAddress(report.getAddress().getCity(),
+                        report.getAddress().getStreet(), report.getAddress().getBuilding(),
+                        report.getAddress().getRoom());
+
                 statement = connection.prepareStatement("SELECT LAST_INSERT_ID()");
                 ResultSet rs = statement.executeQuery();
                 rs.next();
                 addressId = rs.getInt(1);
             }
             statement = connection.prepareStatement("UPDATE reports set name=?, addressId=?, date=?, time=?, speakerId=? where id=?");
-            statement.setString(1, name);
+            statement.setString(1, report.getName());
             statement.setLong(2, addressId);
-            statement.setDate(3, date);
-            statement.setTime(4, time);
-            statement.setLong(5, speaker.getId());
+            statement.setDate(3, DateTimeManager.fromUtilDateToSqlDate(report.getDate()));
+            statement.setTime(4, report.getTime());
+            statement.setLong(5, report.getSpeaker().getId());
             statement.setLong(6, reportId);
             result = statement.executeUpdate();
             connection.commit();
@@ -197,6 +201,27 @@ public class ReportDaoImpl implements ReportDao {
                 } catch (SQLException e) {
                     e.printStackTrace();                                //todo
                 }
+        }
+        return result;
+    }
+
+    @Override
+    public int deleteReport(long reportId) {
+        Statement statement = null;
+        int result = 0;
+        try {
+            statement = connection.createStatement();
+            result = statement.executeUpdate("DELETE from reports where id=" + reportId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if(statement!=null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return result;
     }

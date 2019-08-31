@@ -1,5 +1,11 @@
 package servises.messageManager;
 
+import entity.Report;
+import entity.Speaker;
+import servises.dateTimeManager.DateTimeManager;
+import servises.mailManager.MailManager;
+import servises.mailManager.MailThread;
+
 import java.util.ResourceBundle;
 
 public class MessageManager {
@@ -8,4 +14,5 @@ public class MessageManager {
     public static String getProperty(String key) {
         return resourceBundle.getString(key);
     }
+
 }
