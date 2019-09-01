@@ -21,6 +21,8 @@ public interface UserDao {
 
     Speaker getSpeakerById(long id);
 
+    int addSpeakerRating(Speaker speaker, int rating);
+
     void deleteSpeaker(long speakerId);
 
     void closeConnection();

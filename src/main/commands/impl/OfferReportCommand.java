@@ -8,6 +8,7 @@ import entity.Speaker;
 import entity.User;
 import servises.configManager.ConfigManager;
 import servises.messageManager.MessageManager;
+import servises.parameterManager.ParameterManager;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +21,10 @@ public class OfferReportCommand implements Command {
 
         if (theme.isEmpty()) {
             request.setAttribute("noActionDone", MessageManager.getProperty("noAction"));
+            return page;
+        }
+        if (!ParameterManager.isThemeCorrect(theme)) {
+            request.setAttribute("errorTheme", MessageManager.getProperty("themeIncorrect"));
             return page;
         }
 

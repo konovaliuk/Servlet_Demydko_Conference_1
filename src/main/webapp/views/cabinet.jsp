@@ -22,23 +22,53 @@
 <c:choose>
     <c:when test="${sessionScope.user.position=='Admin'}">
         <div>
-            <form method="post" action="/Conference_war/controller?command=assignmoderator">
-                <p><input type="email" name="email" required placeholder="Email" size="15"/></p>
-
-                    ${errorEmailForm}
-
-                    ${errorUserNotExists}
-
-                    ${successfulChanges}
-                <p><input type="submit" value="Назначить модератора"/></p>
+            <form method="post" action="/Conference_war/controller?command=assignPosition">
+                <p><input type="email" name="email" required placeholder="Email пользователя" size="15"
+                          pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
+                <p>
+                    <select size="1" name="userType">
+                        <option value="Moderator">Модератор</option>
+                        <option value="Admin">Админ</option>
+                        <option value="Speaker">Спикер</option>
+                        <option value="User">Пользователь</option>
+                    </select>
+                </p>
+                <p><input type="submit" value="Назначить на позицию"/></p>
             </form>
         </div>
+        <div>
+            <form method="post" action="/Conference_war/controller?command=addSpeakerRating">
+                <p><input type="email" name="email" required placeholder="Email спикера" size="15"
+                          pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
+                <p>
+                    <select size="1" name="rating">
+                        <option value="1">1</option>
+                        <option value="1">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </p>
+
+                <p><input type="submit" value="Присвоить рейтинг"/></p>
+            </form>
+        </div>
+        <%--        ${errorEmailForm}--%>
+        <%--        ${errorSpeakerNotExists}--%>
+        <%--        ${errorPosition}--%>
+        <%--        ${successfulChanges}--%>
     </c:when>
     <c:when test="${sessionScope.user.position=='Moderator'}">
-        <jsp:useBean id="now" class="java.util.Date" />
+        <jsp:useBean id="now" class="java.util.Date"/>
         <div class="block1">
             <form method="post" action="/Conference_war/controller?command=addreport">
-                <p>Выберите дату: <input type="date" name="date" min="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd"/>" required></p>
+                <p>Выберите дату: <input type="date" name="date"
+                                         min="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd"/>" required></p>
                 <p>Выберите время: <input type="time" name="time" required></p>
                 <p><textarea name="theme" placeholder="Тема" required></textarea></p>
                 <p><input type="text" name="city" size="30" placeholder="Выберите город" required/></p>
@@ -48,19 +78,16 @@
                 <p><input type="email" name="speakerEmail" size="30" placeholder="Выберите спикера(email спикера)"
                           required/></p>
 
-                    ${successfulChanges}
-
-                    ${errorEmptyForm}
-
-                    ${errorSpeakerNotExists}
-
-                    ${errorDate}
+                    <%--                    ${successfulChanges}--%>
+                    <%--                    ${errorEmptyForm}--%>
+                    <%--                    ${errorSpeakerNotExists}--%>
+                    <%--                    ${errorDate}--%>
 
                 <p><input type="submit" value="Добавить доклад"></p>
             </form>
         </div>
         <div class="block1">
-        <form method="post" action="/Conference_war/controller?command=showOfferedReports">
+            <form method="post" action="/Conference_war/controller?command=showOfferedReports">
                 <p><input type="submit" value="Посмотреть предложенные доклады"></p>
             </form>
         </div>
@@ -69,8 +96,9 @@
         <div class="block1">
             <form method="post" action="/Conference_war/controller?command=offerReport">
                 <p><textarea name="theme" placeholder="Тема" required></textarea></p>
-                    ${successfulChanges}
-                    ${noActionDone}
+                    <%--                    ${successfulChanges}--%>
+                    <%--                    ${noActionDone}--%>
+                    <%--                    ${errorTheme}--%>
                 <p><input type="submit" value="Предложить доклад"></p>
             </form>
         </div>
@@ -79,13 +107,27 @@
 
     </c:otherwise>
 </c:choose>
+<p>${errorEmailForm}
+    ${errorSpeakerNotExists}
+    ${errorPosition}
+    ${successfulChanges}
 
-<form method="post" action="/Conference_war/controller?command=logout">
-    <p><input type="submit" value="Выход"/></p>
-</form>
+
+    ${errorEmptyForm}
+    ${errorDate}
+
+    ${noActionDone}
+    ${errorTheme}</p>
+
+
 <div class="block1">
     <form method="post" action="/Conference_war/controller?command=futureReports">
         <p><input type="submit" value="Посмотреть запланированные доклады"></p>
+    </form>
+</div>
+<div class="block1">
+    <form method="post" action="/Conference_war/controller?command=logout">
+        <p><input type="submit" value="Выход"/></p>
     </form>
 </div>
 

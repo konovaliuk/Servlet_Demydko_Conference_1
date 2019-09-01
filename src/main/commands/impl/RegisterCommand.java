@@ -4,7 +4,7 @@ import commands.Command;
 import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
 import entity.User;
-import servises.checkUserManager.CheckUserManager;
+
 import servises.configManager.ConfigManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
@@ -23,19 +23,25 @@ public class RegisterCommand implements Command {
         String surname = request.getParameter("surname");
         String position = request.getParameter("userType");
 
-        if (ParameterManager.isAllEmpty(name, surname, position)) {
+        if (ParameterManager.isEmpty(name, surname, position)) {
             request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
             return page;
         }
-        if (!CheckUserManager.isEmailCorrect(email)) {
+        if (!ParameterManager.isEmailCorrect(email)) {
             request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
             return page;
         }
-        if (!CheckUserManager.isPasswordCorrect(password)) {
+        if (!ParameterManager.isPasswordCorrect(password)) {
             request.setAttribute("errorPassword", MessageManager.getProperty("passwordForm"));
             return page;
         }
-        if (CheckUserManager.isUserExist(email)) {
+
+        if (!ParameterManager.isNameAndSurnameCorrect(name,surname)) {
+            request.setAttribute("errorNameOrSurname", MessageManager.getProperty("nameIncorrect"));
+            return page;
+        }
+
+        if (ParameterManager.isUserExist(email)) {
             request.setAttribute("errorUserExists", MessageManager.getProperty("userExists"));
             return page;
         }

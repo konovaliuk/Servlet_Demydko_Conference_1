@@ -16,7 +16,7 @@ public interface ReportDao {
     List<Report> getFutureConference();
     List<Report> getOfferedConference();
 
-    int updateReport(long reportId, Report report);
+    int updateReport(Report report);
 
     int deleteReport(long reportId);
 

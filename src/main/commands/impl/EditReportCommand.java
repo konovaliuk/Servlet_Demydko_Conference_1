@@ -9,8 +9,6 @@ import entity.Speaker;
 import servises.configManager.ConfigManager;
 import servises.dateTimeManager.DateTimeManager;
 import servises.mailManager.MailManager;
-import servises.mailManager.MailThread;
-import servises.messageManager.BuildMessageManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
 
@@ -39,11 +37,17 @@ public class EditReportCommand implements Command {
             return page;
         }
 
+        Address address = new Address(city, street, building, room);
+        if (!ParameterManager.isAddressCorrect(address)) {
+            request.setAttribute("errorAddress", MessageManager.getProperty("addressIncorrect"));
+            return page;
+        }
+
         List<Report> reportList = (List) request.getSession().getAttribute("offeredReportList");
         Report report = reportList.get(Integer.parseInt(index));
 
 
-        Address address = new Address(city, street, building, room);
+
         Date date = DateTimeManager.fromStringToSqlDate(sDate);
         Time time = DateTimeManager.fromStringToTime(sTime);
 
@@ -52,7 +56,7 @@ public class EditReportCommand implements Command {
         report.setAddress(address);
 
         ReportDao reportDao = DaoFactory.getReportDao();
-        int result = reportDao.updateReport(report.getId(), report);
+        int result = reportDao.updateReport(report);
         reportDao.closeConnection();
 
         if (result != 0) {

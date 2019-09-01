@@ -6,44 +6,49 @@ import databaseLogic.factory.DaoFactory;
 import entity.User;
 
 import servises.configManager.ConfigManager;
+import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-public class LoginCommand implements Command {
-
+public class AssignPositionCommand implements Command {
     @Override
     public String execute(HttpServletRequest request) {
-        String page = ConfigManager.getProperty("login");
+        String page = ConfigManager.getProperty("cabinet");
 
         String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        String position = request.getParameter("userType");
 
         if (!ParameterManager.isEmailCorrect(email)) {
             request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
             return page;
         }
 
-        if (!ParameterManager.isPasswordCorrect(password)) {
-            request.setAttribute("errorPassword", MessageManager.getProperty("passwordForm"));
-            return page;
-        }
-
         UserDao userDao = DaoFactory.getUserDao();
         User user = userDao.getUserByEmail(email);
-        userDao.closeConnection();
 
-        if (user == null || !password.equals(user.getPassword())) {
+
+        if (user == null) {
             request.setAttribute("errorUserNotExists", MessageManager.getProperty("userNotExists"));
             return page;
         }
 
-        HttpSession session = request.getSession();
-        session.setAttribute("user", user);
+        if (user.getPosition().equals(position)) {
+            request.setAttribute("errorPosition", MessageManager.getProperty("userPosition")+
+                    " " + position);
+            return page;
+        }
 
-        return ConfigManager.getProperty("cabinet");
+        int result = userDao.setPosition(user, position);
+        userDao.closeConnection();
+
+        if (result != 0) {
+            user.setPosition(position);
+            MailManager.assignment(user);
+            request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
+        }
+
+        return page;
     }
 }
-

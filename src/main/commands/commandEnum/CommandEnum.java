@@ -19,9 +19,9 @@ public enum CommandEnum {
             this.command = new LoginCommand();
         }
     },
-    ASSIGNMODERATOR {
+    ASSIGNPOSITION {
         {
-            this.command = new AssignModeratorCommand();
+            this.command = new AssignPositionCommand();
         }
     },
     ADDREPORT {
@@ -62,6 +62,11 @@ public enum CommandEnum {
     CONFERENCEREGISTER {
         {
             this.command = new ConferenceRegisterCommand();
+        }
+    },
+    ADDSPEAKERRATING {
+        {
+            this.command = new AddSpeakerRatingCommand();
         }
     };
 

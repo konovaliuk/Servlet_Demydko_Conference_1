@@ -4,7 +4,6 @@ import entity.Report;
 import entity.Speaker;
 import entity.User;
 import servises.dateTimeManager.DateTimeManager;
-import servises.messageManager.BuildMessageManager;
 import servises.messageManager.MessageManager;
 
 import java.util.List;
@@ -74,15 +73,22 @@ public class MailManager {
         }
     }
 
-    public static void notifyUserRegistration(User user,Report report) {
+    public static void notifyUserRegistration(User user, Report report) {
         MailThread mailOperator = new MailThread(user.getEmail(), MessageManager.getProperty("conferenceRegistration"),
                 buildMessage(MessageManager.getProperty("successfulConferenceRegistration"),
                         user.getName(), report.getName(), DateTimeManager.fromDateToString(report.getDate()),
                         DateTimeManager.fromTimeToString(report.getTime()))
                         + "\n" +
-                       buildMessage(MessageManager.getProperty("location"),
-                               report.getAddress().getCity(), report.getAddress().getStreet(),
+                        buildMessage(MessageManager.getProperty("location"),
+                                report.getAddress().getCity(), report.getAddress().getStreet(),
                                 report.getAddress().getBuilding(), report.getAddress().getRoom()));
+        mailOperator.start();
+    }
+
+    public static void assignment(User user) {
+        MailThread mailOperator = new MailThread(user.getEmail(), MessageManager.getProperty("assigment"),
+                buildMessage(MessageManager.getProperty("assigmentChange"),
+                        user.getName(), user.getPosition()));
         mailOperator.start();
     }
 

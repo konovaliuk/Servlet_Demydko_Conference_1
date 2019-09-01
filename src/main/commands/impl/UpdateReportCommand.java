@@ -71,6 +71,22 @@ public class UpdateReportCommand implements Command {
         Date date = sDate.isEmpty() ? DateTimeManager.fromUtilDateToSqlDate(oldReport.getDate()) : DateTimeManager.fromStringToSqlDate(sDate);
         Time time = sTime.isEmpty() ? oldReport.getTime() : DateTimeManager.fromStringToTime(sTime);
 
+
+        if (new java.util.Date().getTime() > date.getTime()) {
+            request.setAttribute("errorDate", MessageManager.getProperty("incorrectDate"));
+            return page;
+        }
+
+        if (!ParameterManager.isAddressCorrect(newAddress)) {
+            request.setAttribute("errorAddress", MessageManager.getProperty("addressIncorrect"));
+            return page;
+        }
+
+        if (!ParameterManager.isThemeCorrect(newTheme)) {
+            request.setAttribute("errorTheme", MessageManager.getProperty("themeIncorrect"));
+            return page;
+        }
+
         long reportId = oldReport.getId();
         Report newReport = new Report();
         newReport.setId(reportId);
@@ -81,7 +97,7 @@ public class UpdateReportCommand implements Command {
         newReport.setTime(time);
 
         ReportDao reportDao = DaoFactory.getReportDao();
-        int result = reportDao.updateReport(reportId, newReport);
+        int result = reportDao.updateReport(newReport);
         reportDao.closeConnection();
 
         if (result != 0) {

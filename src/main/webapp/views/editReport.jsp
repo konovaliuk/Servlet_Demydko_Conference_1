@@ -53,6 +53,7 @@
 
     ${successfulChanges}
     ${errorEmptyForm}
+    ${errorAddress}
     <p><input type="submit" value="Закрепить доклад"/></p>
 </form>
 <p><a href="/Conference_war/views/cabinet.jsp">Кабинет</a></p>

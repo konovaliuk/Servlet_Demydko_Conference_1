@@ -45,7 +45,15 @@ public class AddReportCommand implements Command {
         }
 
         Address address = new Address(city, street, building, room);
-        Time time = DateTimeManager.fromStringToTime(sTime);
+        if (!ParameterManager.isAddressCorrect(address)) {
+            request.setAttribute("errorAddress", MessageManager.getProperty("addressIncorrect"));
+            return page;
+        }
+
+        if (!ParameterManager.isThemeCorrect(theme)) {
+            request.setAttribute("errorTheme", MessageManager.getProperty("themeIncorrect"));
+            return page;
+        }
 
         UserDao userDao = DaoFactory.getUserDao();
         Speaker speaker = userDao.getSpeakerByEmail(email);
@@ -55,6 +63,7 @@ public class AddReportCommand implements Command {
             request.setAttribute("errorSpeakerNotExists", MessageManager.getProperty("speakerNotExists"));
             return page;
         }
+        Time time = DateTimeManager.fromStringToTime(sTime);
         Report report = new Report(theme, address, date, time, speaker);
 
         ReportDao reportDao = DaoFactory.getReportDao();

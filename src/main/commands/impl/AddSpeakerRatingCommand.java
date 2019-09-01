@@ -3,40 +3,43 @@ package commands.impl;
 import commands.Command;
 import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
-import entity.User;
-import servises.checkUserManager.CheckUserManager;
+import entity.Speaker;
 import servises.configManager.ConfigManager;
 import servises.messageManager.MessageManager;
+import servises.parameterManager.ParameterManager;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class AssignModeratorCommand implements Command {
+public class AddSpeakerRatingCommand implements Command {
+
+
     @Override
     public String execute(HttpServletRequest request) {
         String page = ConfigManager.getProperty("cabinet");
 
+        String rating = request.getParameter("rating");
         String email = request.getParameter("email");
 
-        if (!CheckUserManager.isEmailCorrect(email)) {
+        if (!ParameterManager.isEmailCorrect(email)) {
             request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
             return page;
         }
 
         UserDao userDao = DaoFactory.getUserDao();
-        User user = userDao.getUserByEmail(email);
+        Speaker speaker = userDao.getSpeakerByEmail(email);
 
 
-        if (user == null) {
-            request.setAttribute("errorUserNotExists", MessageManager.getProperty("userNotExists"));
+        if (speaker == null) {
+            userDao.closeConnection();
+            request.setAttribute("errorSpeakerNotExists", MessageManager.getProperty("speakerNotExists"));
             return page;
         }
 
-        int result = userDao.setPosition(user, "Moderator");
+        int result = userDao.addSpeakerRating(speaker, Integer.parseInt(rating));
         userDao.closeConnection();
 
         if (result != 0) {
             request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
-            return page;
         }
 
         return page;

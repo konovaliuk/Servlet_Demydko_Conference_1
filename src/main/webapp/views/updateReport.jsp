@@ -21,47 +21,57 @@
 <c:choose>
     <c:when test="${not empty pageContext.request.getParameter('index')}">
         <c:set var="index" value="${pageContext.request.getParameter('index')}"/>
-</c:when>
+    </c:when>
     <c:otherwise>
         <c:set var="index" value="${reportIndex}"/>
     </c:otherwise>
 </c:choose>
 
 <c:set var="report" value="${sessionScope.reportList[index]}"/>
-<jsp:useBean id="now" class="java.util.Date" />
+<jsp:useBean id="now" class="java.util.Date"/>
 <p>"${sessionScope.reportList}"</p>
 <form method="post" action="/Conference_war/controller?command=updateReport">
     <input type="hidden" name="index" value="${index}">
-    <c:out value="${index}" />
+    <c:out value="${index}"/>
 
-    <c:out value="${report}" />
+    <c:out value="${report}"/>
 
     <p>Тема: <c:out value="${report.name}"/>
-       | Изменить тему: <textarea name="theme"></textarea></p>
+        | Изменить тему: <textarea name="theme"></textarea></p>
 
     <p>Дата: <c:out value="${report.date}"/>
-       | Изменить дату: <input type="date" name="date" min="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd"/>"/></p>
+        | Изменить дату: <input type="date" name="date" min="<fmt:formatDate value="${now}"
+        pattern="yyyy-MM-dd"/>"/>
+    </p>
 
-    <p>Время: <fmt:formatDate value="${report.time}" type="time" timeStyle="short" />
-       | Изменить время: <input type="time" name="time"/></p>
+    <p>Время: <fmt:formatDate value="${report.time}" type="time" timeStyle="short"/>
+        | Изменить время: <input type="time" name="time"/></p>
 
     <p>Город: <c:out value="${report.address.city}"/>
-       | Изменить город: <input type="text" name="city"/></p>
+        | Изменить город: <input type="text" name="city"
+                                 pattern="[а-яА-Яa-zA-ZЇїЄєІі]{2,30}"/></p>
 
     <p>Улица: <c:out value="${report.address.street}"/>
-        | Изменить улицу: <input type="text" name="street"/></p>
+        | Изменить улицу: <input type="text" name="street"
+                                 pattern="[а-яА-Яa-zA-ZЇїЄєІі\-\s]{2,50}"/></p>
 
     <p>Дом: <c:out value="${report.address.building}"/>
-        | Изменить дом: <input type="text" name="building"/></p>
+        | Изменить дом: <input type="text" name="building"
+                               pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9\s/-]{1,10}"/></p>
 
     <p>Кабинет: <c:out value="${report.address.room}"/>
-        | Изменить кабинет: <input type="text" name="room"/></p>
+        | Изменить кабинет: <input type="text" name="room"
+                                   pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9]{1,5}"/></p>
 
     <p>Спикер: <c:out value="${report.speaker}"/>
-       | Изменить спикера: <input type="email" name="speakerEmail"/></p>
+        | Изменить спикера: <input type="email" name="speakerEmail"
+                                   pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
 
     ${successfulChanges}
     ${noActionDone}
+    ${errorAddress}
+    ${errorDate}
+    ${errorTheme}
     <p><input type="submit" value="Изменить доклад"/></p>
 </form>
 <p><a href="/Conference_war/views/cabinet.jsp">Кабинет</a></p>

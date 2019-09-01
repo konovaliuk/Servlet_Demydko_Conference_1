@@ -11,15 +11,25 @@ import java.util.List;
 
 public class DeleteReportCommand implements Command {
 
-
     @Override
     public String execute(HttpServletRequest request) {
         List<Report> reports = (List<Report>) request.getSession().getAttribute("offeredReportList");
-        String sIndex = request.getParameter("index");
-        ReportDao reportDao = DaoFactory.getReportDao();
-        int index = Integer.parseInt(sIndex);
-        reportDao.deleteReport(reports.get(index).getId());
-        reports.remove(index);
+        String reportId = request.getParameter("reportId");
+        long id = Long.parseLong(reportId);
+        boolean isPresent = false;
+
+        for (Report report:reports) {
+            if (report.getId() == id) {
+                reports.remove(report);
+                isPresent = true;
+                break;
+            }
+        }
+        if (isPresent) {
+            ReportDao reportDao = DaoFactory.getReportDao();
+            reportDao.deleteReport(id);
+            reportDao.closeConnection();
+        }
         return ConfigManager.getProperty("offeredReports");
     }
 }

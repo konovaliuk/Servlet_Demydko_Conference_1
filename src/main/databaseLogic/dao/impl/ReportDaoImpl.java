@@ -161,7 +161,7 @@ public class ReportDaoImpl implements ReportDao {
     }
 
     @Override
-    public int updateReport(long reportId, Report report) {
+    public int updateReport(Report report) {
         PreparedStatement statement = null;
         int result = 0;
         AddressDao addressDao = DaoFactory.getAddressDao(connection);
@@ -184,7 +184,7 @@ public class ReportDaoImpl implements ReportDao {
             statement.setDate(3, DateTimeManager.fromUtilDateToSqlDate(report.getDate()));
             statement.setTime(4, report.getTime());
             statement.setLong(5, report.getSpeaker().getId());
-            statement.setLong(6, reportId);
+            statement.setLong(6, report.getId());
             result = statement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {

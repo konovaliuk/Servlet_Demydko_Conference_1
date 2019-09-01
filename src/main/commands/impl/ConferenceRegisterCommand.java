@@ -7,12 +7,8 @@ import entity.Address;
 import entity.Report;
 import entity.User;
 import servises.configManager.ConfigManager;
-import servises.dateTimeManager.DateTimeManager;
 import servises.mailManager.MailManager;
-import servises.mailManager.MailThread;
-import servises.messageManager.BuildMessageManager;
 import servises.messageManager.MessageManager;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 

@@ -2,12 +2,8 @@ package TestLogic;
 
 import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
-import entity.Speaker;
+import entity.Address;
 import entity.User;
-import servises.dateTimeManager.DateTimeManager;
-import servises.mailManager.MailManager;
-import servises.messageManager.BuildMessageManager;
-import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
 
 import java.text.DateFormat;
@@ -17,7 +13,8 @@ import java.util.Date;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
-        System.out.println(ParameterManager.isAllEmpty("", "", "", "hj"));
+        Address address=new Address("","dfasfd-adf dfasdf","12/34 :|","asdfa");
+        System.out.println(ParameterManager.isAddressCorrect(address));
 
 
 //        UserDao userDao = DaoFactory.getUserDao();

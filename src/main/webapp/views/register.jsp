@@ -17,9 +17,12 @@
 <body>
 <h1>Регистрация</h1>
 <form method="post" action="/Conference_war/controller?command=register">
-    <p><input type="text" name="name" required placeholder="Имя" size="15"/></p>
-    <p><input type="text" name="surname" required placeholder="Фамилия" size="15"/></p>
-    <p><input type="email" name="email" required placeholder="Email" size="15"/></p>
+    <p><input type="text" name="name" required placeholder="Имя" size="15"
+              pattern="[A-Za-zА-Яа-яЁёІіЄєЇї-]{1,50}"/></p>
+    <p><input type="text" name="surname" required placeholder="Фамилия" size="15"
+              pattern="[A-Za-zА-Яа-яЁёІіЄєЇї-]{1,50}"/></p>
+    <p><input type="email" name="email" required placeholder="Email" size="15"
+    pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
     <p><input type="password" name="password" required placeholder="Пароль" size="15"
               pattern="[A-Za-zА-Яа-яЁёІіЄєЇї0-9]{5,}"/></p>
     <p>
@@ -36,6 +39,8 @@
     ${errorPassword}
 
     ${errorUserExists}
+
+    ${errorNameOrSurname}
 
     <p><input type="submit" value="Регистрация"/></p>
 </form>

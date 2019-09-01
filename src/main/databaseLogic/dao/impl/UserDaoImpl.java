@@ -169,8 +169,8 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
         } finally {
             try {
-                if(statement!=null)
-                statement.close();
+                if (statement != null)
+                    statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();                           //todo
             }
@@ -187,7 +187,7 @@ public class UserDaoImpl implements UserDao {
             statement = connection.prepareStatement("SELECT id, name, surname, email, password, position,rating " +
                     "FROM users u join speakerratings s on u.id=s.speakerId WHERE id=? AND position=?");
             statement.setLong(1, id);
-            statement.setInt(2,getPositionId("Speaker"));
+            statement.setInt(2, getPositionId("Speaker"));
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 speaker = new Speaker();
@@ -203,7 +203,7 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
         } finally {
             try {
-                if(statement!=null)
+                if (statement != null)
                     statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();                           //todo
@@ -320,6 +320,28 @@ public class UserDaoImpl implements UserDao {
                 }
             }
         }
+    }
+
+    @Override
+    public int addSpeakerRating(Speaker speaker, int rating) {
+        PreparedStatement statement = null;
+        int result = 0;
+        try {
+            statement = connection.prepareStatement("UPDATE speakerratings SET rating=? WHERE speakerId=?");
+            statement.setInt(1, rating);
+            statement.setLong(2, speaker.getId());
+            result = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+        return result;
     }
 
     @Override
