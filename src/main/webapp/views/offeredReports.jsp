@@ -26,7 +26,7 @@
             <input type="hidden" name="index" value="${loop.index}">
             <input type="submit" value="Внести изменения и подтвердить">
         </form>
-        <form method="post" action="/Conference_war/controller?command=deleteReport">
+        <form method="post" action="/Conference_war/controller?command=deleteOfferedReport">
             <input type="hidden" name="reportId" value="${report.id}">
             <input type="submit" value="Удалить">
         </form>

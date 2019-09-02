@@ -9,7 +9,7 @@ import servises.configManager.ConfigManager;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-public class DeleteReportCommand implements Command {
+public class DeleteOfferedReportCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {

@@ -98,5 +98,11 @@ public class ParameterManager {
         Pattern p = Pattern.compile("([^\\s]{1})((.){0,254})");
         return p.matcher(theme).matches();
     }
+
+    public static boolean isNumberCorrect(String presence) {
+        Pattern p = Pattern.compile("[0-9]+");
+        return p.matcher(presence).matches();
+    }
+
 }
 

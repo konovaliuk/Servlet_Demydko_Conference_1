@@ -43,13 +43,13 @@
 
     <p><input type="time" placeholder="Время" name="time"/></p>
 
-    <p><input type="text" placeholder="Город" name="city"/></p>
+    <p><input type="text" placeholder="Город" name="city" pattern="[а-яА-Яa-zA-ZЇїЄєІі]{2,30}"/></p>
 
-    <p><input type="text" placeholder="Улица" name="street"/></p>
+    <p><input type="text" placeholder="Улица" name="street" pattern="[а-яА-Яa-zA-ZЇїЄєІі\-\s]{2,50}"/></p>
 
-    <p><input type="text" placeholder="Дом" name="building"/></p>
+    <p><input type="text" placeholder="Дом" name="building" pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9\s/-]{1,10}"/></p>
 
-    <p><input type="text"  placeholder="Кабинет" name="room"/></p>
+    <p><input type="text"  placeholder="Кабинет" name="room" pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9]{1,5}"/></p>
 
     ${successfulChanges}
     ${errorEmptyForm}

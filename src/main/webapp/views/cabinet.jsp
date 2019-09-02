@@ -15,13 +15,13 @@
         <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>
     </style>
 </head>
-
 <body>
 <p>Кабинет</p>
 <p> Вы зашли как ${sessionScope.user.name} ${sessionScope.user.surname} </p>
 <c:choose>
     <c:when test="${sessionScope.user.position=='Admin'}">
         <div>
+            <p>Назначить пользователя на позицию</p>
             <form method="post" action="/Conference_war/controller?command=assignPosition">
                 <p><input type="email" name="email" required placeholder="Email пользователя" size="15"
                           pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
@@ -37,6 +37,7 @@
             </form>
         </div>
         <div>
+            <p>Присвоить рейтинг спикеру</p>
             <form method="post" action="/Conference_war/controller?command=addSpeakerRating">
                 <p><input type="email" name="email" required placeholder="Email спикера" size="15"
                           pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
@@ -54,18 +55,25 @@
                         <option value="10">10</option>
                     </select>
                 </p>
-
                 <p><input type="submit" value="Присвоить рейтинг"/></p>
             </form>
         </div>
-        <%--        ${errorEmailForm}--%>
-        <%--        ${errorSpeakerNotExists}--%>
-        <%--        ${errorPosition}--%>
-        <%--        ${successfulChanges}--%>
+        <div>
+            <p>Добавить бонусы спикеру</p>
+            <form method="post" action="/Conference_war/controller?command=addBonuses">
+                <p><input type="email" name="email" required placeholder="Email спикера" size="15"
+                          pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
+                <p><input type="text" placeholder="Кол-во бонусов" required name="bonuses" pattern="[0-9]{1,}"/></p>
+                <input type="submit" value="Добавить бонусы">
+            </form>
+        </div>
     </c:when>
+
+
     <c:when test="${sessionScope.user.position=='Moderator'}">
         <jsp:useBean id="now" class="java.util.Date"/>
         <div class="block1">
+            <p>Добавить доклад</p>
             <form method="post" action="/Conference_war/controller?command=addreport">
                 <p>Выберите дату: <input type="date" name="date"
                                          min="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd"/>" required></p>
@@ -77,12 +85,6 @@
                 <p><input type="text" name="room" size="30" placeholder="Выберите кабинет" required/></p>
                 <p><input type="email" name="speakerEmail" size="30" placeholder="Выберите спикера(email спикера)"
                           required/></p>
-
-                    <%--                    ${successfulChanges}--%>
-                    <%--                    ${errorEmptyForm}--%>
-                    <%--                    ${errorSpeakerNotExists}--%>
-                    <%--                    ${errorDate}--%>
-
                 <p><input type="submit" value="Добавить доклад"></p>
             </form>
         </div>
@@ -92,14 +94,18 @@
             </form>
         </div>
     </c:when>
+
+
     <c:when test="${sessionScope.user.position=='Speaker'}">
         <div class="block1">
             <form method="post" action="/Conference_war/controller?command=offerReport">
                 <p><textarea name="theme" placeholder="Тема" required></textarea></p>
-                    <%--                    ${successfulChanges}--%>
-                    <%--                    ${noActionDone}--%>
-                    <%--                    ${errorTheme}--%>
                 <p><input type="submit" value="Предложить доклад"></p>
+            </form>
+        </div>
+        <div class="block1">
+            <form method="post" action="/Conference_war/controller?command=showBonuses">
+                <p><input type="submit" value="Посмотреть бонусы"></p>
             </form>
         </div>
     </c:when>
@@ -111,6 +117,8 @@
     ${errorSpeakerNotExists}
     ${errorPosition}
     ${successfulChanges}
+    ${errorNumber}
+    ${bonuses}
 
 
     ${errorEmptyForm}
@@ -126,10 +134,16 @@
     </form>
 </div>
 <div class="block1">
+    <form method="post" action="/Conference_war/controller?command=pastReports">
+        <p><input type="submit" value="Посмотреть прошедшие доклады"></p>
+    </form>
+</div>
+<div class="block1">
     <form method="post" action="/Conference_war/controller?command=logout">
         <p><input type="submit" value="Выход"/></p>
     </form>
 </div>
+
 
 </body>
 </html>

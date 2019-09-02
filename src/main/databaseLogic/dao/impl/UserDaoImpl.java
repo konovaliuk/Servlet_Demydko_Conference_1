@@ -345,6 +345,54 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public int addBonusesToSpeaker(Speaker speaker, int bonuses) {
+        PreparedStatement statement = null;
+        int result = 0;
+        try {
+            statement = connection.prepareStatement("UPDATE speakerratings " +
+                    "set bonuses=? where speakerId=?");
+            statement.setInt(1, getSpeakerBonuses(speaker) + bonuses);
+            statement.setLong(2, speaker.getId());
+            result = statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+        return result;
+    }
+
+    @Override
+    public int getSpeakerBonuses(Speaker speaker) {
+        PreparedStatement statement = null;
+        int bonuses = 0;
+        try {
+            statement = connection.prepareStatement("SELECT bonuses " +
+                    "FROM speakerratings where speakerId=?");
+            statement.setLong(1, speaker.getId());
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                bonuses = rs.getInt("bonuses");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+        return bonuses;
+    }
+
+    @Override
     public void closeConnection() {
         dataSource.closeConnection();
     }

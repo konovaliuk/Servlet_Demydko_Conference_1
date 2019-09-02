@@ -16,7 +16,7 @@
         <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>
     </style>
 </head>
-<p>
+<body>
 <h2 align="center">Запланированные конференции</h2>
 <p> Вы зашли как ${sessionScope.user.name} ${sessionScope.user.surname} </p>
 <c:forEach items="${sessionScope.reportList}" var="report" varStatus="loop">

@@ -1,22 +1,29 @@
 package commands.impl;
+
 import commands.Command;
 import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
-import entity.User;
+import entity.Speaker;
 import servises.configManager.ConfigManager;
-import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
+import servises.userManager.UserManager;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class AssignPositionCommand implements Command {
+public class AddBonusesCommand implements Command {
+
     @Override
     public String execute(HttpServletRequest request) {
         String page = ConfigManager.getProperty("cabinet");
 
+        String bonuses = request.getParameter("bonuses");
         String email = request.getParameter("email");
-        String position = request.getParameter("userType");
+
+        if (!ParameterManager.isNumberCorrect(bonuses)) {
+            request.setAttribute("errorNumber", MessageManager.getProperty("numberIncorrect"));
+            return page;
+        }
 
         if (!ParameterManager.isEmailCorrect(email)) {
             request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
@@ -24,25 +31,21 @@ public class AssignPositionCommand implements Command {
         }
 
         UserDao userDao = DaoFactory.getUserDao();
-        User user = userDao.getUserByEmail(email);
+        Speaker speaker = userDao.getSpeakerByEmail(email);
 
-        if (user == null) {
-            request.setAttribute("errorUserNotExists", MessageManager.getProperty("userNotExists"));
+
+        if (speaker == null) {
+            userDao.closeConnection();
+            request.setAttribute("errorSpeakerNotExists", MessageManager.getProperty("speakerNotExists"));
             return page;
         }
 
-        if (user.getPosition().equals(position)) {
-            request.setAttribute("errorPosition", MessageManager.getProperty("userPosition")+
-                    " " + position);
-            return page;
-        }
+        int allBonuses = UserManager.setSpeakerBonuses(Integer.parseInt(bonuses), speaker);
 
-        int result = userDao.setPosition(user, position);
+        int result = userDao.addBonusesToSpeaker(speaker, allBonuses);
         userDao.closeConnection();
 
         if (result != 0) {
-            user.setPosition(position);
-            MailManager.assignment(user);
             request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
         }
 

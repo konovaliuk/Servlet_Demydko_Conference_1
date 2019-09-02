@@ -54,9 +54,9 @@ public enum CommandEnum {
             this.command = new EditReportCommand();
         }
     },
-    DELETEREPORT {
+    DELETEOFFEREDREPORT {
         {
-            this.command = new DeleteReportCommand();
+            this.command = new DeleteOfferedReportCommand();
         }
     },
     CONFERENCEREGISTER {
@@ -67,6 +67,31 @@ public enum CommandEnum {
     ADDSPEAKERRATING {
         {
             this.command = new AddSpeakerRatingCommand();
+        }
+    },
+    PASTREPORTS {
+        {
+            this.command = new PastReportsCommand();
+        }
+    },
+    ADDPRESENCE {
+        {
+            this.command = new AddPresenceCommand();
+        }
+    },
+    DELETEPASTREPORT {
+        {
+            this.command = new DeletePastReportCommand();
+        }
+    },
+    ADDBONUSES {
+        {
+            this.command = new AddBonusesCommand();
+        }
+    },
+    SHOWBONUSES {
+        {
+            this.command = new ShowBonusesCommand();
         }
     };
 

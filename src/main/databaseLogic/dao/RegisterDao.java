@@ -12,5 +12,9 @@ public interface RegisterDao {
 
     List<User> getAllRegisteredUsers(long reportId);
 
+    int addPresence(long reportId, int presence);
+
+//    boolean isReportPresent(long reportId);    //todo delete
+
     void closeConnection();
 }

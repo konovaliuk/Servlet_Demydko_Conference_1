@@ -161,6 +161,43 @@ public class ReportDaoImpl implements ReportDao {
     }
 
     @Override
+    public List<Report> getPastConference() {
+        PreparedStatement statement = null;
+        UserDao userDao = DaoFactory.getUserDao();
+        AddressDao addressDao = DaoFactory.getAddressDao();
+        List<Report> reports = new ArrayList<>();
+        try {
+            statement = connection.prepareStatement("SELECT id, name, date, time, addressId, speakerId from reports where date<?");
+            statement.setDate(1, new Date(new java.util.Date().getTime()));
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Report report = new Report();
+                report.setId(rs.getInt("id"));
+                report.setName(rs.getString("name"));
+                report.setDate(rs.getDate("date"));
+                report.setTime(rs.getTime("time"));
+                Speaker speaker = userDao.getSpeakerById(rs.getInt("speakerId"));
+                report.setSpeaker(speaker);
+                Address address = addressDao.getAddressById(rs.getInt("addressId"));
+                report.setAddress(address);
+                reports.add(report);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            userDao.closeConnection();
+            addressDao.closeConnection();
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+        return reports;
+    }
+
+    @Override
     public int updateReport(Report report) {
         PreparedStatement statement = null;
         int result = 0;

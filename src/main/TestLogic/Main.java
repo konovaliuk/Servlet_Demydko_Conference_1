@@ -1,10 +1,13 @@
 package TestLogic;
 
+import databaseLogic.dao.RegisterDao;
 import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Address;
+import entity.Speaker;
 import entity.User;
 import servises.parameterManager.ParameterManager;
+import servises.userManager.UserManager;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -13,8 +16,9 @@ import java.util.Date;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
-        Address address=new Address("","dfasfd-adf dfasdf","12/34 :|","asdfa");
-        System.out.println(ParameterManager.isAddressCorrect(address));
+        Speaker speaker = new Speaker();
+        speaker.setRating(1);
+        System.out.println(UserManager.setSpeakerBonuses(100, speaker));
 
 
 //        UserDao userDao = DaoFactory.getUserDao();
