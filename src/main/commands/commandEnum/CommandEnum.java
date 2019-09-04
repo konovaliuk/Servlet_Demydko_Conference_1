@@ -93,7 +93,18 @@ public enum CommandEnum {
         {
             this.command = new ShowBonusesCommand();
         }
+    },
+    CHANGELANGUAGE {
+        {
+            this.command = new ChangeLanguageCommand();
+        }
+    },
+    REPORTINDEX {
+        {
+            this.command = new ReportIndexCommand();
+        }
     };
+
 
     Command command;
 

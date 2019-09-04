@@ -121,6 +121,7 @@
     ${bonuses}
 
 
+    ${errorAddress}
     ${errorEmptyForm}
     ${errorDate}
 
@@ -133,9 +134,19 @@
         <p><input type="submit" value="Посмотреть запланированные доклады"></p>
     </form>
 </div>
+<%--<div class="block1">--%>
+<%--    <form method="post" action="/Conference_war/controller?command=futureList">--%>
+<%--        <p><input type="submit" value="Посмотреть запланированные доклады"></p>--%>
+<%--    </form>--%>
+<%--</div>--%>
 <div class="block1">
     <form method="post" action="/Conference_war/controller?command=pastReports">
         <p><input type="submit" value="Посмотреть прошедшие доклады"></p>
+    </form>
+</div>
+<div class="block1">
+    <form method="post" action="/Conference_war/controller?command=changeLanguage">
+        <p><input type="submit" value="Поменять язык"/></p>
     </form>
 </div>
 <div class="block1">

@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface RegisterDao {
 
-    int userRegister(long userId, long reportId);
+    int userRegister(Long userId, Long reportId);
 
-    List<Long> getReportsIdByUserId(long userId);
+    List<Long> getReportsIdByUserId(Long userId);
 
-    List<User> getAllRegisteredUsers(long reportId);
+    List<User> getAllRegisteredUsers(Long reportId);
 
-    int addPresence(long reportId, int presence);
+    int addPresence(Long reportId, int presence);
 
 //    boolean isReportPresent(long reportId);    //todo delete
 

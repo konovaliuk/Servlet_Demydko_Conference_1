@@ -31,3 +31,37 @@ div {
     border: solid 1px black;
     /*float: left;*/
 }
+.block2 {
+    width: 5px;
+    height: 5px;
+    background: #ccc;
+    padding: 5px;
+    padding-right: 20px;
+    border: solid 1px black;
+    display: inline-block;
+    /*float: left;*/
+}
+
+.block3 {
+    background: #ccc;
+    /*border: solid 0px black;*/
+    display: inline-block;
+    /*float: left;*/
+}
+
+.blockTop{
+    position:absolute;
+    top:0;
+    right:0;
+    width:200px;
+}
+
+.blockCenter {
+    position:absolute;
+    /*top:50%;*/
+    bottom: 10%;
+    right:50%;
+    width:max-content;
+    border: none;
+
+}

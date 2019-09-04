@@ -10,7 +10,7 @@ public interface AddressDao {
 
     long getAddressId(Address address);
 
-    Address getAddressById(long id);
+    Address getAddressById(Long id);
 
     Connection getConnection();
 

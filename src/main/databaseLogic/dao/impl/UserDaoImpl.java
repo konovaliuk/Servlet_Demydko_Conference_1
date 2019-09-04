@@ -42,7 +42,7 @@ public class UserDaoImpl implements UserDao {
                     statement = connection.prepareStatement("SELECT LAST_INSERT_ID()");
                     ResultSet rs = statement.executeQuery();
                     rs.next();
-                    addSpeaker(rs.getInt(1));
+                    addSpeaker(rs.getLong(1));
                 }
                 connection.commit();
             } else {
@@ -125,7 +125,7 @@ public class UserDaoImpl implements UserDao {
             statement.setString(1, email);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                user.setId(rs.getInt("id"));
+                user.setId(rs.getLong("id"));
                 user.setName(rs.getString("name"));
                 user.setSurname(rs.getString("surname"));
                 user.setPassword(rs.getString("password"));
@@ -149,7 +149,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserById(long id) {
+    public User getUserById(Long id) {
         PreparedStatement statement = null;
         User user = null;
         try {
@@ -180,7 +180,7 @@ public class UserDaoImpl implements UserDao {
 
 
     @Override
-    public Speaker getSpeakerById(long id) {
+    public Speaker getSpeakerById(Long id) {
         PreparedStatement statement = null;
         Speaker speaker = null;
         try {
@@ -261,7 +261,7 @@ public class UserDaoImpl implements UserDao {
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 speaker = new Speaker();
-                speaker.setId(rs.getInt("id"));
+                speaker.setId(rs.getLong("id"));
                 speaker.setName(rs.getString("name"));
                 speaker.setSurname(rs.getString("surname"));
                 speaker.setPassword(rs.getString("password"));
@@ -284,7 +284,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void deleteSpeaker(long speakerId) {
+    public void deleteSpeaker(Long speakerId) {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement("DELETE from speakerratings where speakerId=?");
@@ -303,7 +303,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    private void addSpeaker(long speakerId) {
+    private void addSpeaker(Long speakerId) {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement("INSERT speakerratings(speakerId) values (?)");

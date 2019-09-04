@@ -22,8 +22,14 @@
         <p>Спикер: ${report.speaker.name} ${report.speaker.surname}</p>
         <p>loop index = "${loop.index}"</p>
 
-        <form method="post" action="views/editReport.jsp">
+<%--        <form method="post" action="views/editReport.jsp">--%>
+<%--            <input type="hidden" name="index" value="${loop.index}">--%>
+<%--            <input type="submit" value="Внести изменения и подтвердить">--%>
+<%--        </form>--%>
+
+        <form method="post" action="/Conference_war/controller?command=reportIndex">
             <input type="hidden" name="index" value="${loop.index}">
+            <input type="hidden" name="requestURI" value="${pageContext.request.getRequestURI()}">
             <input type="submit" value="Внести изменения и подтвердить">
         </form>
         <form method="post" action="/Conference_war/controller?command=deleteOfferedReport">

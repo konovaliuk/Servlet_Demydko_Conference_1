@@ -15,11 +15,11 @@ public interface UserDao {
 
     User getUserByEmail(String email);
 
-    User getUserById(long id);
+    User getUserById(Long id);
 
     Speaker getSpeakerByEmail(String email);
 
-    Speaker getSpeakerById(long id);
+    Speaker getSpeakerById(Long id);
 
     int addSpeakerRating(Speaker speaker, int rating);
 
@@ -27,7 +27,7 @@ public interface UserDao {
 
     int addBonusesToSpeaker(Speaker speaker, int bonuses);
 
-    void deleteSpeaker(long speakerId);
+    void deleteSpeaker(Long speakerId);
 
     void closeConnection();
 }

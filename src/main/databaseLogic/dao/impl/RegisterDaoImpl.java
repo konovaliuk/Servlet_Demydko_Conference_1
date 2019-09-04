@@ -27,7 +27,7 @@ public class RegisterDaoImpl implements RegisterDao {
     }
 
     @Override
-    public int userRegister(long userId, long reportId) {
+    public int userRegister(Long userId, Long reportId) {
         PreparedStatement statement = null;
         int result = 0;
         try {
@@ -49,7 +49,7 @@ public class RegisterDaoImpl implements RegisterDao {
     }
 
     @Override
-    public List<Long> getReportsIdByUserId(long userId) {
+    public List<Long> getReportsIdByUserId(Long userId) {
         PreparedStatement statement = null;
         List<Long> list = new ArrayList<>();
         try {
@@ -74,7 +74,7 @@ public class RegisterDaoImpl implements RegisterDao {
     }
 
     @Override
-    public List<User> getAllRegisteredUsers(long reportId) {
+    public List<User> getAllRegisteredUsers(Long reportId) {
         PreparedStatement statement = null;
         List<User> userList = new ArrayList<>();
         UserDao userDao = DaoFactory.getUserDao();
@@ -102,7 +102,7 @@ public class RegisterDaoImpl implements RegisterDao {
     }
 
     @Override
-    public int addPresence(long reportId, int count) {
+    public int addPresence(Long reportId, int count) {
         PreparedStatement statement = null;
         int result = 0;
         try {
@@ -130,7 +130,7 @@ public class RegisterDaoImpl implements RegisterDao {
         return result;
     }
 
-    private boolean isReportPresent(long reportId) {
+    private boolean isReportPresent(Long reportId) {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement("SELECT reportId FROM presence where reportId=?");
@@ -141,6 +141,13 @@ public class RegisterDaoImpl implements RegisterDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
         }
         return false;
     }

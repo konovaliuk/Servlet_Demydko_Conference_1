@@ -29,21 +29,21 @@ ${sessionScope.pastReportList}
         <p>Спикер: ${report.speaker.name} ${report.speaker.surname}</p>
         <p>loop index = "${loop.index}"</p>
 
-            <c:if test="${sessionScope.user.position=='Admin'}">
-                <form method="post" action="/Conference_war/controller?command=addPresence">
-                    <input type="hidden" name="index" value="${loop.index}">
-                    <p><input type="text" placeholder="Посещаемость" required name="presence" pattern="[0-9]{1,}"/></p>
-                    <input type="submit" value="Установить посещаемость">
-                </form>
-                <form method="post" action="/Conference_war/controller?command=deletePastReport">
-                    <input type="hidden" name="reportId" value="${report.id}">
-                    <input type="submit" value="Удалить">
-                </form>
-            </c:if>
+        <c:if test="${sessionScope.user.position=='Admin'}">
+            <form method="post" action="/Conference_war/controller?command=addPresence">
+                <input type="hidden" name="index" value="${loop.index}">
+                <p><input type="text" placeholder="Посещаемость" required name="presence" pattern="[0-9]{1,}"/></p>
+                <input type="submit" value="Установить посещаемость">
+            </form>
+            <form method="post" action="/Conference_war/controller?command=deletePastReport">
+                <input type="hidden" name="reportId" value="${report.id}">
+                <input type="submit" value="Удалить">
+            </form>
+        </c:if>
     </div>
 </c:forEach>
 <p>${successfulChanges}
-${errorNumber}</p>
+    ${errorNumber}</p>
 <p><a href="views/cabinet.jsp">Кабинет</a></p>
 </body>
 </html>

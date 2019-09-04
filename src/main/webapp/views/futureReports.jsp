@@ -29,8 +29,9 @@
         <p>Спикер: ${report.speaker.name} ${report.speaker.surname}</p>
         <p>loop index = "${loop.index}"</p>
         <c:choose>
+
             <c:when test="${sessionScope.user.position=='Moderator'}">
-                <form method="post" action="views/updateReport.jsp">
+                <form method="post" action="/Conference_war/controller?command=reportIndex">
                     <input type="hidden" name="index" value="${loop.index}">
                     <input type="submit" value="Внести изменения">
                 </form>
@@ -58,6 +59,35 @@
         </c:choose>
     </div>
 </c:forEach>
+
+<div class="blockCenter"><c:forEach items="${sessionScope.buttons}" var="offset">
+    <div class="block2"> <form method="post" action="/Conference_war/controller?command=futureReports">
+       <input type="hidden" name="offset" value="${offset}">
+        <p><input type="submit" value="${offset}"></p>
+   </form></div>
+</c:forEach></div>
+
+<div class="blockTop">
+    <p>Количество елементов на странице</p>
+    <form method="post" action="/Conference_war/controller?command=futureReports">
+        <p>
+            <select size="1"  name="maxCount">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+        </p>
+    <p><input type="submit" value="Количество"></p>
+</form></div>
+
+
 <p><a href="views/cabinet.jsp">Кабинет</a></p>
 </body>
 </html>

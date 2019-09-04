@@ -65,12 +65,19 @@ public class AddressDaoImpl implements AddressDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
         }
         return id;
     }
 
     @Override
-    public Address getAddressById(long id) {
+    public Address getAddressById(Long id) {
         PreparedStatement statement = null;
         Address address = null;
         try {

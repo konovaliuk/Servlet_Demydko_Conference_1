@@ -6,6 +6,8 @@ import databaseLogic.factory.DaoFactory;
 import entity.Address;
 import entity.Speaker;
 import entity.User;
+import servises.configManager.ConfigManager;
+import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
 import servises.userManager.UserManager;
 
@@ -16,9 +18,8 @@ import java.util.Date;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
-        Speaker speaker = new Speaker();
-        speaker.setRating(1);
-        System.out.println(UserManager.setSpeakerBonuses(100, speaker));
+
+
 
 
 //        UserDao userDao = DaoFactory.getUserDao();
