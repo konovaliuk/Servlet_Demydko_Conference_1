@@ -3,7 +3,7 @@ package commands.impl;
 import commands.Command;
 import databaseLogic.dao.RegisterDao;
 import databaseLogic.dao.ReportDao;
-import databaseLogic.dao.UserDao;
+import databaseLogic.dao.SpeakerDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Address;
 import entity.Report;
@@ -38,7 +38,10 @@ public class UpdateReportCommand implements Command {
 
         request.setAttribute("reportIndex", index);
 
-        if (ParameterManager.isAllEmpty(theme, sDate, sTime, city, street, building, room, email)) {
+        ParameterManager pm = new ParameterManager();
+        DateTimeManager dtm = new DateTimeManager();
+
+        if (pm.isAllEmpty(theme, sDate, sTime, city, street, building, room, email)) {
             request.setAttribute("noActionDone", MessageManager.getProperty("noAction"));
             return page;
         }
@@ -48,9 +51,9 @@ public class UpdateReportCommand implements Command {
 
         Speaker newSpeaker;
         if (!email.isEmpty()) {
-            UserDao userDao = DaoFactory.getUserDao();
-            newSpeaker = userDao.getSpeakerByEmail(email);
-            userDao.closeConnection();
+            SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
+            newSpeaker = speakerDao.getSpeakerByEmail(email);
+            speakerDao.closeConnection();
             if (newSpeaker == null) {
                 request.setAttribute("errorSpeakerNotExists", MessageManager.getProperty("speakerNotExists"));
                 return page;
@@ -68,8 +71,8 @@ public class UpdateReportCommand implements Command {
         String newBuilding = building.isEmpty() ? oldAddress.getBuilding() : building;
         String newRoom = room.isEmpty() ? oldAddress.getRoom() : room;
         Address newAddress = new Address(newCity, newStreet, newBuilding, newRoom);
-        Date date = sDate.isEmpty() ? DateTimeManager.fromUtilDateToSqlDate(oldReport.getDate()) : DateTimeManager.fromStringToSqlDate(sDate);
-        Time time = sTime.isEmpty() ? oldReport.getTime() : DateTimeManager.fromStringToTime(sTime);
+        Date date = sDate.isEmpty() ? dtm.fromUtilDateToSqlDate(oldReport.getDate()) : dtm.fromStringToSqlDate(sDate);
+        Time time = sTime.isEmpty() ? oldReport.getTime() : dtm.fromStringToTime(sTime);
 
 
         if (new java.util.Date().getTime() > date.getTime()) {
@@ -77,12 +80,12 @@ public class UpdateReportCommand implements Command {
             return page;
         }
 
-        if (!ParameterManager.isAddressCorrect(newAddress)) {
+        if (!pm.isAddressCorrect(newAddress)) {
             request.setAttribute("errorAddress", MessageManager.getProperty("addressIncorrect"));
             return page;
         }
 
-        if (!ParameterManager.isThemeCorrect(newTheme)) {
+        if (!pm.isThemeCorrect(newTheme)) {
             request.setAttribute("errorTheme", MessageManager.getProperty("themeIncorrect"));
             return page;
         }
@@ -110,10 +113,12 @@ public class UpdateReportCommand implements Command {
         List<User> userList = registerDao.getAllRegisteredUsers(reportId);
         registerDao.closeConnection();
 
-        if (!email.isEmpty() && ParameterManager.isAllEmpty(theme, sDate, sTime, city, street, building, room)) {
+
+
+        if (!email.isEmpty() && pm.isAllEmpty(theme, sDate, sTime, city, street, building, room)) {
             MailManager.notifySpeakerAppointment(newSpeaker, oldReport);
             MailManager.notifySpeakerDismiss(oldSpeaker, oldReport);
-        } else if (!email.isEmpty() && !ParameterManager.isAllEmpty(theme, sDate, sTime, city, street, building, room)) {
+        } else if (!email.isEmpty() && !pm.isAllEmpty(theme, sDate, sTime, city, street, building, room)) {
             MailManager.notifySpeakerAppointment(newSpeaker, newReport);
             MailManager.notifySpeakerDismiss(oldSpeaker, oldReport);
             MailManager.notifyChangeConference(newReport, oldReport, userList);

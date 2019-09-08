@@ -2,7 +2,7 @@ package commands.impl;
 
 import commands.Command;
 import databaseLogic.dao.ReportDao;
-import databaseLogic.dao.UserDao;
+import databaseLogic.dao.SpeakerDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Speaker;
 import entity.User;
@@ -23,17 +23,21 @@ public class OfferReportCommand implements Command {
             request.setAttribute("noActionDone", MessageManager.getProperty("noAction"));
             return page;
         }
-        if (!ParameterManager.isThemeCorrect(theme)) {
+        ParameterManager pm = new ParameterManager();
+
+        if (!pm.isThemeCorrect(theme)) {
             request.setAttribute("errorTheme", MessageManager.getProperty("themeIncorrect"));
             return page;
         }
 
         ReportDao reportDao = DaoFactory.getReportDao();
-        UserDao userDao = DaoFactory.getUserDao();
+
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
         User user = (User) request.getSession().getAttribute("user");
-        Speaker speaker = userDao.getSpeakerById(user.getId());
+
+        Speaker speaker = speakerDao.getSpeakerById(user.getId());
         int result = reportDao.addReport(theme, speaker);
-        userDao.closeConnection();
+        speakerDao.closeConnection();
         reportDao.closeConnection();
 
         if (result != 0) {

@@ -2,7 +2,7 @@ package commands.impl;
 
 import commands.Command;
 import databaseLogic.dao.ReportDao;
-import databaseLogic.dao.UserDao;
+import databaseLogic.dao.SpeakerDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Address;
 import entity.Report;
@@ -32,12 +32,15 @@ public class AddReportCommand implements Command {
         String room = request.getParameter("room");
         String email = request.getParameter("speakerEmail");
 
-        if (ParameterManager.isAllEmpty(sDate, sTime, theme, city, street, building, room, email)) {
+        ParameterManager pm = new ParameterManager();
+        DateTimeManager dtm = new DateTimeManager();
+
+        if (pm.isAllEmpty(sDate, sTime, theme, city, street, building, room, email)) {
             request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
             return page;
         }
 
-        Date date = DateTimeManager.fromStringToSqlDate(sDate);
+        Date date = dtm.fromStringToSqlDate(sDate);
 
         if (new java.util.Date().getTime() > date.getTime()) {
             request.setAttribute("errorDate", MessageManager.getProperty("incorrectDate"));
@@ -45,25 +48,29 @@ public class AddReportCommand implements Command {
         }
 
         Address address = new Address(city, street, building, room);
-        if (!ParameterManager.isAddressCorrect(address)) {
+        if (!pm.isAddressCorrect(address)) {
             request.setAttribute("errorAddress", MessageManager.getProperty("addressIncorrect"));
             return page;
         }
 
-        if (!ParameterManager.isThemeCorrect(theme)) {
+        if (!pm.isThemeCorrect(theme)) {
             request.setAttribute("errorTheme", MessageManager.getProperty("themeIncorrect"));
             return page;
         }
 
-        UserDao userDao = DaoFactory.getUserDao();
-        Speaker speaker = userDao.getSpeakerByEmail(email);
-        userDao.closeConnection();
+//        UserDao userDao = DaoFactory.getUserDao();
+//        Speaker speaker = userDao.getSpeakerByEmail(email);
+//        userDao.closeConnection();
+
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
+        Speaker speaker = speakerDao.getSpeakerByEmail(email);
+        speakerDao.closeConnection();
 
         if (speaker == null) {
             request.setAttribute("errorSpeakerNotExists", MessageManager.getProperty("speakerNotExists"));
             return page;
         }
-        Time time = DateTimeManager.fromStringToTime(sTime);
+        Time time = dtm.fromStringToTime(sTime);
         Report report = new Report(theme, address, date, time, speaker);
 
         ReportDao reportDao = DaoFactory.getReportDao();

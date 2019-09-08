@@ -1,7 +1,7 @@
 package commands.impl;
 
 import commands.Command;
-import databaseLogic.dao.RegisterDao;
+import databaseLogic.dao.PresenceDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Report;
 import servises.configManager.ConfigManager;
@@ -21,14 +21,20 @@ public class AddPresenceCommand implements Command {
         Report report = pastReportList.get(Integer.parseInt(index));
         String count = request.getParameter("presence");
 
-        if (!ParameterManager.isNumberCorrect(count)) {
+        ParameterManager pm = new ParameterManager();
+
+        if (!pm.isNumberCorrect(count)) {
             request.setAttribute("errorNumber", MessageManager.getProperty("numberIncorrect"));
             return page;
         }
 
-        RegisterDao registerDao = DaoFactory.getRegisterDao();
-        int result = registerDao.addPresence(report.getId(), Integer.parseInt(count));
-        registerDao.closeConnection();
+//        RegisterDao registerDao = DaoFactory.getRegisterDao();
+//        int result = registerDao.addPresence(report.getId(), Integer.parseInt(count));
+//        registerDao.closeConnection();
+
+        PresenceDao presenceDao = DaoFactory.getPresenceDao();
+        int result = presenceDao.addPresence(report.getId(), Integer.parseInt(count));
+        presenceDao.closeConnection();
 
 
         if (result != 0) {

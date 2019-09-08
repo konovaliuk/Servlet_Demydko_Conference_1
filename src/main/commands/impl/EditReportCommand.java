@@ -32,13 +32,16 @@ public class EditReportCommand implements Command {
 
         request.setAttribute("reportIndex", index);
 
-        if (ParameterManager.isEmpty(sDate, sTime, city, street, building, room)) {
+        ParameterManager pm = new ParameterManager();
+        DateTimeManager dtm = new DateTimeManager();
+
+        if (pm.isEmpty(sDate, sTime, city, street, building, room)) {
             request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
             return page;
         }
 
         Address address = new Address(city, street, building, room);
-        if (!ParameterManager.isAddressCorrect(address)) {
+        if (!pm.isAddressCorrect(address)) {
             request.setAttribute("errorAddress", MessageManager.getProperty("addressIncorrect"));
             return page;
         }
@@ -48,8 +51,8 @@ public class EditReportCommand implements Command {
 
 
 
-        Date date = DateTimeManager.fromStringToSqlDate(sDate);
-        Time time = DateTimeManager.fromStringToTime(sTime);
+        Date date = dtm.fromStringToSqlDate(sDate);
+        Time time = dtm.fromStringToTime(sTime);
 
         report.setTime(time);
         report.setDate(date);

@@ -2,7 +2,10 @@ package databaseLogic.dao.impl;
 
 import databaseLogic.connection.DataSourceConference;
 import databaseLogic.connection.TestDataSource;
+import databaseLogic.dao.PositionDao;
+import databaseLogic.dao.SpeakerDao;
 import databaseLogic.dao.UserDao;
+import databaseLogic.factory.DaoFactory;
 import entity.Speaker;
 import entity.User;
 
@@ -27,8 +30,10 @@ public class UserDaoImpl implements UserDao {
     public int addUser(User user) {
         PreparedStatement statement = null;
         int result = 0;
+        PositionDao positionDao = DaoFactory.getPositionDao();
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
         try {
-            int position = getPositionId(user.getPosition());
+            int position = positionDao.getPositionId(user.getPosition());
             if (position != -1) {
                 connection.setAutoCommit(false);
                 statement = connection.prepareStatement("INSERT users(name, surname, email, password, position) values (?,?,?,?,?)");
@@ -42,7 +47,7 @@ public class UserDaoImpl implements UserDao {
                     statement = connection.prepareStatement("SELECT LAST_INSERT_ID()");
                     ResultSet rs = statement.executeQuery();
                     rs.next();
-                    addSpeaker(rs.getLong(1));
+                   speakerDao.addSpeaker(rs.getLong(1));
                 }
                 connection.commit();
             } else {
@@ -56,6 +61,7 @@ public class UserDaoImpl implements UserDao {
                 ex.printStackTrace();                                         //todo
             }
         } finally {
+            positionDao.closeConnection();
             if (statement != null) {
                 try {
                     statement.close();
@@ -68,58 +74,10 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public int getPositionId(String position) {
-        PreparedStatement statement = null;
-        int result = -1;
-        try {
-            statement = connection.prepareStatement("SELECT id from positions where position=?");
-            statement.setString(1, position);
-            ResultSet rs = statement.executeQuery();
-            rs.next();
-            result = rs.getInt("id");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-        }
-        return result;
-    }
-
-    @Override
-    public String getPosition(int id) {
-        PreparedStatement statement = null;
-        String position = null;
-        try {
-            statement = connection.prepareStatement("SELECT position from positions where id=?");
-            statement.setInt(1, id);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                position = rs.getString("position");
-            } else {
-                System.out.println("Position's id is incorrect");                                  // todo
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-        }
-        return position;
-    }
-
-    @Override
     public User getUserByEmail(String email) {
         PreparedStatement statement = null;
         User user = new User();
+        PositionDao positionDao = DaoFactory.getPositionDao();
         try {
             statement = connection.prepareStatement("SELECT * from users where email=?");
             statement.setString(1, email);
@@ -131,13 +89,14 @@ public class UserDaoImpl implements UserDao {
                 user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
                 int position = rs.getInt("position");
-                user.setPosition(getPosition(position));
+                user.setPosition(positionDao.getPosition(position));
             } else {
                 return null;                                               //todo
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            positionDao.closeConnection();
             if (statement != null)
                 try {
                     statement.close();
@@ -152,6 +111,7 @@ public class UserDaoImpl implements UserDao {
     public User getUserById(Long id) {
         PreparedStatement statement = null;
         User user = null;
+        PositionDao positionDao = DaoFactory.getPositionDao();
         try {
             statement = connection.prepareStatement("SELECT * FROM users WHERE id=?");
             statement.setLong(1, id);
@@ -163,11 +123,12 @@ public class UserDaoImpl implements UserDao {
                 user.setSurname(rs.getString("surname"));
                 user.setEmail(rs.getString("email"));
                 user.setPassword("password");
-                user.setPosition(getPosition(rs.getInt("position")));
+                user.setPosition(positionDao.getPosition(rs.getInt("position")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            positionDao.closeConnection();
             try {
                 if (statement != null)
                     statement.close();
@@ -178,55 +139,23 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
-
     @Override
-    public Speaker getSpeakerById(Long id) {
-        PreparedStatement statement = null;
-        Speaker speaker = null;
-        try {
-            statement = connection.prepareStatement("SELECT id, name, surname, email, password, position,rating " +
-                    "FROM users u join speakerratings s on u.id=s.speakerId WHERE id=? AND position=?");
-            statement.setLong(1, id);
-            statement.setInt(2, getPositionId("Speaker"));
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                speaker = new Speaker();
-                speaker.setId(id);
-                speaker.setName(rs.getString("name"));
-                speaker.setSurname(rs.getString("surname"));
-                speaker.setEmail(rs.getString("email"));
-                speaker.setPassword("password");
-                speaker.setPosition("Speaker");
-                speaker.setRating(rs.getInt("rating"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (statement != null)
-                    statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();                           //todo
-            }
-        }
-        return speaker;
-    }
-
-    @Override
-    public int setPosition(User user, String position) {
+    public int setUserPosition(User user, String position) {
         PreparedStatement statement = null;
         int result = 0;
+        PositionDao positionDao = DaoFactory.getPositionDao();
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
         try {
             connection.setAutoCommit(false);
             if (user.getPosition().equals("Speaker")) {
-                deleteSpeaker(user.getId());
+               speakerDao.deleteSpeaker(user.getId());
             }
             statement = connection.prepareStatement("UPDATE users set position=? where email=?");
-            statement.setInt(1, getPositionId(position));
+            statement.setInt(1, positionDao.getPositionId(position));
             statement.setString(2, user.getEmail());
             result = statement.executeUpdate();
             if (position.equals("Speaker")) {
-                addSpeaker(user.getId());
+               speakerDao.addSpeaker(user.getId());
             }
             connection.commit();
         } catch (SQLException e) {
@@ -237,6 +166,7 @@ public class UserDaoImpl implements UserDao {
                 ex.printStackTrace();                                    //todo
             }
         } finally {
+            positionDao.closeConnection();
             if (statement != null)
                 try {
                     statement.close();
@@ -245,151 +175,6 @@ public class UserDaoImpl implements UserDao {
                 }
         }
         return result;
-    }
-
-    @Override
-    public Speaker getSpeakerByEmail(String email) {
-        PreparedStatement statement = null;
-        Speaker speaker = null;
-        try {
-            statement = connection.prepareStatement("SELECT id,name,surname,password,rating " +
-                    "from users u join speakerratings s " +
-                    "on u.id = s.speakerId where position=? and email=?");
-            int position = getPositionId("Speaker");
-            statement.setInt(1, position);
-            statement.setString(2, email);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                speaker = new Speaker();
-                speaker.setId(rs.getLong("id"));
-                speaker.setName(rs.getString("name"));
-                speaker.setSurname(rs.getString("surname"));
-                speaker.setPassword(rs.getString("password"));
-                speaker.setRating(rs.getInt("rating"));
-                speaker.setEmail(email);
-                speaker.setPosition("Speaker");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();                                    //todo
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();                              //todo
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return speaker;
-    }
-
-    @Override
-    public void deleteSpeaker(Long speakerId) {
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement("DELETE from speakerratings where speakerId=?");
-            statement.setLong(1, speakerId);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();                                   //todo
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private void addSpeaker(Long speakerId) {
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement("INSERT speakerratings(speakerId) values (?)");
-            statement.setLong(1, speakerId);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();                                 //todo
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    @Override
-    public int addSpeakerRating(Speaker speaker, int rating) {
-        PreparedStatement statement = null;
-        int result = 0;
-        try {
-            statement = connection.prepareStatement("UPDATE speakerratings SET rating=? WHERE speakerId=?");
-            statement.setInt(1, rating);
-            statement.setLong(2, speaker.getId());
-            result = statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-        }
-        return result;
-    }
-
-    @Override
-    public int addBonusesToSpeaker(Speaker speaker, int bonuses) {
-        PreparedStatement statement = null;
-        int result = 0;
-        try {
-            statement = connection.prepareStatement("UPDATE speakerratings " +
-                    "set bonuses=? where speakerId=?");
-            statement.setInt(1, getSpeakerBonuses(speaker) + bonuses);
-            statement.setLong(2, speaker.getId());
-            result = statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-        }
-        return result;
-    }
-
-    @Override
-    public int getSpeakerBonuses(Speaker speaker) {
-        PreparedStatement statement = null;
-        int bonuses = 0;
-        try {
-            statement = connection.prepareStatement("SELECT bonuses " +
-                    "FROM speakerratings where speakerId=?");
-            statement.setLong(1, speaker.getId());
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                bonuses = rs.getInt("bonuses");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-        }
-        return bonuses;
     }
 
     @Override

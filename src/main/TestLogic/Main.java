@@ -16,8 +16,34 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
+
+class MedicalStaff {}
+class Doctor extends MedicalStaff {}
+class Nurse extends MedicalStaff {}
+class HeadDoctor extends Doctor {}
+
+
 public class Main {
+
+
+
     public static void main(String[] args) throws ParseException {
+        float var3 = 356f;
+        Object var9 = 356f;
+        double var2 = 356f;
+
+        MedicalStaff medic = new HeadDoctor();
+        if (medic instanceof Nurse) {
+            System.out.println ("Nurse");
+        } else if (medic instanceof Doctor) {
+            System.out.println ("Doctor");
+        } else if (medic instanceof HeadDoctor) {
+            System.out.println ("HeadDoctor");
+        }
+
+
+
 
 
 
@@ -45,6 +71,8 @@ public class Main {
 //        DateFormat df = new SimpleDateFormat("dd/MM/YYYY - hh:mm:ss");
 //        System.out.println("Using a dateFormat date is : " + df.format(uDate));
     }
+
+
 
     private static java.sql.Date convertUtilToSql(java.util.Date uDate) {
         java.sql.Date sDate = new java.sql.Date(uDate.getTime());

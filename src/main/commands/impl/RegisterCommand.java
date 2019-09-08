@@ -23,25 +23,27 @@ public class RegisterCommand implements Command {
         String surname = request.getParameter("surname");
         String position = request.getParameter("userType");
 
-        if (ParameterManager.isEmpty(name, surname, position)) {
+        ParameterManager pm = new ParameterManager();
+
+        if (pm.isEmpty(name, surname, position)) {
             request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
             return page;
         }
-        if (!ParameterManager.isEmailCorrect(email)) {
+        if (!pm.isEmailCorrect(email)) {
             request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
             return page;
         }
-        if (!ParameterManager.isPasswordCorrect(password)) {
+        if (!pm.isPasswordCorrect(password)) {
             request.setAttribute("errorPassword", MessageManager.getProperty("passwordForm"));
             return page;
         }
 
-        if (!ParameterManager.isNameAndSurnameCorrect(name,surname)) {
+        if (!pm.isNameAndSurnameCorrect(name,surname)) {
             request.setAttribute("errorNameOrSurname", MessageManager.getProperty("nameIncorrect"));
             return page;
         }
 
-        if (ParameterManager.isUserExist(email)) {
+        if (pm.isUserExist(email)) {
             request.setAttribute("errorUserExists", MessageManager.getProperty("userExists"));
             return page;
         }

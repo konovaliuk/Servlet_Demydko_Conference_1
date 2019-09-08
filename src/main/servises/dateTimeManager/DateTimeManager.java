@@ -5,16 +5,14 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-
 
 public class DateTimeManager {
 
-    public static java.sql.Date fromUtilDateToSqlDate(Date date) {
+    public java.sql.Date fromUtilDateToSqlDate(Date date) {
         return new java.sql.Date(date.getTime());
     }
 
-    public static Date fromSqlDateToUtilDate(java.sql.Date date) {
+    public Date fromSqlDateToUtilDate(java.sql.Date date) {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date uDate = null;
         try {
@@ -25,7 +23,7 @@ public class DateTimeManager {
         return uDate;
     }
 
-    public static Date fromStringToUtilDate(String date) {
+    public Date fromStringToUtilDate(String date) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Date d = null;
         try {
@@ -36,7 +34,7 @@ public class DateTimeManager {
         return d;
     }
 
-    public static java.sql.Date fromStringToSqlDate(String date) {
+    public java.sql.Date fromStringToSqlDate(String date) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         java.sql.Date d = null;
         try {
@@ -47,12 +45,12 @@ public class DateTimeManager {
         return d;
     }
 
-    public static String fromDateToString(Date date) {
+    public String fromDateToString(Date date) {
         DateFormat df = new SimpleDateFormat("dd-MM-YYYY");
         return df.format(date);
     }
 
-    public static Time fromStringToTime(String time) {
+    public Time fromStringToTime(String time) {
         DateFormat df = new SimpleDateFormat("hh:mm");
         Time t = null;
         try {
@@ -63,7 +61,7 @@ public class DateTimeManager {
         return t;
     }
 
-    public static String fromTimeToString(Time time) {
+    public String fromTimeToString(Time time) {
         DateFormat df = new SimpleDateFormat("HH:mm");
         return df.format(time);
     }

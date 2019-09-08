@@ -1,7 +1,7 @@
 package commands.impl;
 
 import commands.Command;
-import databaseLogic.dao.UserDao;
+import databaseLogic.dao.SpeakerDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Speaker;
 import servises.configManager.ConfigManager;
@@ -20,23 +20,25 @@ public class AddSpeakerRatingCommand implements Command {
         String rating = request.getParameter("rating");
         String email = request.getParameter("email");
 
-        if (!ParameterManager.isEmailCorrect(email)) {
+        ParameterManager pm = new ParameterManager();
+
+        if (!pm.isEmailCorrect(email)) {
             request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
             return page;
         }
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
+        Speaker speaker = speakerDao.getSpeakerByEmail(email);
 
-        UserDao userDao = DaoFactory.getUserDao();
-        Speaker speaker = userDao.getSpeakerByEmail(email);
 
 
         if (speaker == null) {
-            userDao.closeConnection();
+            speakerDao.closeConnection();
             request.setAttribute("errorSpeakerNotExists", MessageManager.getProperty("speakerNotExists"));
             return page;
         }
 
-        int result = userDao.addSpeakerRating(speaker, Integer.parseInt(rating));
-        userDao.closeConnection();
+        int result = speakerDao.addSpeakerRating(speaker, Integer.parseInt(rating));
+        speakerDao.closeConnection();
 
         if (result != 0) {
             request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));

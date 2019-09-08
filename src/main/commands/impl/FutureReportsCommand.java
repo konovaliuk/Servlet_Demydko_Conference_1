@@ -19,24 +19,6 @@ public class FutureReportsCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {
-//        ReportDao reportDao = DaoFactory.getReportDao();
-////        List<Report> list = reportDao.getFutureConference();
-////        reportDao.closeConnection();
-////        User user = (User) request.getSession().getAttribute("user");
-////        if (user.getPosition().equals("User")) {
-////            RegisterDao registerDao = DaoFactory.getRegisterDao();
-////            List<Long> registerList = registerDao.getReportsIdByUserId(user.getId());
-////            registerDao.closeConnection();
-////            for (Long id : registerList) {
-////                for (Report report : list) {
-////                    if (report.getId() == id) {
-////                        report.setIsUserRegistered(true);
-////                    }
-////                }
-////            }
-////        }
-////        request.getSession().setAttribute("reportList", list);
-
 
         String requestOffset = request.getParameter("offset");
         String requestMaxCount = request.getParameter("maxCount");
@@ -47,20 +29,10 @@ public class FutureReportsCommand implements Command {
         List<Report> reportList;
         if (requestOffset == null && requestMaxCount == null) {
             String sessionMaxCount = (String) request.getSession().getAttribute("maxCount");
-//            if (sessionMaxCount == null) {
-//                maxCount = 5;
-//            } else {
-//                maxCount = Integer.parseInt(sessionMaxCount);
-//            }
-
-            maxCount = (sessionMaxCount != null) ? Integer.parseInt(sessionMaxCount) : 5;    // todo
+            maxCount = (sessionMaxCount != null) ? Integer.parseInt(sessionMaxCount) : 5;
             Integer sessionOffset = (Integer) request.getSession().getAttribute("offset");
-//            if (sessionOffset != null) {
-//                offset = sessionOffset;
-//            } else {
-//                offset = 0;
-//            }
-            offset = (sessionOffset != null) ? sessionOffset : 0;                        //todo
+
+            offset = (sessionOffset != null) ? sessionOffset : 0;
             ReportDao reportDao = DaoFactory.getReportDao();
             int result = reportDao.getCountReports();
             reportList = reportDao.getFutureConference(offset, maxCount);

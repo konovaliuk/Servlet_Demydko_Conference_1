@@ -21,12 +21,14 @@ public class LoginCommand implements Command {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        if (!ParameterManager.isEmailCorrect(email)) {
+        ParameterManager pm = new ParameterManager();
+
+        if (!pm.isEmailCorrect(email)) {
             request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
             return page;
         }
 
-        if (!ParameterManager.isPasswordCorrect(password)) {
+        if (!pm.isPasswordCorrect(password)) {
             request.setAttribute("errorPassword", MessageManager.getProperty("passwordForm"));
             return page;
         }

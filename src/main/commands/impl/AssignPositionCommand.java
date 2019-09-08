@@ -18,7 +18,9 @@ public class AssignPositionCommand implements Command {
         String email = request.getParameter("email");
         String position = request.getParameter("userType");
 
-        if (!ParameterManager.isEmailCorrect(email)) {
+        ParameterManager pm = new ParameterManager();
+
+        if (!pm.isEmailCorrect(email)) {
             request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
             return page;
         }
@@ -37,7 +39,7 @@ public class AssignPositionCommand implements Command {
             return page;
         }
 
-        int result = userDao.setPosition(user, position);
+        int result = userDao.setUserPosition(user, position);
         userDao.closeConnection();
 
         if (result != 0) {

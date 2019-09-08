@@ -4,7 +4,7 @@ import databaseLogic.connection.DataSourceConference;
 import databaseLogic.connection.TestDataSource;
 import databaseLogic.dao.AddressDao;
 import databaseLogic.dao.ReportDao;
-import databaseLogic.dao.UserDao;
+import databaseLogic.dao.SpeakerDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Address;
 import entity.Report;
@@ -31,6 +31,7 @@ public class ReportDaoImpl implements ReportDao {
     public int addReport(Report report) {
         PreparedStatement statement = null;
         int result = 0;
+        DateTimeManager dtm = new DateTimeManager();
         AddressDao addressDao = DaoFactory.getAddressDao(connection);
         try {
             connection.setAutoCommit(false);
@@ -48,7 +49,7 @@ public class ReportDaoImpl implements ReportDao {
                     "(name, addressId, date, time, speakerId)values (?,?,?,?,?)");
             statement.setString(1, report.getName());
             statement.setLong(2, addressId);
-            statement.setDate(3, DateTimeManager.fromUtilDateToSqlDate(report.getDate()));
+            statement.setDate(3, dtm.fromUtilDateToSqlDate(report.getDate()));
             statement.setTime(4, report.getTime());
             statement.setLong(5, report.getSpeaker().getId());
             result = statement.executeUpdate();
@@ -93,49 +94,11 @@ public class ReportDaoImpl implements ReportDao {
         return result;
     }
 
-//    @Override
-//    public List<Report> getFutureConference() {
-//        PreparedStatement statement = null;
-//        UserDao userDao = DaoFactory.getUserDao();
-//        AddressDao addressDao = DaoFactory.getAddressDao();
-//        List<Report> reports = new ArrayList<>();
-//        try {
-//            statement = connection.prepareStatement("SELECT id,name,date,time,addressId,speakerId from reports where date>?");
-//            statement.setDate(1, new Date(new java.util.Date().getTime()));
-//            ResultSet rs = statement.executeQuery();
-//            while (rs.next()) {
-//                Report report = new Report();
-//                report.setId(rs.getInt("id"));
-//                report.setName(rs.getString("name"));
-//                report.setDate(rs.getDate("date"));
-//                report.setTime(rs.getTime("time"));
-//                Speaker speaker = userDao.getSpeakerById(rs.getInt("speakerId"));
-//                report.setSpeaker(speaker);
-//                Address address = addressDao.getAddressById(rs.getInt("addressId"));
-//                report.setAddress(address);
-//                reports.add(report);
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            userDao.closeConnection();
-//            addressDao.closeConnection();
-//            if (statement != null)
-//                try {
-//                    statement.close();
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//        }
-//        return reports;
-//    }
-
-
     @Override
     public List<Report> getFutureConference(int offset,int maxCount) {
         PreparedStatement statement = null;
-        UserDao userDao = DaoFactory.getUserDao();
         AddressDao addressDao = DaoFactory.getAddressDao();
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
         List<Report> reports = new ArrayList<>();
         try {
             statement = connection.prepareStatement("SELECT id,name,date,time,addressId,speakerId" +
@@ -150,7 +113,7 @@ public class ReportDaoImpl implements ReportDao {
                 report.setName(rs.getString("name"));
                 report.setDate(rs.getDate("date"));
                 report.setTime(rs.getTime("time"));
-                Speaker speaker = userDao.getSpeakerById(rs.getLong("speakerId"));
+                Speaker speaker = speakerDao.getSpeakerById(rs.getLong("speakerId"));
                 report.setSpeaker(speaker);
                 Address address = addressDao.getAddressById(rs.getLong("addressId"));
                 report.setAddress(address);
@@ -159,7 +122,7 @@ public class ReportDaoImpl implements ReportDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            userDao.closeConnection();
+           speakerDao.closeConnection();
             addressDao.closeConnection();
             if (statement != null)
                 try {
@@ -199,7 +162,7 @@ public class ReportDaoImpl implements ReportDao {
     public List<Report> getOfferedConference() {
         Statement statement = null;
         List<Report> reports = new ArrayList<>();
-        UserDao userDao = DaoFactory.getUserDao();
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
         try {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT id,name,speakerId from reports where date is null");
@@ -207,14 +170,14 @@ public class ReportDaoImpl implements ReportDao {
                 Report report = new Report();
                 report.setId(rs.getLong("id"));
                 report.setName(rs.getString("name"));
-                Speaker speaker = userDao.getSpeakerById(rs.getLong("speakerId"));
+                Speaker speaker = speakerDao.getSpeakerById(rs.getLong("speakerId"));
                 report.setSpeaker(speaker);
                 reports.add(report);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            userDao.closeConnection();
+            speakerDao.closeConnection();
             if (statement != null)
                 try {
                     statement.close();
@@ -228,7 +191,7 @@ public class ReportDaoImpl implements ReportDao {
     @Override
     public List<Report> getPastConference() {
         PreparedStatement statement = null;
-        UserDao userDao = DaoFactory.getUserDao();
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
         AddressDao addressDao = DaoFactory.getAddressDao();
         List<Report> reports = new ArrayList<>();
         try {
@@ -241,7 +204,7 @@ public class ReportDaoImpl implements ReportDao {
                 report.setName(rs.getString("name"));
                 report.setDate(rs.getDate("date"));
                 report.setTime(rs.getTime("time"));
-                Speaker speaker = userDao.getSpeakerById(rs.getLong("speakerId"));
+                Speaker speaker = speakerDao.getSpeakerById(rs.getLong("speakerId"));
                 report.setSpeaker(speaker);
                 Address address = addressDao.getAddressById(rs.getLong("addressId"));
                 report.setAddress(address);
@@ -250,7 +213,7 @@ public class ReportDaoImpl implements ReportDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            userDao.closeConnection();
+           speakerDao.closeConnection();
             addressDao.closeConnection();
             if (statement != null)
                 try {
@@ -266,6 +229,7 @@ public class ReportDaoImpl implements ReportDao {
     public int updateReport(Report report) {
         PreparedStatement statement = null;
         int result = 0;
+        DateTimeManager dtm = new DateTimeManager();
         AddressDao addressDao = DaoFactory.getAddressDao(connection);
         try {
             connection.setAutoCommit(false);
@@ -283,7 +247,7 @@ public class ReportDaoImpl implements ReportDao {
             statement = connection.prepareStatement("UPDATE reports set name=?, addressId=?, date=?, time=?, speakerId=? where id=?");
             statement.setString(1, report.getName());
             statement.setLong(2, addressId);
-            statement.setDate(3, DateTimeManager.fromUtilDateToSqlDate(report.getDate()));
+            statement.setDate(3, dtm.fromUtilDateToSqlDate(report.getDate()));
             statement.setTime(4, report.getTime());
             statement.setLong(5, report.getSpeaker().getId());
             statement.setLong(6, report.getId());

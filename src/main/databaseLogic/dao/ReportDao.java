@@ -13,7 +13,6 @@ public interface ReportDao {
     int addReport(Report report);
     int addReport(String name,Speaker speaker);
 
-//    List<Report> getFutureConference();
     List<Report> getFutureConference(int offset,int maxCount);
     List<Report> getOfferedConference();
     List<Report> getPastConference();
