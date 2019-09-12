@@ -7,9 +7,11 @@ import entity.Report;
 import servises.configManager.ConfigManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
+import servises.presenceManager.PresenceManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 public class AddPresenceCommand implements Command {
     @Override
@@ -19,26 +21,30 @@ public class AddPresenceCommand implements Command {
         List<Report> pastReportList = (List<Report>) request.getSession().getAttribute("pastReportList");
         String index = request.getParameter("index");
         Report report = pastReportList.get(Integer.parseInt(index));
-        String count = request.getParameter("presence");
+        String sCount = request.getParameter("presence");
 
         ParameterManager pm = new ParameterManager();
+        MessageManager message = new MessageManager();
 
-        if (!pm.isNumberCorrect(count)) {
-            request.setAttribute("errorNumber", MessageManager.getProperty("numberIncorrect"));
+
+        if (!pm.isNumberCorrect(sCount)) {
+            request.setAttribute("errorNumber", message.getProperty("errorNumber"));
             return page;
         }
 
-//        RegisterDao registerDao = DaoFactory.getRegisterDao();
-//        int result = registerDao.addPresence(report.getId(), Integer.parseInt(count));
-//        registerDao.closeConnection();
+        int count = Integer.parseInt(sCount);
+        PresenceManager presenceManager = new PresenceManager();
+        int result=presenceManager.addPresence(report.getId(), count);
 
-        PresenceDao presenceDao = DaoFactory.getPresenceDao();
-        int result = presenceDao.addPresence(report.getId(), Integer.parseInt(count));
-        presenceDao.closeConnection();
-
+//        PresenceDao presenceDao = DaoFactory.getPresenceDao();
+//        int result = presenceDao.addPresence(report.getId(), count);
+//        presenceDao.closeConnection();
 
         if (result != 0) {
-            request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
+            Map<Long, Integer> pastReportPresence = (Map<Long, Integer>) request.getSession().getAttribute("pastReportPresence");
+            pastReportPresence.put(report.getId(), count);
+            request.getSession().setAttribute("pastReportPresence", pastReportPresence);
+            request.setAttribute("successfulChanges", message.getProperty("successfulChanges"));
         }
 
         return page;

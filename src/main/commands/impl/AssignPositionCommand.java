@@ -7,6 +7,7 @@ import servises.configManager.ConfigManager;
 import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
+import servises.userManager.UserManager;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,34 +19,35 @@ public class AssignPositionCommand implements Command {
         String email = request.getParameter("email");
         String position = request.getParameter("userType");
 
-        ParameterManager pm = new ParameterManager();
+        ParameterManager parameterManager = new ParameterManager();
+        MessageManager message = new MessageManager();
 
-        if (!pm.isEmailCorrect(email)) {
-            request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
+        if (!parameterManager.isEmailCorrect(email)) {
+            request.setAttribute("errorEmailForm", message.getProperty("errorEmailForm"));
             return page;
         }
 
-        UserDao userDao = DaoFactory.getUserDao();
-        User user = userDao.getUserByEmail(email);
+        UserManager userManager = new UserManager();
+        User user = userManager.getUserByEmail(email);
 
         if (user == null) {
-            request.setAttribute("errorUserNotExists", MessageManager.getProperty("userNotExists"));
+            request.setAttribute("errorUserNotExists", message.getProperty("errorUserNotExists"));
             return page;
         }
 
         if (user.getPosition().equals(position)) {
-            request.setAttribute("errorPosition", MessageManager.getProperty("userPosition")+
+            request.setAttribute("errorPosition", message.getProperty("errorPosition")+
                     " " + position);
             return page;
         }
 
-        int result = userDao.setUserPosition(user, position);
-        userDao.closeConnection();
+        int result = userManager.setUserPosition(user, position);
+        MailManager mail = new MailManager();
 
         if (result != 0) {
             user.setPosition(position);
-            MailManager.assignment(user);
-            request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
+            mail.assignment(user);
+            request.setAttribute("successfulChanges", message.getProperty("successfulChanges"));
         }
 
         return page;

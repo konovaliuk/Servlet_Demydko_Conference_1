@@ -16,9 +16,9 @@ public class PositionDaoImpl implements PositionDao {
     private Connection connection;
 
     public PositionDaoImpl() {
-        dataSource = new DataSourceConference();
-        //dataSource = new TestDataSource();
+        dataSource = DataSourceConference.getInstance();
         this.connection = dataSource.getConnection();
+        //dataSource = new TestDataSource();
     }
 
 

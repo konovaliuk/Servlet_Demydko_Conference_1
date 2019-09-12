@@ -9,6 +9,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<c:import url="header.jsp" charEncoding="utf-8"/>
+
 <html>
 <head>
     <title>Title</title>
@@ -17,15 +19,7 @@
     </style>
 </head>
 <body>
-<h1 align="center">Редактирование доклада</h1>
-<c:choose>
-    <c:when test="${not empty pageContext.request.getParameter('index')}">
-        <c:set var="index" value="${pageContext.request.getParameter('index')}"/>
-    </c:when>
-    <c:otherwise>
-        <c:set var="index" value="${reportIndex}"/>
-    </c:otherwise>
-</c:choose>
+<h1 align="center"><fmt:message key="label.reportEditing" bundle="${rm}"/></h1>
 
 <c:set var="report" value="${sessionScope.reportList[index]}"/>
 <jsp:useBean id="now" class="java.util.Date"/>
@@ -36,44 +30,61 @@
 
     <c:out value="${report}"/>
 
-    <p>Тема: <c:out value="${report.name}"/>
-        | Изменить тему: <textarea name="theme"></textarea></p>
+    <p><fmt:message key="label.theme" bundle="${rm}"/>: <c:out value="${report.name}"/>
+        | <fmt:message key="label.changeTheme" bundle="${rm}"/>: <textarea name="theme"></textarea></p>
 
-    <p>Дата: <c:out value="${report.date}"/>
-        | Изменить дату: <input type="date" name="date" min="<fmt:formatDate value="${now}"
+    <p><fmt:message key="label.date" bundle="${rm}"/>: <c:out value="${report.date}"/>
+        | <fmt:message key="label.changeDate" bundle="${rm}"/>: <input type="date" name="date" min="<fmt:formatDate value="${now}"
         pattern="yyyy-MM-dd"/>"/>
     </p>
 
-    <p>Время: <fmt:formatDate value="${report.time}" type="time" timeStyle="short"/>
-        | Изменить время: <input type="time" name="time"/></p>
+    <p><fmt:message key="label.time" bundle="${rm}"/>: <fmt:formatDate value="${report.time}" type="time" timeStyle="short"/>
+        | <fmt:message key="label.changeTime" bundle="${rm}"/>: <input type="time" name="time"/></p>
 
-    <p>Город: <c:out value="${report.address.city}"/>
-        | Изменить город: <input type="text" name="city"
+    <p><fmt:message key="label.city" bundle="${rm}"/>: <c:out value="${report.address.city}"/>
+        | <fmt:message key="label.changeCity" bundle="${rm}"/>: <input type="text" name="city"
                                  pattern="[а-яА-Яa-zA-ZЇїЄєІі]{2,30}"/></p>
 
-    <p>Улица: <c:out value="${report.address.street}"/>
-        | Изменить улицу: <input type="text" name="street"
+    <p><fmt:message key="label.street" bundle="${rm}"/>: <c:out value="${report.address.street}"/>
+        | <fmt:message key="label.changeStreet" bundle="${rm}"/>: <input type="text" name="street"
                                  pattern="[а-яА-Яa-zA-ZЇїЄєІі\-\s]{2,50}"/></p>
 
-    <p>Дом: <c:out value="${report.address.building}"/>
-        | Изменить дом: <input type="text" name="building"
+    <p><fmt:message key="label.building" bundle="${rm}"/>: <c:out value="${report.address.building}"/>
+        | <fmt:message key="label.changeBuilding" bundle="${rm}"/>: <input type="text" name="building"
                                pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9\s/-]{1,10}"/></p>
 
-    <p>Кабинет: <c:out value="${report.address.room}"/>
-        | Изменить кабинет: <input type="text" name="room"
+    <p><fmt:message key="label.room" bundle="${rm}"/>: <c:out value="${report.address.room}"/>
+        | <fmt:message key="label.changeRoom" bundle="${rm}"/>: <input type="text" name="room"
                                    pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9]{1,5}"/></p>
 
-    <p>Спикер: <c:out value="${report.speaker}"/>
-        | Изменить спикера: <input type="email" name="speakerEmail"
+    <p><fmt:message key="label.speaker" bundle="${rm}"/>: <c:out value="${report.speaker.name}"/>
+        <c:out value="${report.speaker.surname}"/>
+        | <fmt:message key="label.changeSpeaker" bundle="${rm}"/>: <input type="email" name="speakerEmail"
                                    pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
 
-    ${successfulChanges}
-    ${noActionDone}
-    ${errorAddress}
-    ${errorDate}
-    ${errorTheme}
-    <p><input type="submit" value="Изменить доклад"/></p>
+    <c:choose>
+        <c:when test="${not empty errorEmailForm}">
+            <fmt:message key="errorEmailForm" bundle="${rm}"/>
+        </c:when>
+        <c:when test="${not empty successfulChanges}">
+            <fmt:message key="successfulChanges" bundle="${rm}"/>
+        </c:when>
+        <c:when test="${not empty noActionDone}">
+            <fmt:message key="noActionDone" bundle="${rm}"/>
+        </c:when>
+        <c:when test="${not empty errorAddress}">
+            <fmt:message key="errorAddress" bundle="${rm}"/>
+        </c:when>
+        <c:when test="${not empty errorDate}">
+            <fmt:message key="errorDate" bundle="${rm}"/>
+        </c:when>
+        <c:when test="${not empty errorTheme}">
+            <fmt:message key="errorTheme" bundle="${rm}"/>
+        </c:when>
+    </c:choose>
+
+    <p><input type="submit" value="<fmt:message key="label.changeReport" bundle="${rm}"/>"/></p>
 </form>
-<p><a href="/Conference_war/views/cabinet.jsp">Кабинет</a></p>
+<p><a href="/Conference_war/views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>
 </body>
 </html>

@@ -5,18 +5,35 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DataSourceConference {
 
+
+    private static volatile DataSourceConference instance;
+
     private Connection connection;
+    private DataSourceConference() {
+    }
+
+    public static DataSourceConference getInstance() {
+        if (instance == null) {
+            synchronized (DataSourceConference.class) {
+                if (instance == null) {
+                    instance = new DataSourceConference();
+                }
+            }
+        }
+        return instance;
+    }
+
 
     public Connection getConnection() {
+//        Connection connection = null;
         try {
             Context initContext = new InitialContext();
             Context envContext = (Context) initContext.lookup("java:/comp/env");
-            javax.sql.DataSource dataSource = (javax.sql.DataSource) envContext.lookup("jdbc/EPAMdb");
+            DataSource dataSource = (javax.sql.DataSource) envContext.lookup("jdbc/ConferenceDb");
             connection = dataSource.getConnection();
         } catch (SQLException | NamingException e) {
             e.printStackTrace();

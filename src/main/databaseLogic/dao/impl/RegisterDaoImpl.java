@@ -16,14 +16,14 @@ import java.util.List;
 
 public class RegisterDaoImpl implements RegisterDao {
 
-       private DataSourceConference dataSource;                             // todo
-   // private TestDataSource dataSource;
+    private DataSourceConference dataSource;                             // todo
     private Connection connection;
+    // private TestDataSource dataSource;
 
     public RegisterDaoImpl() {
-          dataSource = new DataSourceConference();
-       // dataSource = new TestDataSource();
+        dataSource = DataSourceConference.getInstance();
         this.connection = dataSource.getConnection();
+        // dataSource = new TestDataSource();
     }
 
     @Override
@@ -99,6 +99,30 @@ public class RegisterDaoImpl implements RegisterDao {
                 }
         }
         return userList;
+    }
+
+    @Override
+    public int getCountOfVisitors(Long reportId) {
+        PreparedStatement statement = null;
+        int result = 0;
+        try {
+            statement = connection.prepareStatement("SELECT count(userId) as sum from registeredlist where reportId =? ");
+            statement.setLong(1,reportId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("sum");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+        return result;
     }
 
     @Override

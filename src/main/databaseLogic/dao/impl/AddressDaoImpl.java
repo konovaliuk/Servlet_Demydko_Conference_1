@@ -12,13 +12,14 @@ import java.sql.SQLException;
 
 public class AddressDaoImpl implements AddressDao {
     private DataSourceConference dataSource;                             // todo
-    // private TestDataSource dataSource;
     private Connection connection;
 
+    // private TestDataSource dataSource;
+
     public AddressDaoImpl() {
-        dataSource = new DataSourceConference();
-        //   dataSource = new TestDataSource();
+        dataSource = DataSourceConference.getInstance();
         this.connection = dataSource.getConnection();
+        //   dataSource = new TestDataSource();
     }
 
     public AddressDaoImpl(Connection connection) {

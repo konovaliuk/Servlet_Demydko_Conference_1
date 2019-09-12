@@ -2,7 +2,7 @@ a img, form, fieldset {
     height: content-box;
     width: content-box;
     border: 6pt;
-    background: burlywood;
+    /*background: burlywood;*/
 }
 
 h1 {
@@ -25,12 +25,21 @@ div {
 
 .block1 {
     width: 300px;
-    background: #ccc;
+    background: #cbb9cc;
     padding: 5px;
     padding-right: 20px;
     border: solid 1px black;
     /*float: left;*/
 }
+
+.block11 {
+    width:300px;
+    padding:5px;
+    padding-right: 20px;
+    border: none;
+    /*float: left;*/
+}
+
 .block2 {
     width: 5px;
     height: 5px;
@@ -55,13 +64,29 @@ div {
     right:0;
     width:200px;
 }
+.blockTop2{
+    position:absolute;
+    top:0;
+    right:220px;
+    width:200px;
+}
 
-.blockCenter {
+.blockBottom {
     position:absolute;
     /*top:50%;*/
     bottom: 10%;
     right:50%;
     width:max-content;
     border: none;
+
+}
+
+.blockCenter {
+    position:absolute;
+    /*top:50%;*/
+    bottom: 50%;
+    right:50%;
+    width:max-content;
+    border: solid 1px black;;
 
 }

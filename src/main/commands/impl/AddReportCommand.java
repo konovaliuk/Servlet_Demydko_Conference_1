@@ -12,6 +12,8 @@ import servises.dateTimeManager.DateTimeManager;
 import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
+import servises.reportManager.ReportManager;
+import servises.spaekerManager.SpeakerManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Time;
@@ -32,54 +34,50 @@ public class AddReportCommand implements Command {
         String room = request.getParameter("room");
         String email = request.getParameter("speakerEmail");
 
-        ParameterManager pm = new ParameterManager();
-        DateTimeManager dtm = new DateTimeManager();
+        ParameterManager parameterManager = new ParameterManager();
+        MessageManager message = new MessageManager();
 
-        if (pm.isAllEmpty(sDate, sTime, theme, city, street, building, room, email)) {
-            request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
+        if (parameterManager.isAllEmpty(sDate, sTime, theme, city, street, building, room, email)) {
+            request.setAttribute("errorEmptyForm", message.getProperty("errorEmptyForm"));
             return page;
         }
 
-        Date date = dtm.fromStringToSqlDate(sDate);
+        DateTimeManager dateTimeManager = new DateTimeManager();
+        Date date = dateTimeManager.fromStringToSqlDate(sDate);
 
         if (new java.util.Date().getTime() > date.getTime()) {
-            request.setAttribute("errorDate", MessageManager.getProperty("incorrectDate"));
+            request.setAttribute("errorDate", message.getProperty("errorDate"));
             return page;
         }
 
         Address address = new Address(city, street, building, room);
-        if (!pm.isAddressCorrect(address)) {
-            request.setAttribute("errorAddress", MessageManager.getProperty("addressIncorrect"));
+        if (!parameterManager.isAddressCorrect(address)) {
+            request.setAttribute("errorAddress", message.getProperty("addressIncorrect"));
             return page;
         }
 
-        if (!pm.isThemeCorrect(theme)) {
-            request.setAttribute("errorTheme", MessageManager.getProperty("themeIncorrect"));
+        if (!parameterManager.isThemeCorrect(theme)) {
+            request.setAttribute("errorTheme", message.getProperty("errorTheme"));
             return page;
         }
+        SpeakerManager speakerManager = new SpeakerManager();
+        Speaker speaker = speakerManager.getSpeakerByEmail(email);
 
-//        UserDao userDao = DaoFactory.getUserDao();
-//        Speaker speaker = userDao.getSpeakerByEmail(email);
-//        userDao.closeConnection();
-
-        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
-        Speaker speaker = speakerDao.getSpeakerByEmail(email);
-        speakerDao.closeConnection();
 
         if (speaker == null) {
-            request.setAttribute("errorSpeakerNotExists", MessageManager.getProperty("speakerNotExists"));
+            request.setAttribute("errorSpeakerNotExists", message.getProperty("errorSpeakerNotExists"));
             return page;
         }
-        Time time = dtm.fromStringToTime(sTime);
+        Time time = dateTimeManager.fromStringToTime(sTime);
         Report report = new Report(theme, address, date, time, speaker);
 
-        ReportDao reportDao = DaoFactory.getReportDao();
-        int result = reportDao.addReport(report);
-        reportDao.closeConnection();
+        ReportManager reportManager = new ReportManager();
+        int result = reportManager.addReport(report);
 
         if (result != 0) {
-            request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
-            MailManager.notifySpeakerAppointment(speaker, report);
+            MailManager mail = new MailManager();
+            request.setAttribute("successfulChanges", message.getProperty("successfulChanges"));
+            mail.notifySpeakerAppointment(speaker, report);
         }
 
         return page;

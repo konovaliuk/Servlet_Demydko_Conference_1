@@ -1,49 +1,27 @@
 package TestLogic;
 
-import databaseLogic.dao.RegisterDao;
 import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
-import entity.Address;
-import entity.Speaker;
 import entity.User;
-import servises.configManager.ConfigManager;
-import servises.messageManager.MessageManager;
-import servises.parameterManager.ParameterManager;
+import org.apache.log4j.Logger;
 import servises.userManager.UserManager;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-
-
-
-class MedicalStaff {}
-class Doctor extends MedicalStaff {}
-class Nurse extends MedicalStaff {}
-class HeadDoctor extends Doctor {}
+import java.util.List;
 
 
 public class Main {
-
-
+    private static final Logger log = Logger.getLogger(Main.class);
 
     public static void main(String[] args) throws ParseException {
-        float var3 = 356f;
-        Object var9 = 356f;
-        double var2 = 356f;
-
-        MedicalStaff medic = new HeadDoctor();
-        if (medic instanceof Nurse) {
-            System.out.println ("Nurse");
-        } else if (medic instanceof Doctor) {
-            System.out.println ("Doctor");
-        } else if (medic instanceof HeadDoctor) {
-            System.out.println ("HeadDoctor");
-        }
-
-
-
+        Long a = 589L;
+        Long b = 59L;
+        System.out.println(a.equals(b));
 
 
 

@@ -3,14 +3,16 @@ package commands.impl;
 import commands.Command;
 import databaseLogic.dao.RegisterDao;
 import databaseLogic.factory.DaoFactory;
-import entity.Address;
 import entity.Report;
 import entity.User;
 import servises.configManager.ConfigManager;
 import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
+import servises.registerManager.RegisterManager;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 public class ConferenceRegisterCommand implements Command {
 
@@ -23,23 +25,28 @@ public class ConferenceRegisterCommand implements Command {
         int index = Integer.parseInt(sIndex);
 
         Report r = reportList.get(index);
+        MessageManager message = new MessageManager();
+        MailManager mail = new MailManager();
+
         if (r.getIsUserRegistered()) {
-            request.setAttribute("errorAlreadyRegistered", MessageManager.getProperty("alreadyRegistered"));
+            request.setAttribute("errorAlreadyRegistered", message.getProperty("errorAlreadyRegistered"));
             request.setAttribute("reportId", r.getId());
             return page;
         }
 
-        RegisterDao registerDao = DaoFactory.getRegisterDao();
-        int result = registerDao.userRegister(user.getId(), reportList.get(index).getId());
-        registerDao.closeConnection();
-
+        RegisterManager registerManager = new RegisterManager();
+        int result = registerManager.userRegister(user.getId(), reportList.get(index).getId());
 
         if (result != 0) {
             Report report = reportList.get(index);
-            report.setIsUserRegistered(true);
-            reportList.set(index, report);
+            registerManager.makeUserRegistered(report);
             request.getSession().setAttribute("reportList", reportList);
-            MailManager.notifyUserRegistration(user,report);
+
+            Map<Long, Integer> countOfVisitors = (Map<Long, Integer>) request.getSession().getAttribute("countOfVisitors");
+            int count = countOfVisitors.get(report.getId());
+            countOfVisitors.put(report.getId(), ++count);
+            request.getSession().setAttribute("countOfVisitors", countOfVisitors);
+            mail.notifyUserRegistration(user, report);
         }
 
         return page;

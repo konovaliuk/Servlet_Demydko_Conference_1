@@ -15,22 +15,24 @@ public class MailThread extends Thread {
     private String mailSubject;
     private String mailText;
     private Properties properties;
+    private MailManager mailManager;
 
     public MailThread(String sendToEmail, String mailSubject, String mailText) {
         this.sendToEmail = sendToEmail;
         this.mailSubject = mailSubject;
         this.mailText = mailText;
+        mailManager = new MailManager();
         properties = new Properties();
-        properties.put("mail.smtp.host", MailManager.getProperty("mail.smtp.host"));
-        properties.put("mail.smtp.socketFactory.port", MailManager.getProperty("mail.smtp.socketFactory.port"));
-        properties.put("mail.smtp.socketFactory.class", MailManager.getProperty("mail.smtp.socketFactory.class"));
-        properties.put("mail.smtp.auth", MailManager.getProperty("mail.smtp.auth"));
-        properties.put("mail.smtp.port", MailManager.getProperty("mail.smtp.port"));
+        properties.put("mail.smtp.host", mailManager.getProperty("mail.smtp.host"));
+        properties.put("mail.smtp.socketFactory.port", mailManager.getProperty("mail.smtp.socketFactory.port"));
+        properties.put("mail.smtp.socketFactory.class", mailManager.getProperty("mail.smtp.socketFactory.class"));
+        properties.put("mail.smtp.auth", mailManager.getProperty("mail.smtp.auth"));
+        properties.put("mail.smtp.port", mailManager.getProperty("mail.smtp.port"));
     }
 
     private void init() {
-        final String APIKey = MailManager.getProperty("apiKey");
-        final String SecretKey = MailManager.getProperty("secretKey");
+        final String APIKey = mailManager.getProperty("apiKey");
+        final String SecretKey = mailManager.getProperty("secretKey");
         Session mailSession = (Session.getDefaultInstance(properties,
                 new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {

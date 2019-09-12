@@ -6,8 +6,10 @@ import databaseLogic.factory.DaoFactory;
 import entity.User;
 
 import servises.configManager.ConfigManager;
+import servises.languageManager.LanguageManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
+import servises.userManager.UserManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -24,36 +26,49 @@ public class RegisterCommand implements Command {
         String position = request.getParameter("userType");
 
         ParameterManager pm = new ParameterManager();
+        MessageManager message = new MessageManager();
 
         if (pm.isEmpty(name, surname, position)) {
-            request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
+            request.setAttribute("errorEmptyForm", message.getProperty("errorEmptyForm"));
             return page;
         }
         if (!pm.isEmailCorrect(email)) {
-            request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
+            request.setAttribute("errorEmailForm", message.getProperty("errorEmailForm"));
             return page;
         }
         if (!pm.isPasswordCorrect(password)) {
-            request.setAttribute("errorPassword", MessageManager.getProperty("passwordForm"));
+            request.setAttribute("errorPassword", message.getProperty("errorPassword"));
             return page;
         }
 
-        if (!pm.isNameAndSurnameCorrect(name,surname)) {
-            request.setAttribute("errorNameOrSurname", MessageManager.getProperty("nameIncorrect"));
+        if (!pm.isNameAndSurnameCorrect(name, surname)) {
+            request.setAttribute("errorNameOrSurname", message.getProperty("errorNameOrSurname"));
             return page;
         }
 
         if (pm.isUserExist(email)) {
-            request.setAttribute("errorUserExists", MessageManager.getProperty("userExists"));
+            request.setAttribute("errorUserExists", message.getProperty("errorUserExists"));
             return page;
         }
+        String language = (String) request.getSession().getAttribute("language");
+        LanguageManager languageManager = new LanguageManager();
+        language = languageManager.setLanguageToUser(language);
+        User user = new User(name, surname, email, password, position, language);
 
-        User user = new User(name, surname, email, password, position);
+        language = languageManager.setLanguageToSession(language);
+        request.getSession().setAttribute("language", language);
 
-        UserDao userDao = DaoFactory.getUserDao();
-        userDao.addUser(user);
-        userDao.closeConnection();
+        UserManager userManager = new UserManager();
+        userManager.addUser(user);
+        user = userManager.getUserByEmail(email);
 
+//        UserDao userDao = DaoFactory.getUserDao();
+//        userDao.addUser(user);
+//        user = userDao.getUserByEmail(email);
+//        userDao.closeConnection();
+
+
+        user.setPassword(null);
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
 

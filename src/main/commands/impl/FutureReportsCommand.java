@@ -1,21 +1,20 @@
 package commands.impl;
 
 import commands.Command;
-import databaseLogic.dao.RegisterDao;
-import databaseLogic.dao.ReportDao;
-import databaseLogic.factory.DaoFactory;
 import entity.Report;
 import entity.User;
+import org.apache.log4j.Logger;
 import servises.configManager.ConfigManager;
+import servises.paginationManager.PaginationManager;
+import servises.registerManager.RegisterManager;
+import servises.reportManager.ReportManager;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class FutureReportsCommand implements Command {
-
+    private Logger logger = Logger.getLogger(FutureReportsCommand.class);
 
     @Override
     public String execute(HttpServletRequest request) {
@@ -23,27 +22,24 @@ public class FutureReportsCommand implements Command {
         String requestOffset = request.getParameter("offset");
         String requestMaxCount = request.getParameter("maxCount");
 
+        ReportManager reportManager = new ReportManager();
+        PaginationManager paginationManager = new PaginationManager();
+        int countOfFutureReports = reportManager.getCountOfFutureReports();
         int offset;
         int maxCount;
+        List<Report> futureConferenceList;
+        List<Integer> buttons;
 
-        List<Report> reportList;
         if (requestOffset == null && requestMaxCount == null) {
             String sessionMaxCount = (String) request.getSession().getAttribute("maxCount");
             maxCount = (sessionMaxCount != null) ? Integer.parseInt(sessionMaxCount) : 5;
-            Integer sessionOffset = (Integer) request.getSession().getAttribute("offset");
 
+            Integer sessionOffset = (Integer) request.getSession().getAttribute("offset");
             offset = (sessionOffset != null) ? sessionOffset : 0;
-            ReportDao reportDao = DaoFactory.getReportDao();
-            int result = reportDao.getCountReports();
-            reportList = reportDao.getFutureConference(offset, maxCount);
-            reportDao.closeConnection();
-            double buttons = result / (double) maxCount;
-            buttons = Math.ceil(buttons);
-            List<Integer> list = new ArrayList<>();
-            for (int i = 1; i <= buttons; i++) {
-                list.add(i);
-            }
-            request.getSession().setAttribute("buttons", list);
+
+            futureConferenceList = reportManager.getFutureConference(offset, maxCount);
+            buttons = paginationManager.getButtons(countOfFutureReports, maxCount);
+            request.getSession().setAttribute("buttons", buttons);
         } else {
             if (requestMaxCount == null) {
                 String sessionMaxCount = (String) request.getSession().getAttribute("maxCount");
@@ -55,16 +51,8 @@ public class FutureReportsCommand implements Command {
             } else {
                 maxCount = Integer.parseInt(requestMaxCount);
                 request.getSession().setAttribute("maxCount", requestMaxCount);
-                ReportDao reportDao = DaoFactory.getReportDao();
-                int result = reportDao.getCountReports();
-                reportDao.closeConnection();
-                double buttons = result / (double) maxCount;
-                buttons = Math.ceil(buttons);
-                List<Integer> list = new ArrayList<>();
-                for (int i = 1; i <= buttons; i++) {
-                    list.add(i);
-                }
-                request.getSession().setAttribute("buttons", list);
+                buttons = paginationManager.getButtons(countOfFutureReports, maxCount);
+                request.getSession().setAttribute("buttons", buttons);
             }
             Integer sessionOffset = (Integer) request.getSession().getAttribute("offset");
             if (requestOffset != null) {
@@ -75,26 +63,19 @@ public class FutureReportsCommand implements Command {
                 offset = 0;
             }
             request.getSession().setAttribute("offset", offset);
-            ReportDao reportDao = DaoFactory.getReportDao();
-            reportList = reportDao.getFutureConference(offset, maxCount);
-            reportDao.closeConnection();
+            futureConferenceList = reportManager.getFutureConference(offset, maxCount);
         }
 
+        RegisterManager registerManager = new RegisterManager();
         User user = (User) request.getSession().getAttribute("user");
         if (user.getPosition().equals("User")) {
-            RegisterDao registerDao = DaoFactory.getRegisterDao();
-            List<Long> registerList = registerDao.getReportsIdByUserId(user.getId());
-            registerDao.closeConnection();
-            for (Long id : registerList) {
-                for (Report report : reportList) {
-                    if (report.getId() == id) {
-                        report.setIsUserRegistered(true);
-                    }
-                }
-            }
+            List<Long> registerList = registerManager.getReportsIdByUserId(user);
+            registerManager.checkRegistrationForUser(futureConferenceList, registerList);
         }
 
-        request.getSession().setAttribute("reportList", reportList);
+        Map<Long, Integer> countOfVisitors = registerManager.getCountOfVisitors(futureConferenceList);
+        request.getSession().setAttribute("countOfVisitors", countOfVisitors);
+        request.getSession().setAttribute("reportList", futureConferenceList);
 
 
         return ConfigManager.getProperty("futureReports");

@@ -1,6 +1,7 @@
 package databaseLogic.dao.impl;
 
 import databaseLogic.connection.DataSourceConference;
+import databaseLogic.dao.LanguageDao;
 import databaseLogic.dao.PositionDao;
 import databaseLogic.dao.SpeakerDao;
 import databaseLogic.factory.DaoFactory;
@@ -14,14 +15,18 @@ import java.sql.SQLException;
 public class SpeakerDaoImpl implements SpeakerDao {
 
     private DataSourceConference dataSource;                             // todo
+    private Connection connection;
     //  private TestDataSource dataSource;                             // todo
 
-    private Connection connection;
 
     public SpeakerDaoImpl() {
-        dataSource = new DataSourceConference();
-        //dataSource = new TestDataSource();
+        dataSource = DataSourceConference.getInstance();
         this.connection = dataSource.getConnection();
+        //dataSource = new TestDataSource();
+    }
+
+    public SpeakerDaoImpl(Connection connection) {
+        this.connection = connection;
     }
 
 
@@ -30,8 +35,9 @@ public class SpeakerDaoImpl implements SpeakerDao {
         PreparedStatement statement = null;
         Speaker speaker = null;
         PositionDao positionDao = DaoFactory.getPositionDao();
+        LanguageDao languageDao = DaoFactory.getLanguageDao();
         try {
-            statement = connection.prepareStatement("SELECT id, name, surname, email, password, position,rating " +
+            statement = connection.prepareStatement("SELECT id, name, surname, email, password, position,language,rating " +
                     "FROM users u join speakerratings s on u.id=s.speakerId WHERE id=? AND position=?");
             statement.setLong(1, id);
             statement.setInt(2, positionDao.getPositionId("Speaker"));
@@ -44,12 +50,14 @@ public class SpeakerDaoImpl implements SpeakerDao {
                 speaker.setEmail(rs.getString("email"));
                 speaker.setPassword("password");
                 speaker.setPosition("Speaker");
+                speaker.setLanguage(languageDao.getLanguageById(rs.getInt("language")));
                 speaker.setRating(rs.getInt("rating"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             positionDao.closeConnection();
+            languageDao.closeConnection();
             try {
                 if (statement != null)
                     statement.close();
@@ -65,8 +73,9 @@ public class SpeakerDaoImpl implements SpeakerDao {
         PreparedStatement statement = null;
         Speaker speaker = null;
         PositionDao positionDao = DaoFactory.getPositionDao();
+        LanguageDao languageDao = DaoFactory.getLanguageDao();
         try {
-            statement = connection.prepareStatement("SELECT id,name,surname,password,rating " +
+            statement = connection.prepareStatement("SELECT id,name,surname,password,language,rating " +
                     "from users u join speakerratings s " +
                     "on u.id = s.speakerId where position=? and email=?");
             int position = positionDao.getPositionId("Speaker");
@@ -79,6 +88,7 @@ public class SpeakerDaoImpl implements SpeakerDao {
                 speaker.setName(rs.getString("name"));
                 speaker.setSurname(rs.getString("surname"));
                 speaker.setPassword(rs.getString("password"));
+                speaker.setLanguage(languageDao.getLanguageById(rs.getInt("language")));
                 speaker.setRating(rs.getInt("rating"));
                 speaker.setEmail(email);
                 speaker.setPosition("Speaker");
@@ -87,6 +97,7 @@ public class SpeakerDaoImpl implements SpeakerDao {
             e.printStackTrace();                                    //todo
         } finally {
             positionDao.closeConnection();
+            languageDao.closeConnection();
             if (statement != null) {
                 try {
                     statement.close();                              //todo

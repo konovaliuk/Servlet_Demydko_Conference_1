@@ -1,5 +1,6 @@
 package commands.impl;
 
+
 import commands.Command;
 import databaseLogic.dao.RegisterDao;
 import databaseLogic.dao.ReportDao;
@@ -14,6 +15,7 @@ import servises.dateTimeManager.DateTimeManager;
 import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
+import servises.spaekerManager.SpeakerManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
@@ -36,13 +38,14 @@ public class UpdateReportCommand implements Command {
         String room = request.getParameter("room");
         String email = request.getParameter("speakerEmail");
 
-        request.setAttribute("reportIndex", index);
-
         ParameterManager pm = new ParameterManager();
         DateTimeManager dtm = new DateTimeManager();
+        MessageManager message = new MessageManager();
+//        SpeakerManager speakerManager = new SpeakerManager();       // todo
+        MailManager mail = new MailManager();
 
         if (pm.isAllEmpty(theme, sDate, sTime, city, street, building, room, email)) {
-            request.setAttribute("noActionDone", MessageManager.getProperty("noAction"));
+            request.setAttribute("noActionDone", message.getProperty("noActionDone"));
             return page;
         }
 
@@ -55,7 +58,7 @@ public class UpdateReportCommand implements Command {
             newSpeaker = speakerDao.getSpeakerByEmail(email);
             speakerDao.closeConnection();
             if (newSpeaker == null) {
-                request.setAttribute("errorSpeakerNotExists", MessageManager.getProperty("speakerNotExists"));
+                request.setAttribute("errorSpeakerNotExists", message.getProperty("errorSpeakerNotExists"));
                 return page;
             }
         } else {
@@ -76,17 +79,17 @@ public class UpdateReportCommand implements Command {
 
 
         if (new java.util.Date().getTime() > date.getTime()) {
-            request.setAttribute("errorDate", MessageManager.getProperty("incorrectDate"));
+            request.setAttribute("errorDate", message.getProperty("errorDate"));
             return page;
         }
 
         if (!pm.isAddressCorrect(newAddress)) {
-            request.setAttribute("errorAddress", MessageManager.getProperty("addressIncorrect"));
+            request.setAttribute("errorAddress", message.getProperty("addressIncorrect"));
             return page;
         }
 
         if (!pm.isThemeCorrect(newTheme)) {
-            request.setAttribute("errorTheme", MessageManager.getProperty("themeIncorrect"));
+            request.setAttribute("errorTheme", message.getProperty("errorTheme"));
             return page;
         }
 
@@ -103,8 +106,9 @@ public class UpdateReportCommand implements Command {
         int result = reportDao.updateReport(newReport);
         reportDao.closeConnection();
 
+
         if (result != 0) {
-            request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
+            request.setAttribute("successfulChanges", message.getProperty("successfulChanges"));
             reportList.set(Integer.parseInt(index), newReport);
             request.getSession().setAttribute("reportList", reportList);
         }
@@ -114,17 +118,16 @@ public class UpdateReportCommand implements Command {
         registerDao.closeConnection();
 
 
-
         if (!email.isEmpty() && pm.isAllEmpty(theme, sDate, sTime, city, street, building, room)) {
-            MailManager.notifySpeakerAppointment(newSpeaker, oldReport);
-            MailManager.notifySpeakerDismiss(oldSpeaker, oldReport);
+            mail.notifySpeakerAppointment(newSpeaker, oldReport);
+            mail.notifySpeakerDismiss(oldSpeaker, oldReport);
         } else if (!email.isEmpty() && !pm.isAllEmpty(theme, sDate, sTime, city, street, building, room)) {
-            MailManager.notifySpeakerAppointment(newSpeaker, newReport);
-            MailManager.notifySpeakerDismiss(oldSpeaker, oldReport);
-            MailManager.notifyChangeConference(newReport, oldReport, userList);
+            mail.notifySpeakerAppointment(newSpeaker, newReport);
+            mail.notifySpeakerDismiss(oldSpeaker, oldReport);
+            mail.notifyChangeConference(newReport, oldReport, userList);
         } else {
             userList.add(newSpeaker);
-            MailManager.notifyChangeConference(newReport, oldReport, userList);
+            mail.notifyChangeConference(newReport, oldReport, userList);
         }
 
         return page;

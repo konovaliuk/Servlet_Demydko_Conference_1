@@ -9,13 +9,15 @@ public class User {
   private String email;
   private String password;
   private String position;
+  private String language;
 
-  public User(String name, String surname, String email, String password, String position) {
+  public User(String name, String surname, String email, String password, String position, String language) {
     this.name = name;
     this.surname = surname;
     this.email = email;
     this.password = password;
     this.position = position;
+    this.language = language;
   }
 
   public User(){}
@@ -70,6 +72,14 @@ public class User {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public String getLanguage() {
+    return language;
+  }
+
+  public void setLanguage(String language) {
+    this.language = language;
   }
 
   @Override

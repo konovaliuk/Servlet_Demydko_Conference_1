@@ -9,6 +9,8 @@ import entity.User;
 import servises.configManager.ConfigManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
+import servises.reportManager.ReportManager;
+import servises.spaekerManager.SpeakerManager;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,32 +20,24 @@ public class OfferReportCommand implements Command {
     public String execute(HttpServletRequest request) {
         String page = ConfigManager.getProperty("cabinet");
         String theme = request.getParameter("theme");
-
+        MessageManager message = new MessageManager();
         if (theme.isEmpty()) {
-            request.setAttribute("noActionDone", MessageManager.getProperty("noAction"));
+            request.setAttribute("noActionDone", message.getProperty("noActionDone"));
             return page;
         }
-        ParameterManager pm = new ParameterManager();
-
-        if (!pm.isThemeCorrect(theme)) {
-            request.setAttribute("errorTheme", MessageManager.getProperty("themeIncorrect"));
+        ParameterManager parameterManager = new ParameterManager();
+        if (!parameterManager.isThemeCorrect(theme)) {
+            request.setAttribute("errorTheme", message.getProperty("errorTheme"));
             return page;
         }
-
-        ReportDao reportDao = DaoFactory.getReportDao();
-
-        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
         User user = (User) request.getSession().getAttribute("user");
-
-        Speaker speaker = speakerDao.getSpeakerById(user.getId());
-        int result = reportDao.addReport(theme, speaker);
-        speakerDao.closeConnection();
-        reportDao.closeConnection();
-
+        SpeakerManager speakerManager = new SpeakerManager();
+        Speaker speaker = speakerManager.getSpeakerById(user.getId());
+        ReportManager reportManager = new ReportManager();
+        int result = reportManager.addReport(theme, speaker);
         if (result != 0) {
-            request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
+            request.setAttribute("successfulChanges", message.getProperty("successfulChanges"));
         }
-
         return page;
     }
 }

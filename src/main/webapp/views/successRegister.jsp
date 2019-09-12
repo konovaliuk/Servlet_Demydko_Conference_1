@@ -7,20 +7,25 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<c:import url="header.jsp" charEncoding="utf-8"/>
 <html>
 <head>
-    <title>Успех</title>
-    <style>
-        <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>
-    </style>
+    <title><fmt:message key="label.registration" bundle="${rm}"/></title>
+    <%--    <style>--%>
+    <%--        <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>--%>
+    <%--    </style>--%>
 </head>
 <body>
 
-<h2>Поздравляет с успешной регистрацией ${sessionScope.user.name}! </h2>
+<h2><fmt:message key="label.successRegister" bundle="${rm}"/> ${sessionScope.user.name}! </h2>
 
-<p><a href="views/cabinet.jsp">Личный кабинет</a></p>
+<p><a href="views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>
+
 <form method="post" action="/Conference_war/controller?command=logout">
-    <p><input type="submit" value="Выход"/></p>
+    <input type="submit" value="<fmt:message key="label.exit" bundle="${rm}"/>"/>
+
 </form>
 </body>
 </html>

@@ -11,6 +11,7 @@ import servises.dateTimeManager.DateTimeManager;
 import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
+import servises.reportManager.ReportManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
@@ -32,40 +33,43 @@ public class EditReportCommand implements Command {
 
         request.setAttribute("reportIndex", index);
 
-        ParameterManager pm = new ParameterManager();
-        DateTimeManager dtm = new DateTimeManager();
+        ParameterManager parameterManager = new ParameterManager();
+        MessageManager message = new MessageManager();
 
-        if (pm.isEmpty(sDate, sTime, city, street, building, room)) {
-            request.setAttribute("errorEmptyForm", MessageManager.getProperty("emptyForm"));
+        if (parameterManager.isEmpty(sDate, sTime, city, street, building, room)) {
+            request.setAttribute("errorEmptyForm", message.getProperty("errorEmptyForm"));
             return page;
         }
 
         Address address = new Address(city, street, building, room);
-        if (!pm.isAddressCorrect(address)) {
-            request.setAttribute("errorAddress", MessageManager.getProperty("addressIncorrect"));
+        if (!parameterManager.isAddressCorrect(address)) {
+            request.setAttribute("errorAddress", message.getProperty("addressIncorrect"));
             return page;
         }
 
         List<Report> reportList = (List) request.getSession().getAttribute("offeredReportList");
         Report report = reportList.get(Integer.parseInt(index));
 
-
-
-        Date date = dtm.fromStringToSqlDate(sDate);
-        Time time = dtm.fromStringToTime(sTime);
+        DateTimeManager dateTimeManager = new DateTimeManager();
+        Date date = dateTimeManager.fromStringToSqlDate(sDate);
+        Time time = dateTimeManager.fromStringToTime(sTime);
 
         report.setTime(time);
         report.setDate(date);
         report.setAddress(address);
 
-        ReportDao reportDao = DaoFactory.getReportDao();
-        int result = reportDao.updateReport(report);
-        reportDao.closeConnection();
+        ReportManager reportManager = new ReportManager();
+        int result = reportManager.updateReport(report);
 
+//        ReportDao reportDao = DaoFactory.getReportDao();
+//        int result = reportDao.updateReport(report);
+//        reportDao.closeConnection();
+
+        MailManager mail = new MailManager();
         if (result != 0) {
-            request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
+            request.setAttribute("successfulChanges", message.getProperty("successfulChanges"));
             Speaker speaker = report.getSpeaker();
-            MailManager.notifySpeakerAppointment(speaker, report);
+            mail.notifySpeakerAppointment(speaker, report);
         }
 
         return page;

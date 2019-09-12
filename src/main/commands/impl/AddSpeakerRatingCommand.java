@@ -7,6 +7,7 @@ import entity.Speaker;
 import servises.configManager.ConfigManager;
 import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
+import servises.spaekerManager.SpeakerManager;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,28 +21,35 @@ public class AddSpeakerRatingCommand implements Command {
         String rating = request.getParameter("rating");
         String email = request.getParameter("email");
 
-        ParameterManager pm = new ParameterManager();
+        ParameterManager parameterManager = new ParameterManager();
+        MessageManager message = new MessageManager();
 
-        if (!pm.isEmailCorrect(email)) {
-            request.setAttribute("errorEmailForm", MessageManager.getProperty("emailForm"));
+        if (!parameterManager.isEmailCorrect(email)) {
+            request.setAttribute("errorEmailForm", message.getProperty("errorEmailForm"));
             return page;
         }
-        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
-        Speaker speaker = speakerDao.getSpeakerByEmail(email);
+
+        SpeakerManager speakerManager = new SpeakerManager();
+        Speaker speaker = speakerManager.getSpeakerByEmail(email);
+
+//        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
+//        Speaker speaker = speakerDao.getSpeakerByEmail(email);
 
 
 
         if (speaker == null) {
-            speakerDao.closeConnection();
-            request.setAttribute("errorSpeakerNotExists", MessageManager.getProperty("speakerNotExists"));
+//            speakerDao.closeConnection();
+            request.setAttribute("errorSpeakerNotExists", message.getProperty("errorSpeakerNotExists"));
             return page;
         }
 
-        int result = speakerDao.addSpeakerRating(speaker, Integer.parseInt(rating));
-        speakerDao.closeConnection();
+        int result=speakerManager.addSpeakerRating(speaker, Integer.parseInt(rating));
+
+//        int result = speakerDao.addSpeakerRating(speaker, Integer.parseInt(rating));
+//        speakerDao.closeConnection();
 
         if (result != 0) {
-            request.setAttribute("successfulChanges", MessageManager.getProperty("successfulChanges"));
+            request.setAttribute("successfulChanges", message.getProperty("successfulChanges"));
         }
 
         return page;

@@ -18,13 +18,17 @@ import java.util.List;
 public class ReportDaoImpl implements ReportDao {
 
     private DataSourceConference dataSource;                             // todo
-    //  private TestDataSource dataSource;                             // todo
     private Connection connection;
+    //  private TestDataSource dataSource;                             // todo
 
     public ReportDaoImpl() {
-        dataSource = new DataSourceConference();
-        //  dataSource = new TestDataSource();
+        dataSource = DataSourceConference.getInstance();
         this.connection = dataSource.getConnection();
+        //  dataSource = new TestDataSource();
+    }
+
+    public ReportDaoImpl(Connection connection) {
+        this.connection = connection;
     }
 
     @Override
@@ -72,6 +76,55 @@ public class ReportDaoImpl implements ReportDao {
         return result;
     }
 
+
+//    @Override
+//    public int addReport(Report report) {
+//        PreparedStatement statement = null;
+//        int result = 0;
+//        DateTimeManager dtm = new DateTimeManager();
+//  //      AddressDao addressDao = DaoFactory.getAddressDao(connection);
+//        try {
+//    //        connection.setAutoCommit(false);
+////            long addressId = addressDao.getAddressId(report.getAddress());
+////            if (addressId == -1) {
+////                addressDao.addAddress(report.getAddress().getCity(),
+////                        report.getAddress().getStreet(), report.getAddress()
+////                                .getBuilding(), report.getAddress().getRoom());
+////                statement = connection.prepareStatement("SELECT LAST_INSERT_ID()");
+////                ResultSet rs = statement.executeQuery();
+////                rs.next();
+////                addressId = rs.getInt(1);
+////            }
+//            statement = connection.prepareStatement("INSERT reports" +
+//                    "(name, date, time, speakerId)values (?,?,?,?)");
+//            statement.setString(1, report.getName());
+//            statement.setDate(2, dtm.fromUtilDateToSqlDate(report.getDate()));
+//            statement.setTime(3, report.getTime());
+//            statement.setLong(4, report.getSpeaker().getId());
+//            result = statement.executeUpdate();
+////            connection.commit();
+//        } catch (SQLException e) {
+//            e.printStackTrace();                                    //todo
+////            try {
+//////                connection.rollback();
+////            } catch (SQLException ex) {
+////                ex.printStackTrace();                              // todo
+////            }
+//        } finally {
+//            if (statement != null)
+//                try {
+//                    statement.close();
+//                } catch (SQLException e) {
+//                    e.printStackTrace();                                //todo
+//                }
+//        }
+//        return result;
+//    }
+
+
+
+
+
     @Override
     public int addReport(String name, Speaker speaker) {
         PreparedStatement statement = null;
@@ -95,7 +148,7 @@ public class ReportDaoImpl implements ReportDao {
     }
 
     @Override
-    public List<Report> getFutureConference(int offset,int maxCount) {
+    public List<Report> getFutureConference(int offset, int maxCount) {
         PreparedStatement statement = null;
         AddressDao addressDao = DaoFactory.getAddressDao();
         SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
@@ -122,7 +175,7 @@ public class ReportDaoImpl implements ReportDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-           speakerDao.closeConnection();
+            speakerDao.closeConnection();
             addressDao.closeConnection();
             if (statement != null)
                 try {
@@ -135,11 +188,75 @@ public class ReportDaoImpl implements ReportDao {
     }
 
     @Override
-    public int getCountReports() {
+    public List<Report> getPastConference(int offset, int maxCount) {
+        PreparedStatement statement = null;
+        AddressDao addressDao = DaoFactory.getAddressDao();
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
+        List<Report> reports = new ArrayList<>();
+        try {
+            statement = connection.prepareStatement("SELECT id,name,date,time,addressId,speakerId" +
+                    " from reports where date<? order by id limit ? OFFSET ?");
+            statement.setDate(1, new Date(new java.util.Date().getTime()));
+            statement.setInt(2, maxCount);
+            statement.setInt(3, offset);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Report report = new Report();
+                report.setId(rs.getLong("id"));
+                report.setName(rs.getString("name"));
+                report.setDate(rs.getDate("date"));
+                report.setTime(rs.getTime("time"));
+                Speaker speaker = speakerDao.getSpeakerById(rs.getLong("speakerId"));
+                report.setSpeaker(speaker);
+                Address address = addressDao.getAddressById(rs.getLong("addressId"));
+                report.setAddress(address);
+                reports.add(report);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            speakerDao.closeConnection();
+            addressDao.closeConnection();
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+        return reports;
+    }
+
+    @Override
+    public int getCountOfFutureReports() {
         PreparedStatement statement = null;
         int result = 0;
         try {
             statement = connection.prepareStatement("SELECT count(*)as sum from reports where date>?");
+            statement.setDate(1, new Date(new java.util.Date().getTime()));
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("sum");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+        return result;
+    }
+
+    @Override
+    public int getCountOfPastReports() {
+        PreparedStatement statement = null;
+        int result = 0;
+        try {
+            statement = connection.prepareStatement("SELECT count(*)as sum from reports where date<?");
             statement.setDate(1, new Date(new java.util.Date().getTime()));
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
@@ -189,13 +306,14 @@ public class ReportDaoImpl implements ReportDao {
     }
 
     @Override
-    public List<Report> getPastConference() {
+    public List<Report> getPastReports() {
         PreparedStatement statement = null;
         SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
         AddressDao addressDao = DaoFactory.getAddressDao();
         List<Report> reports = new ArrayList<>();
         try {
-            statement = connection.prepareStatement("SELECT id, name, date, time, addressId, speakerId from reports where date<?");
+            statement = connection.prepareStatement("SELECT " +
+                    "id, name, date, time, addressId, speakerId from reports  where date<?");
             statement.setDate(1, new Date(new java.util.Date().getTime()));
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -213,7 +331,7 @@ public class ReportDaoImpl implements ReportDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-           speakerDao.closeConnection();
+            speakerDao.closeConnection();
             addressDao.closeConnection();
             if (statement != null)
                 try {

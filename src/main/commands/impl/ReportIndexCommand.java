@@ -12,9 +12,8 @@ public class ReportIndexCommand implements Command {
     public String execute(HttpServletRequest request) {
         String index = request.getParameter("index");
         String requestURI = request.getParameter("requestURI");
-        request.setAttribute("index",index);
-
-        if (requestURI!=null) {
+        request.getSession().setAttribute("index", index);
+        if (requestURI != null) {
             return ConfigManager.getProperty("editReport");
         }
         return ConfigManager.getProperty("updateReport");

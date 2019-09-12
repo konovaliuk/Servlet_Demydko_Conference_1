@@ -12,11 +12,6 @@ public class LogoutCommand implements Command {
     public String execute(HttpServletRequest request) {
         HttpSession session = request.getSession();
         session.invalidate();
-//        Enumeration<String> attributes = session.getAttributeNames();
-//        while (attributes.hasMoreElements()) {
-//            session.removeAttribute(attributes.nextElement());
-//        }
-       // session.removeAttribute("user");
         return ConfigManager.getProperty("index");
     }
 }

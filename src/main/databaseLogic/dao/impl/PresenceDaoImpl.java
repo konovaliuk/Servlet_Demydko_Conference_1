@@ -11,13 +11,13 @@ import java.sql.SQLException;
 public class PresenceDaoImpl implements PresenceDao {
 
     private DataSourceConference dataSource;                             // todo
-    // private TestDataSource dataSource;
     private Connection connection;
+    // private TestDataSource dataSource;
 
     public PresenceDaoImpl() {
-        dataSource = new DataSourceConference();
-        // dataSource = new TestDataSource();
+        dataSource = DataSourceConference.getInstance();
         this.connection = dataSource.getConnection();
+        // dataSource = new TestDataSource();
     }
 
     @Override
@@ -49,6 +49,30 @@ public class PresenceDaoImpl implements PresenceDao {
         return result;
     }
 
+    @Override
+    public int getPresence(Long reportId) {
+        PreparedStatement statement = null;
+        int result = 0;
+        try {
+            statement = connection.prepareStatement("SELECT count from presence where reportId=?");
+            statement.setLong(1, reportId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+        return result;
+    }
+
     private boolean isReportPresent(Long reportId) {
         PreparedStatement statement = null;
         try {
@@ -60,7 +84,7 @@ public class PresenceDaoImpl implements PresenceDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (statement != null)
                 try {
                     statement.close();

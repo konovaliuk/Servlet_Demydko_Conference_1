@@ -2,6 +2,7 @@ package databaseLogic.dao.impl;
 
 import databaseLogic.connection.DataSourceConference;
 import databaseLogic.connection.TestDataSource;
+import databaseLogic.dao.LanguageDao;
 import databaseLogic.dao.PositionDao;
 import databaseLogic.dao.SpeakerDao;
 import databaseLogic.dao.UserDao;
@@ -15,15 +16,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDaoImpl implements UserDao {
+
     private DataSourceConference dataSource;                             // todo
+    private Connection connection;
     //  private TestDataSource dataSource;                             // todo
 
-    private Connection connection;
 
     public UserDaoImpl() {
-        dataSource = new DataSourceConference();
-        //dataSource = new TestDataSource();
+        dataSource = DataSourceConference.getInstance();
         this.connection = dataSource.getConnection();
+        //dataSource = new TestDataSource();
     }
 
     @Override
@@ -32,22 +34,25 @@ public class UserDaoImpl implements UserDao {
         int result = 0;
         PositionDao positionDao = DaoFactory.getPositionDao();
         SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
+        LanguageDao languageDao = DaoFactory.getLanguageDao();
         try {
             int position = positionDao.getPositionId(user.getPosition());
             if (position != -1) {
                 connection.setAutoCommit(false);
-                statement = connection.prepareStatement("INSERT users(name, surname, email, password, position) values (?,?,?,?,?)");
+                statement = connection.prepareStatement("INSERT users(name, surname, email, password, position, language)" +
+                        " values (?,?,?,?,?,?)");
                 statement.setString(1, user.getName());
                 statement.setString(2, user.getSurname());
                 statement.setString(3, user.getEmail());
                 statement.setString(4, user.getPassword());
                 statement.setInt(5, position);
+                statement.setInt(6, languageDao.getLanguageId(user.getLanguage()));
                 statement.executeUpdate();
                 if (user.getPosition().equals("Speaker")) {
                     statement = connection.prepareStatement("SELECT LAST_INSERT_ID()");
                     ResultSet rs = statement.executeQuery();
                     rs.next();
-                   speakerDao.addSpeaker(rs.getLong(1));
+                    speakerDao.addSpeaker(rs.getLong(1));
                 }
                 connection.commit();
             } else {
@@ -61,7 +66,9 @@ public class UserDaoImpl implements UserDao {
                 ex.printStackTrace();                                         //todo
             }
         } finally {
+            speakerDao.closeConnection();
             positionDao.closeConnection();
+            languageDao.closeConnection();
             if (statement != null) {
                 try {
                     statement.close();
@@ -78,6 +85,7 @@ public class UserDaoImpl implements UserDao {
         PreparedStatement statement = null;
         User user = new User();
         PositionDao positionDao = DaoFactory.getPositionDao();
+        LanguageDao languageDao = DaoFactory.getLanguageDao();
         try {
             statement = connection.prepareStatement("SELECT * from users where email=?");
             statement.setString(1, email);
@@ -90,6 +98,7 @@ public class UserDaoImpl implements UserDao {
                 user.setEmail(rs.getString("email"));
                 int position = rs.getInt("position");
                 user.setPosition(positionDao.getPosition(position));
+                user.setLanguage(languageDao.getLanguageById(rs.getInt("language")));
             } else {
                 return null;                                               //todo
             }
@@ -97,6 +106,7 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
         } finally {
             positionDao.closeConnection();
+            languageDao.closeConnection();
             if (statement != null)
                 try {
                     statement.close();
@@ -112,6 +122,7 @@ public class UserDaoImpl implements UserDao {
         PreparedStatement statement = null;
         User user = null;
         PositionDao positionDao = DaoFactory.getPositionDao();
+        LanguageDao languageDao = DaoFactory.getLanguageDao();
         try {
             statement = connection.prepareStatement("SELECT * FROM users WHERE id=?");
             statement.setLong(1, id);
@@ -124,11 +135,13 @@ public class UserDaoImpl implements UserDao {
                 user.setEmail(rs.getString("email"));
                 user.setPassword("password");
                 user.setPosition(positionDao.getPosition(rs.getInt("position")));
+                user.setLanguage(languageDao.getLanguageById(rs.getInt("language")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             positionDao.closeConnection();
+            languageDao.closeConnection();
             try {
                 if (statement != null)
                     statement.close();
@@ -144,18 +157,18 @@ public class UserDaoImpl implements UserDao {
         PreparedStatement statement = null;
         int result = 0;
         PositionDao positionDao = DaoFactory.getPositionDao();
-        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao(connection);
         try {
             connection.setAutoCommit(false);
             if (user.getPosition().equals("Speaker")) {
-               speakerDao.deleteSpeaker(user.getId());
+                speakerDao.deleteSpeaker(user.getId());
             }
             statement = connection.prepareStatement("UPDATE users set position=? where email=?");
             statement.setInt(1, positionDao.getPositionId(position));
             statement.setString(2, user.getEmail());
             result = statement.executeUpdate();
             if (position.equals("Speaker")) {
-               speakerDao.addSpeaker(user.getId());
+                speakerDao.addSpeaker(user.getId());
             }
             connection.commit();
         } catch (SQLException e) {

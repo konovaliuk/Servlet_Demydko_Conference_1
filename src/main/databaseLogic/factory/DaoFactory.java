@@ -23,6 +23,10 @@ public class DaoFactory {
         return new ReportDaoImpl();
     }
 
+    public static ReportDao getReportDao(Connection connection) {
+        return new ReportDaoImpl(connection);
+    }
+
     public static RegisterDao getRegisterDao() {
         return new RegisterDaoImpl();
     }
@@ -34,8 +38,17 @@ public class DaoFactory {
     public static PositionDao getPositionDao() {
         return new PositionDaoImpl();
     }
+
     public static SpeakerDao getSpeakerDao() {
         return new SpeakerDaoImpl();
+    }
+
+    public static SpeakerDao getSpeakerDao(Connection connection) {
+        return new SpeakerDaoImpl(connection);
+    }
+
+    public static LanguageDao getLanguageDao() {
+        return new LanguageDaoImpl();
     }
 
 }

@@ -12,5 +12,7 @@ public interface RegisterDao {
 
     List<User> getAllRegisteredUsers(Long reportId);
 
+    int getCountOfVisitors(Long reportId);
+
     void closeConnection();
 }
