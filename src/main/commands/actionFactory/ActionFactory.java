@@ -11,10 +11,8 @@ import java.util.MissingResourceException;
 
 public class ActionFactory {
     public Command defineCommand(HttpServletRequest request) {
-        MessageManager message = new MessageManager();
-        Command current = null;
+        Command current;
         String action = request.getParameter("command");
-
         try {
             CommandEnum currentEnum = CommandEnum.valueOf(action.toUpperCase());
             current = currentEnum.getCurrentCommand();
