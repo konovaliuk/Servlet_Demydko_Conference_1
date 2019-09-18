@@ -22,7 +22,7 @@ public class RegisterManager {
     public void checkRegistrationForUser(List<Report> reportList, List<Long> registerList) {
         for (Long id : registerList) {
             for (Report report : reportList) {
-                if (report.getId() == id) {
+                if (report.getId().equals(id)) {
                     report.setIsUserRegistered(true);
                 }
             }
@@ -51,5 +51,12 @@ public class RegisterManager {
 
     public void makeUserRegistered(Report report) {
         report.setIsUserRegistered(true);
+    }
+
+    public List<User> getAllRegisteredUsers(Long reportId) {
+        RegisterDao registerDao = DaoFactory.getRegisterDao();
+        List<User> userList = registerDao.getAllRegisteredUsers(reportId);
+        registerDao.closeConnection();
+        return userList;
     }
 }

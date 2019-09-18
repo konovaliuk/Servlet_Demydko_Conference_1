@@ -1,6 +1,7 @@
 package commands.impl;
 
 import commands.Command;
+import commands.commandHelpers.FutureReportsHelper;
 import entity.Report;
 import entity.User;
 import org.apache.log4j.Logger;
@@ -21,63 +22,21 @@ public class FutureReportsCommand implements Command {
 
         String requestOffset = request.getParameter("offset");
         String requestMaxCount = request.getParameter("maxCount");
-
-        ReportManager reportManager = new ReportManager();
-        PaginationManager paginationManager = new PaginationManager();
-        int countOfFutureReports = reportManager.getCountOfFutureReports();
-        int offset;
-        int maxCount;
-        List<Report> futureConferenceList;
-        List<Integer> buttons;
-
-        if (requestOffset == null && requestMaxCount == null) {
-            String sessionMaxCount = (String) request.getSession().getAttribute("maxCount");
-            maxCount = (sessionMaxCount != null) ? Integer.parseInt(sessionMaxCount) : 5;
-
-            Integer sessionOffset = (Integer) request.getSession().getAttribute("offset");
-            offset = (sessionOffset != null) ? sessionOffset : 0;
-
-            futureConferenceList = reportManager.getFutureConference(offset, maxCount);
-            buttons = paginationManager.getButtons(countOfFutureReports, maxCount);
-            request.getSession().setAttribute("buttons", buttons);
-        } else {
-            if (requestMaxCount == null) {
-                String sessionMaxCount = (String) request.getSession().getAttribute("maxCount");
-                if (sessionMaxCount == null) {
-                    maxCount = 5;
-                } else {
-                    maxCount = Integer.parseInt(sessionMaxCount);
-                }
-            } else {
-                maxCount = Integer.parseInt(requestMaxCount);
-                request.getSession().setAttribute("maxCount", requestMaxCount);
-                buttons = paginationManager.getButtons(countOfFutureReports, maxCount);
-                request.getSession().setAttribute("buttons", buttons);
-            }
-            Integer sessionOffset = (Integer) request.getSession().getAttribute("offset");
-            if (requestOffset != null) {
-                offset = Integer.parseInt(requestOffset) * maxCount - maxCount;
-            } else if (sessionOffset != null) {
-                offset = sessionOffset;
-            } else {
-                offset = 0;
-            }
-            request.getSession().setAttribute("offset", offset);
-            futureConferenceList = reportManager.getFutureConference(offset, maxCount);
-        }
-
-        RegisterManager registerManager = new RegisterManager();
+        Integer sessionMaxCount = (Integer) request.getSession().getAttribute("maxCount");
+        Integer sessionOffset = (Integer) request.getSession().getAttribute("offset");
         User user = (User) request.getSession().getAttribute("user");
-        if (user.getPosition().equals("User")) {
-            List<Long> registerList = registerManager.getReportsIdByUserId(user);
-            registerManager.checkRegistrationForUser(futureConferenceList, registerList);
+
+
+        FutureReportsHelper helper = new FutureReportsHelper(requestOffset, requestMaxCount, sessionOffset, sessionMaxCount, user);
+        helper.handle();
+
+        request.getSession().setAttribute("reportList", helper.getFutureConferenceList());
+        request.getSession().setAttribute("offset", helper.getOffset());
+        request.getSession().setAttribute("maxCount", helper.getMaxCount());
+        request.getSession().setAttribute("countOfVisitors", helper.getCountOfVisitors());
+        if (helper.getButtons() != null) {
+            request.getSession().setAttribute("buttons", helper.getButtons());
         }
-
-        Map<Long, Integer> countOfVisitors = registerManager.getCountOfVisitors(futureConferenceList);
-        request.getSession().setAttribute("countOfVisitors", countOfVisitors);
-        request.getSession().setAttribute("reportList", futureConferenceList);
-
-
         return ConfigManager.getProperty("futureReports");
     }
 }

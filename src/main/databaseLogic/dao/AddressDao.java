@@ -6,13 +6,13 @@ import java.sql.Connection;
 
 public interface AddressDao {
 
-    void addAddress(String city, String street, String building, String room);
+    Long addAddress(String city, String street, String building, String room);
 
-    long getAddressId(Address address);
+    Long getAddressId(Address address);
 
     Address getAddressById(Long id);
 
-    Connection getConnection();
+    Connection getConnection();      //todo delete this
 
     void closeConnection();
 }

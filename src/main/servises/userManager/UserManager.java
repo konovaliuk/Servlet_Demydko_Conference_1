@@ -1,9 +1,12 @@
 package servises.userManager;
 
 
+
 import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
 import entity.User;
+import transaction.PositionTransaction;
+import transaction.UserTransaction;
 
 public class UserManager {
     UserDao userDao;
@@ -15,16 +18,27 @@ public class UserManager {
         return user;
     }
 
+//    public int setUserPosition(User user, String position) {
+//        PositionDao positionDao = DaoFactory.getPositionDao();
+//        int result = positionDao.setPositionForUser(user, position);
+//        positionDao.closeConnection();
+//        return result;
+//    }
+
     public int setUserPosition(User user, String position) {
-        userDao = DaoFactory.getUserDao();
-        int result = userDao.setUserPosition(user, position);
-        userDao.closeConnection();
-        return result;
+        PositionTransaction transaction = new PositionTransaction();
+        return transaction.setPositionForUser(user, position);
     }
 
-    public void addUser(User user) {
-        userDao = DaoFactory.getUserDao();
-        userDao.addUser(user);
-        userDao.closeConnection();
+//    public Long addUser(User user) {
+//        userDao = DaoFactory.getUserDao();
+//        Long id = userDao.addUser(user);
+//        userDao.closeConnection();
+//        return id;
+//    }
+
+    public Long addUser(User user) {
+        UserTransaction transaction = new UserTransaction();
+        return transaction.addUser(user);
     }
 }

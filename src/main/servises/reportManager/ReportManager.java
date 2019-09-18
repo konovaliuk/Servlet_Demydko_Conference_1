@@ -1,13 +1,11 @@
 package servises.reportManager;
 
-import databaseLogic.connection.DataSourceConference;
 import databaseLogic.dao.ReportDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Report;
 import entity.Speaker;
+import transaction.ReportTransaction;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class ReportManager {
@@ -41,30 +39,22 @@ public class ReportManager {
         return reportList;
     }
 
-    public int addReport(Report report) {
-        reportDao = DaoFactory.getReportDao();
-        int result = reportDao.addReport(report);
-        reportDao.closeConnection();
-        return result;
-    }
-
 //    public int addReport(Report report) {
-//        DataSourceConference dataSource = DataSourceConference.getInstance();
-//        Connection connection = dataSource.getConnection();
 //        int result = 0;
-//        try {
-//            connection.setAutoCommit(false);
-//            reportDao = DaoFactory.getReportDao(connection);
-//           result = reportDao.addReport(report);
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
+//        reportDao = DaoFactory.getReportDao();
+//        Long id= reportDao.addReport(report);
+//        reportDao.closeConnection();
+//        if (id != null) {
+//            result++;
 //        }
-//
-//        dataSource.closeConnection();
 //        return result;
 //    }
 
+
+    public int addReport(Report report) {
+        ReportTransaction transaction = new ReportTransaction();
+        return transaction.addReport(report);
+    }
 
 
     public int addReport(String reportName, Speaker speaker) {
@@ -90,11 +80,16 @@ public class ReportManager {
         }
     }
 
+//    public int updateReport(Report report) {
+//        reportDao = DaoFactory.getReportDao();
+//        int result = reportDao.updateReport(report);
+//        reportDao.closeConnection();
+//        return result;
+//    }
+
     public int updateReport(Report report) {
-        reportDao = DaoFactory.getReportDao();
-        int result = reportDao.updateReport(report);
-        reportDao.closeConnection();
-        return result;
+        ReportTransaction transaction = new ReportTransaction();
+        return transaction.updateReport(report);
     }
 
     public List<Report> getOfferedConference() {

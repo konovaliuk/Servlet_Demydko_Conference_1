@@ -30,9 +30,9 @@
 
 <c:set var="report" value="${sessionScope.offeredReportList[index]}"/>
 <jsp:useBean id="now" class="java.util.Date" />
-<p>"${sessionScope.offeredReportList}"</p>
-<%--<form method="post" action="/Conference_war/controller?command=editReport">--%>
-<form method="post" action="/Conference_war/controller?command=editReport">
+
+
+<form method="post" action="${pageContext.request.contextPath}/controller?command=editReport">
     <input type="hidden" name="index" value="${index}">
     <c:out value="${index}" />
 
@@ -71,6 +71,6 @@
 
     <p><input type="submit" value="<fmt:message key="label.pinReport" bundle="${rm}"/>"/></p>
 </form>
-<p><a href="/Conference_war/views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>
+<%--<p><a href="${pageContext.request.contextPath}/views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>--%>
 </body>
 </html>

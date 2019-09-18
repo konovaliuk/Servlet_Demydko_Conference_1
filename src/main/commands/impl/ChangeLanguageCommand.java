@@ -3,10 +3,8 @@ package commands.impl;
 import commands.Command;
 import servises.configManager.ConfigManager;
 import servises.languageManager.LanguageManager;
-import servises.messageManager.MessageManager;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Locale;
 
 public class ChangeLanguageCommand implements Command {
 
@@ -18,7 +16,6 @@ public class ChangeLanguageCommand implements Command {
         LanguageManager languageManager = new LanguageManager();
         language = languageManager.setLanguageToSession(language);
         request.getSession().setAttribute("language", language);
-
         if (requestURI.endsWith("jsp")) {
             String[] array = requestURI.split("[/.]");
             return ConfigManager.getProperty(array[array.length - 2]);

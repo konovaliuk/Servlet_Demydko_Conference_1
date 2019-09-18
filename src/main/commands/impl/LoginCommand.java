@@ -1,6 +1,7 @@
 package commands.impl;
 
 import commands.Command;
+import commands.commandHelpers.LoginHelper;
 import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
 import entity.User;
@@ -18,44 +19,21 @@ public class LoginCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {
-        String page = ConfigManager.getProperty("login");
-
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        ParameterManager pm = new ParameterManager();
+
+        LoginHelper helper = new LoginHelper(email, password);
+        String result = helper.handle();
 
         MessageManager message = new MessageManager();
-
-        if (!pm.isEmailCorrect(email)) {
-            request.setAttribute("errorEmailForm", message.getProperty("errorEmailForm"));
-            return page;
+        if (!result.equals("success")) {
+            request.setAttribute(result, message.getProperty(result));
+            return ConfigManager.getProperty("login");
         }
-
-        if (!pm.isPasswordCorrect(password)) {
-            request.setAttribute("errorPassword", message.getProperty("errorPassword"));
-            return page;
-        }
-
-        UserManager userManager = new UserManager();
-        User user = userManager.getUserByEmail(email);
-
-//        UserDao userDao = DaoFactory.getUserDao();
-//        User user = userDao.getUserByEmail(email);
-//        userDao.closeConnection();
-
-        if (user == null || !password.equals(user.getPassword())) {
-            request.setAttribute("errorUserNotExists", message.getProperty("errorUserNotExists"));
-            return page;
-        }
-
-        user.setPassword(null);
-        HttpSession session = request.getSession();
-        session.setAttribute("user", user);
-
-        LanguageManager languageManager = new LanguageManager();
-        String language = languageManager.setLanguageToSession(user.getLanguage());
+        String language = helper.getLanguage();
+        User user = helper.getUser();
         request.getSession().setAttribute("language", language);
-
+        request.getSession().setAttribute("user", user);
         return ConfigManager.getProperty("cabinet");
     }
 }

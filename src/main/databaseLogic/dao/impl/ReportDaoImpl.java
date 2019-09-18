@@ -1,7 +1,6 @@
 package databaseLogic.dao.impl;
 
-import databaseLogic.connection.DataSourceConference;
-import databaseLogic.connection.TestDataSource;
+import databaseLogic.connection.ConnectionPool;
 import databaseLogic.dao.AddressDao;
 import databaseLogic.dao.ReportDao;
 import databaseLogic.dao.SpeakerDao;
@@ -17,113 +16,85 @@ import java.util.List;
 
 public class ReportDaoImpl implements ReportDao {
 
-    private DataSourceConference dataSource;                             // todo
+
     private Connection connection;
-    //  private TestDataSource dataSource;                             // todo
 
     public ReportDaoImpl() {
-        dataSource = DataSourceConference.getInstance();
-        this.connection = dataSource.getConnection();
-        //  dataSource = new TestDataSource();
+        connection = ConnectionPool.getConnection();
     }
 
     public ReportDaoImpl(Connection connection) {
         this.connection = connection;
     }
 
-    @Override
-    public int addReport(Report report) {
-        PreparedStatement statement = null;
-        int result = 0;
-        DateTimeManager dtm = new DateTimeManager();
-        AddressDao addressDao = DaoFactory.getAddressDao(connection);
-        try {
-            connection.setAutoCommit(false);
-            long addressId = addressDao.getAddressId(report.getAddress());
-            if (addressId == -1) {
-                addressDao.addAddress(report.getAddress().getCity(),
-                        report.getAddress().getStreet(), report.getAddress()
-                                .getBuilding(), report.getAddress().getRoom());
-                statement = connection.prepareStatement("SELECT LAST_INSERT_ID()");
-                ResultSet rs = statement.executeQuery();
-                rs.next();
-                addressId = rs.getInt(1);
-            }
-            statement = connection.prepareStatement("INSERT reports" +
-                    "(name, addressId, date, time, speakerId)values (?,?,?,?,?)");
-            statement.setString(1, report.getName());
-            statement.setLong(2, addressId);
-            statement.setDate(3, dtm.fromUtilDateToSqlDate(report.getDate()));
-            statement.setTime(4, report.getTime());
-            statement.setLong(5, report.getSpeaker().getId());
-            result = statement.executeUpdate();
-            connection.commit();
-        } catch (SQLException e) {
-            e.printStackTrace();                                    //todo
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();                              // todo
-            }
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();                                //todo
-                }
-        }
-        return result;
-    }
-
-
 //    @Override
-//    public int addReport(Report report) {
-//        PreparedStatement statement = null;
-//        int result = 0;
+//    public Long addReport(Report report) {
+//        Long id = null;
 //        DateTimeManager dtm = new DateTimeManager();
-//  //      AddressDao addressDao = DaoFactory.getAddressDao(connection);
-//        try {
-//    //        connection.setAutoCommit(false);
-////            long addressId = addressDao.getAddressId(report.getAddress());
-////            if (addressId == -1) {
-////                addressDao.addAddress(report.getAddress().getCity(),
-////                        report.getAddress().getStreet(), report.getAddress()
-////                                .getBuilding(), report.getAddress().getRoom());
-////                statement = connection.prepareStatement("SELECT LAST_INSERT_ID()");
-////                ResultSet rs = statement.executeQuery();
-////                rs.next();
-////                addressId = rs.getInt(1);
-////            }
-//            statement = connection.prepareStatement("INSERT reports" +
-//                    "(name, date, time, speakerId)values (?,?,?,?)");
+//        AddressDao addressDao = DaoFactory.getAddressDao(connection);
+//        try (PreparedStatement statement = connection.prepareStatement("INSERT reports" +
+//                "(name, addressId, date, time, speakerId)values (?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);){
+//            connection.setAutoCommit(false);
+//            Long addressId = addressDao.getAddressId(report.getAddress());
+//            if (addressId == null) {
+//                addressId = addressDao.addAddress(report.getAddress().getCity(),
+//                        report.getAddress().getStreet(), report.getAddress()
+//                                .getBuilding(), report.getAddress().getRoom());
+//            }
 //            statement.setString(1, report.getName());
-//            statement.setDate(2, dtm.fromUtilDateToSqlDate(report.getDate()));
-//            statement.setTime(3, report.getTime());
-//            statement.setLong(4, report.getSpeaker().getId());
-//            result = statement.executeUpdate();
-////            connection.commit();
+//            statement.setLong(2, addressId);
+//            statement.setDate(3, dtm.fromUtilDateToSqlDate(report.getDate()));
+//            statement.setTime(4, report.getTime());
+//            statement.setLong(5, report.getSpeaker().getId());
+//            statement.executeUpdate();
+//            ResultSet rs = statement.getGeneratedKeys();
+//            rs.next();
+//            id = rs.getLong(1);
+//            connection.commit();
 //        } catch (SQLException e) {
 //            e.printStackTrace();                                    //todo
-////            try {
-//////                connection.rollback();
-////            } catch (SQLException ex) {
-////                ex.printStackTrace();                              // todo
-////            }
-//        } finally {
-//            if (statement != null)
-//                try {
-//                    statement.close();
-//                } catch (SQLException e) {
-//                    e.printStackTrace();                                //todo
-//                }
+//            try {
+//                connection.rollback();
+//            } catch (SQLException ex) {
+//                ex.printStackTrace();                              // todo
+//            }
 //        }
-//        return result;
+//        return id;
 //    }
 
 
+    @Override
+    public Long addReport(Report report) {
+        Long id = null;
+        DateTimeManager dtm = new DateTimeManager();
+        try (PreparedStatement statement = connection.prepareStatement("INSERT reports" +
+                "(name, date, time, speakerId)values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, report.getName());
+            statement.setDate(2, dtm.fromUtilDateToSqlDate(report.getDate()));
+            statement.setTime(3, report.getTime());
+            statement.setLong(4, report.getSpeaker().getId());
+            statement.executeUpdate();
+            ResultSet rs = statement.getGeneratedKeys();
+            rs.next();
+            id = rs.getLong(1);
+        } catch (SQLException e) {
+            e.printStackTrace();                                    //todo
+        }
+        return id;
+    }
 
 
+    @Override
+    public void setAddressForReport(Long addressId, Long reportId) {
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE reports " +
+                "set addressId=? where id=?")) {
+            statement.setLong(1, addressId);
+            statement.setLong(2, reportId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public int addReport(String name, Speaker speaker) {
@@ -150,8 +121,8 @@ public class ReportDaoImpl implements ReportDao {
     @Override
     public List<Report> getFutureConference(int offset, int maxCount) {
         PreparedStatement statement = null;
-        AddressDao addressDao = DaoFactory.getAddressDao();
-        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
+        AddressDao addressDao = DaoFactory.getAddressDao(connection);
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao(connection);
         List<Report> reports = new ArrayList<>();
         try {
             statement = connection.prepareStatement("SELECT id,name,date,time,addressId,speakerId" +
@@ -175,8 +146,6 @@ public class ReportDaoImpl implements ReportDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            speakerDao.closeConnection();
-            addressDao.closeConnection();
             if (statement != null)
                 try {
                     statement.close();
@@ -190,8 +159,8 @@ public class ReportDaoImpl implements ReportDao {
     @Override
     public List<Report> getPastConference(int offset, int maxCount) {
         PreparedStatement statement = null;
-        AddressDao addressDao = DaoFactory.getAddressDao();
-        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
+        AddressDao addressDao = DaoFactory.getAddressDao(connection);
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao(connection);
         List<Report> reports = new ArrayList<>();
         try {
             statement = connection.prepareStatement("SELECT id,name,date,time,addressId,speakerId" +
@@ -215,8 +184,6 @@ public class ReportDaoImpl implements ReportDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            speakerDao.closeConnection();
-            addressDao.closeConnection();
             if (statement != null)
                 try {
                     statement.close();
@@ -279,7 +246,7 @@ public class ReportDaoImpl implements ReportDao {
     public List<Report> getOfferedConference() {
         Statement statement = null;
         List<Report> reports = new ArrayList<>();
-        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao(connection);
         try {
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT id,name,speakerId from reports where date is null");
@@ -294,7 +261,6 @@ public class ReportDaoImpl implements ReportDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            speakerDao.closeConnection();
             if (statement != null)
                 try {
                     statement.close();
@@ -308,8 +274,8 @@ public class ReportDaoImpl implements ReportDao {
     @Override
     public List<Report> getPastReports() {
         PreparedStatement statement = null;
-        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
-        AddressDao addressDao = DaoFactory.getAddressDao();
+        SpeakerDao speakerDao = DaoFactory.getSpeakerDao(connection);
+        AddressDao addressDao = DaoFactory.getAddressDao(connection);
         List<Report> reports = new ArrayList<>();
         try {
             statement = connection.prepareStatement("SELECT " +
@@ -331,8 +297,6 @@ public class ReportDaoImpl implements ReportDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            speakerDao.closeConnection();
-            addressDao.closeConnection();
             if (statement != null)
                 try {
                     statement.close();
@@ -343,51 +307,58 @@ public class ReportDaoImpl implements ReportDao {
         return reports;
     }
 
+//    @Override
+//    public int updateReport(Report report) {
+//        int result = 0;
+//        DateTimeManager dtm = new DateTimeManager();
+//        AddressDao addressDao = DaoFactory.getAddressDao(connection);
+//        try(PreparedStatement statement = connection.prepareStatement("UPDATE reports " +
+//                "set name=?, addressId=?, date=?, time=?, speakerId=? where id=?");) {
+//            connection.setAutoCommit(false);
+//            Long addressId = addressDao.getAddressId(report.getAddress());
+//            if (addressId == null) {
+//              addressId=  addressDao.addAddress(report.getAddress().getCity(),
+//                        report.getAddress().getStreet(), report.getAddress().getBuilding(),
+//                        report.getAddress().getRoom());
+//            }
+//            statement.setString(1, report.getName());
+//            statement.setLong(2, addressId);
+//            statement.setDate(3, dtm.fromUtilDateToSqlDate(report.getDate()));
+//            statement.setTime(4, report.getTime());
+//            statement.setLong(5, report.getSpeaker().getId());
+//            statement.setLong(6, report.getId());
+//            result = statement.executeUpdate();
+//            connection.commit();
+//        } catch (SQLException e) {
+//            e.printStackTrace();                                    //todo
+//            try {
+//                connection.rollback();
+//            } catch (SQLException ex) {
+//                ex.printStackTrace();                              // todo
+//            }
+//        }
+//        return result;
+//    }
+
     @Override
     public int updateReport(Report report) {
-        PreparedStatement statement = null;
         int result = 0;
         DateTimeManager dtm = new DateTimeManager();
-        AddressDao addressDao = DaoFactory.getAddressDao(connection);
-        try {
-            connection.setAutoCommit(false);
-            long addressId = addressDao.getAddressId(report.getAddress());
-            if (addressId == -1) {
-                addressDao.addAddress(report.getAddress().getCity(),
-                        report.getAddress().getStreet(), report.getAddress().getBuilding(),
-                        report.getAddress().getRoom());
-
-                statement = connection.prepareStatement("SELECT LAST_INSERT_ID()");
-                ResultSet rs = statement.executeQuery();
-                rs.next();
-                addressId = rs.getInt(1);
-            }
-            statement = connection.prepareStatement("UPDATE reports set name=?, addressId=?, date=?, time=?, speakerId=? where id=?");
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE reports " +
+                "set name=?, date=?, time=?, speakerId=? where id=?")) {
             statement.setString(1, report.getName());
-            statement.setLong(2, addressId);
-            statement.setDate(3, dtm.fromUtilDateToSqlDate(report.getDate()));
-            statement.setTime(4, report.getTime());
-            statement.setLong(5, report.getSpeaker().getId());
-            statement.setLong(6, report.getId());
+            statement.setDate(2, dtm.fromUtilDateToSqlDate(report.getDate()));
+            statement.setTime(3, report.getTime());
+            statement.setLong(4, report.getSpeaker().getId());
+            statement.setLong(5, report.getId());
             result = statement.executeUpdate();
-            connection.commit();
+
         } catch (SQLException e) {
             e.printStackTrace();                                    //todo
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();                              // todo
-            }
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();                                //todo
-                }
         }
         return result;
     }
+
 
     @Override
     public int deleteReport(Long reportId) {
@@ -412,6 +383,6 @@ public class ReportDaoImpl implements ReportDao {
 
     @Override
     public void closeConnection() {
-        dataSource.closeConnection();
+        ConnectionPool.closeConnection(connection);
     }
 }

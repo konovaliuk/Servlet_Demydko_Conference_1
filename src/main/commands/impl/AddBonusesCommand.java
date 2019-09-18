@@ -1,6 +1,7 @@
 package commands.impl;
 
 import commands.Command;
+import commands.commandHelpers.AddBonusesHelper;
 import databaseLogic.dao.SpeakerDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Speaker;
@@ -17,48 +18,15 @@ public class AddBonusesCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {
-        String page = ConfigManager.getProperty("cabinet");
 
         String bonuses = request.getParameter("bonuses");
         String email = request.getParameter("email");
 
-        ParameterManager pm = new ParameterManager();
+        AddBonusesHelper helper = new AddBonusesHelper(bonuses, email);
+        String result = helper.handle();
+
         MessageManager message = new MessageManager();
-
-        if (!pm.isNumberCorrect(bonuses)) {
-            request.setAttribute("errorNameOrSurname", message.getProperty("errorNumber"));
-            return page;
-        }
-
-        if (!pm.isEmailCorrect(email)) {
-            request.setAttribute("errorEmailForm",message.getProperty("errorEmailForm"));
-            return page;
-        }
-
-        SpeakerManager speakerManager = new SpeakerManager();
-        Speaker speaker=speakerManager.getSpeakerByEmail(email);
-
-//        SpeakerDao speakerDao = DaoFactory.getSpeakerDao();
-//        Speaker speaker = speakerDao.getSpeakerByEmail(email);
-
-
-        if (speaker == null) {
-//            speakerDao.closeConnection();
-            request.setAttribute("errorSpeakerNotExists", message.getProperty("errorSpeakerNotExists"));
-            return page;
-        }
-
-        int allBonuses = speakerManager.setSpeakerBonuses(Integer.parseInt(bonuses), speaker);
-
-        int result = speakerManager.addBonusesToSpeaker(speaker, allBonuses);
-
-//        int result = speakerDao.addBonusesToSpeaker(speaker, allBonuses);
-//        speakerDao.closeConnection();
-
-        if (result != 0) {
-            request.setAttribute("successfulChanges", message.getProperty("successfulChanges"));
-        }
-
-        return page;
+        request.setAttribute(result, message.getProperty(result));
+        return ConfigManager.getProperty("cabinet");
     }
 }

@@ -10,8 +10,7 @@ import java.util.Enumeration;
 public class LogoutCommand implements Command {
     @Override
     public String execute(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        session.invalidate();
+        request.getSession().invalidate();
         return ConfigManager.getProperty("index");
     }
 }

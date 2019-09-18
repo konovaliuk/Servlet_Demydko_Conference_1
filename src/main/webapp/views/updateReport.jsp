@@ -19,49 +19,54 @@
     </style>
 </head>
 <body>
-<h1 align="center"><fmt:message key="label.reportEditing" bundle="${rm}"/></h1>
+<%--<h1 align="center"><fmt:message key="label.reportEditing" bundle="${rm}"/></h1>--%>
 
 <c:set var="report" value="${sessionScope.reportList[index]}"/>
 <jsp:useBean id="now" class="java.util.Date"/>
-<p>"${sessionScope.reportList}"</p>
-<form method="post" action="/Conference_war/controller?command=updateReport">
+
+<form method="post" action="${pageContext.request.contextPath}/controller?command=updateReport">
     <input type="hidden" name="index" value="${index}">
-    <c:out value="${index}"/>
 
-    <c:out value="${report}"/>
+    <div class="blockUpdateReport">
+        <p align="center"><fmt:message key="label.theme" bundle="${rm}"/> : <c:out value="${report.name}"/></p>
+        <p align="left"> <fmt:message key="label.changeTheme" bundle="${rm}"/>: <textarea name="theme"></textarea></p>
+        <hr>
+        <p align="center"><fmt:message key="label.date" bundle="${rm}"/>: <c:out value="${report.date}"/></p>
+           <p align="left"> <fmt:message key="label.changeDate" bundle="${rm}"/>:
+               <input type="date" name="date" min="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd"/>"/></p>
+        <hr>
+        <p align="center"><fmt:message key="label.time" bundle="${rm}"/>: <fmt:formatDate value="${report.time}" type="time"
+                                                                           timeStyle="short"/></p>
+        <p align="left"> <fmt:message key="label.changeTime" bundle="${rm}"/> : <input type="time" name="time"/></p>
+        <hr>
+        <p align="center"><fmt:message key="label.city" bundle="${rm}"/>: <c:out value="${report.address.city}"/></p>
+        <p align="left"><fmt:message key="label.changeCity" bundle="${rm}"/> : <input type="text" name="city"
+                                                                                      pattern="[а-яА-Яa-zA-ZЇїЄєІі]{2,30}"/></p>
+        <hr>
 
-    <p><fmt:message key="label.theme" bundle="${rm}"/>: <c:out value="${report.name}"/>
-        | <fmt:message key="label.changeTheme" bundle="${rm}"/>: <textarea name="theme"></textarea></p>
+        <p align="center"><fmt:message key="label.street" bundle="${rm}"/> : <c:out value="${report.address.street}"/></p>
+            <p align="left"><fmt:message key="label.changeStreet" bundle="${rm}"/>: <input type="text" name="street"
+                                                                              pattern="[а-яА-Яa-zA-ZЇїЄєІі\-\s]{2,50}"/></p>
+        <hr>
+        <p align="center"><fmt:message key="label.building" bundle="${rm}"/>: <c:out value="${report.address.building}"/></p>
+        <p align="left"><fmt:message key="label.changeBuilding" bundle="${rm}"/>: <input type="text" name="building"
+                                                                            pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9\s/-]{1,10}"/></p>
+        <hr>
+        <p align="center"><fmt:message key="label.room" bundle="${rm}"/>: <c:out value="${report.address.room}"/></p>
+            <p align="left"><fmt:message key="label.changeRoom" bundle="${rm}"/>: <input type="text" name="room"
+                                                                           pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9]{1,5}"/></p>
+        <hr>
+        <p align="center"><fmt:message key="label.speaker" bundle="${rm}"/>: <c:out value="${report.speaker.name}"/>
+            <c:out value="${report.speaker.surname}"/></p>
+            <p align="left"><fmt:message key="label.changeSpeaker" bundle="${rm}"/>: <input type="email"
+               placeholder="<fmt:message key="label.speakerEmail" bundle="${rm}"/>" name="speakerEmail"pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
 
-    <p><fmt:message key="label.date" bundle="${rm}"/>: <c:out value="${report.date}"/>
-        | <fmt:message key="label.changeDate" bundle="${rm}"/>: <input type="date" name="date" min="<fmt:formatDate value="${now}"
-        pattern="yyyy-MM-dd"/>"/>
-    </p>
+        <p align="center"><input type="submit" value="<fmt:message key="label.changeReport" bundle="${rm}"/>"/></p>
+    </div>
 
-    <p><fmt:message key="label.time" bundle="${rm}"/>: <fmt:formatDate value="${report.time}" type="time" timeStyle="short"/>
-        | <fmt:message key="label.changeTime" bundle="${rm}"/>: <input type="time" name="time"/></p>
 
-    <p><fmt:message key="label.city" bundle="${rm}"/>: <c:out value="${report.address.city}"/>
-        | <fmt:message key="label.changeCity" bundle="${rm}"/>: <input type="text" name="city"
-                                 pattern="[а-яА-Яa-zA-ZЇїЄєІі]{2,30}"/></p>
-
-    <p><fmt:message key="label.street" bundle="${rm}"/>: <c:out value="${report.address.street}"/>
-        | <fmt:message key="label.changeStreet" bundle="${rm}"/>: <input type="text" name="street"
-                                 pattern="[а-яА-Яa-zA-ZЇїЄєІі\-\s]{2,50}"/></p>
-
-    <p><fmt:message key="label.building" bundle="${rm}"/>: <c:out value="${report.address.building}"/>
-        | <fmt:message key="label.changeBuilding" bundle="${rm}"/>: <input type="text" name="building"
-                               pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9\s/-]{1,10}"/></p>
-
-    <p><fmt:message key="label.room" bundle="${rm}"/>: <c:out value="${report.address.room}"/>
-        | <fmt:message key="label.changeRoom" bundle="${rm}"/>: <input type="text" name="room"
-                                   pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9]{1,5}"/></p>
-
-    <p><fmt:message key="label.speaker" bundle="${rm}"/>: <c:out value="${report.speaker.name}"/>
-        <c:out value="${report.speaker.surname}"/>
-        | <fmt:message key="label.changeSpeaker" bundle="${rm}"/>: <input type="email" name="speakerEmail"
-                                   pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
-
+</form>
+<p align="right">
     <c:choose>
         <c:when test="${not empty errorEmailForm}">
             <fmt:message key="errorEmailForm" bundle="${rm}"/>
@@ -81,10 +86,15 @@
         <c:when test="${not empty errorTheme}">
             <fmt:message key="errorTheme" bundle="${rm}"/>
         </c:when>
+        <c:when test="${not empty errorSpeakerNotExists}">
+            <fmt:message key="errorSpeakerNotExists" bundle="${rm}"/>
+        </c:when>
+        <c:when test="${not empty NoChangesMade}">
+            <fmt:message key="NoChangesMade" bundle="${rm}"/>
+        </c:when>
     </c:choose>
-
-    <p><input type="submit" value="<fmt:message key="label.changeReport" bundle="${rm}"/>"/></p>
-</form>
-<p><a href="/Conference_war/views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>
+</p>
+<%--<p><a href="${pageContext.request.contextPath}/views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a>--%>
+</p>
 </body>
 </html>

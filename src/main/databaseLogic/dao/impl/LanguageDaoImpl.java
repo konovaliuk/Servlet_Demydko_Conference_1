@@ -1,6 +1,6 @@
 package databaseLogic.dao.impl;
 
-import databaseLogic.connection.DataSourceConference;
+import databaseLogic.connection.ConnectionPool;
 import databaseLogic.dao.LanguageDao;
 
 import java.sql.Connection;
@@ -10,14 +10,17 @@ import java.sql.SQLException;
 
 public class LanguageDaoImpl implements LanguageDao {
 
-    private DataSourceConference dataSource;                             // todo
+
     private Connection connection;
-    // private TestDataSource dataSource;
+
 
     public LanguageDaoImpl() {
-        dataSource = DataSourceConference.getInstance();
-        this.connection = dataSource.getConnection();
-        //   dataSource = new TestDataSource();
+        connection = ConnectionPool.getConnection();
+    }
+
+    public LanguageDaoImpl(Connection connection) {
+        this.connection = connection;
+
     }
 
     @Override
@@ -70,6 +73,6 @@ public class LanguageDaoImpl implements LanguageDao {
 
     @Override
     public void closeConnection() {
-        dataSource.closeConnection();
+        ConnectionPool.closeConnection(connection);
     }
 }

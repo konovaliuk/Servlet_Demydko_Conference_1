@@ -21,11 +21,11 @@
 
 <h2><fmt:message key="label.successRegister" bundle="${rm}"/> ${sessionScope.user.name}! </h2>
 
-<p><a href="views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>
+<%--<p><a href="views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>--%>
 
-<form method="post" action="/Conference_war/controller?command=logout">
-    <input type="submit" value="<fmt:message key="label.exit" bundle="${rm}"/>"/>
+<%--<form method="post" action="/Conference_war/controller?command=logout">--%>
+<%--    <input type="submit" value="<fmt:message key="label.exit" bundle="${rm}"/>"/>--%>
 
-</form>
+<%--</form>--%>
 </body>
 </html>

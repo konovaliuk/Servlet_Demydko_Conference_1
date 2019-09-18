@@ -96,6 +96,6 @@
 </form></div>
 
 
-<p><a href="views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>
+<%--<p><a href="views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>--%>
 </body>
 </html>

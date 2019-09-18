@@ -1,7 +1,6 @@
 package databaseLogic.dao.impl;
 
-import databaseLogic.connection.DataSourceConference;
-import databaseLogic.connection.TestDataSource;
+import databaseLogic.connection.ConnectionPool;
 import databaseLogic.dao.RegisterDao;
 import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
@@ -16,44 +15,29 @@ import java.util.List;
 
 public class RegisterDaoImpl implements RegisterDao {
 
-    private DataSourceConference dataSource;                             // todo
     private Connection connection;
-    // private TestDataSource dataSource;
 
     public RegisterDaoImpl() {
-        dataSource = DataSourceConference.getInstance();
-        this.connection = dataSource.getConnection();
-        // dataSource = new TestDataSource();
+        connection = ConnectionPool.getConnection();
     }
 
     @Override
     public int userRegister(Long userId, Long reportId) {
-        PreparedStatement statement = null;
         int result = 0;
-        try {
-            statement = connection.prepareStatement("INSERT registeredlist(reportId, userId) values (?,?)");
+        try (PreparedStatement statement = connection.prepareStatement("INSERT registeredlist(reportId, userId) values (?,?)")) {
             statement.setLong(1, reportId);
             statement.setLong(2, userId);
             result = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();                         // todo
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();                  // todo
-                }
         }
         return result;
     }
 
     @Override
     public List<Long> getReportsIdByUserId(Long userId) {
-        PreparedStatement statement = null;
         List<Long> list = new ArrayList<>();
-        try {
-            statement = connection.prepareStatement("SELECT reportId from registeredlist where userId =?");
+        try (PreparedStatement statement = connection.prepareStatement("SELECT reportId from registeredlist where userId =?")) {
             statement.setLong(1, userId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
@@ -62,71 +46,45 @@ public class RegisterDaoImpl implements RegisterDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();                    //todo
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();                      // todo
-                }
         }
         return list;
     }
 
     @Override
     public List<User> getAllRegisteredUsers(Long reportId) {
-        PreparedStatement statement = null;
         List<User> userList = new ArrayList<>();
-        UserDao userDao = DaoFactory.getUserDao();
-        try {
-            statement = connection.prepareStatement("SELECT userId from registeredlist where reportId=?");
+        UserDao userDao = DaoFactory.getUserDao(connection);
+        try (PreparedStatement statement = connection.prepareStatement("SELECT userId from registeredlist where reportId=?")) {
             statement.setLong(1, reportId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                long id = rs.getInt("userid");
+                long id = rs.getInt("userId");
                 User user = userDao.getUserById(id);
                 userList.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            userDao.closeConnection();
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
         }
         return userList;
     }
 
     @Override
     public int getCountOfVisitors(Long reportId) {
-        PreparedStatement statement = null;
         int result = 0;
-        try {
-            statement = connection.prepareStatement("SELECT count(userId) as sum from registeredlist where reportId =? ");
-            statement.setLong(1,reportId);
+        try (PreparedStatement statement = connection.prepareStatement("SELECT count(userId) as sum from registeredlist where reportId =? ");) {
+            statement.setLong(1, reportId);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 result = rs.getInt("sum");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
         }
         return result;
     }
 
     @Override
     public void closeConnection() {
-        dataSource.closeConnection();
+        ConnectionPool.closeConnection(connection);
     }
 }

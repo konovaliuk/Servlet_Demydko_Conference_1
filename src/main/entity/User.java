@@ -1,6 +1,8 @@
 package entity;
 
 
+import java.util.Objects;
+
 public class User {
 
   private Long id;
@@ -91,5 +93,23 @@ public class User {
             ", email='" + email + '\'' +
             ", position='" + position + '\'' +
             '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return id.equals(user.id) &&
+            name.equals(user.name) &&
+            surname.equals(user.surname) &&
+            email.equals(user.email) &&
+            position.equals(user.position) &&
+            language.equals(user.language);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name, surname, email, position, language);
   }
 }

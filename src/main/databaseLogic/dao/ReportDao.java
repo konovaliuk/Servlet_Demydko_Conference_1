@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ReportDao {
 
-    int addReport(Report report);
+    Long addReport(Report report);
 
     int addReport(String reportName, Speaker speaker);
 
@@ -21,6 +21,8 @@ public interface ReportDao {
     List<Report> getOfferedConference();
 
     List<Report> getPastReports();
+
+    void setAddressForReport(Long addressId, Long reportId);
 
     int getCountOfFutureReports();                    // todo
 

@@ -1,6 +1,7 @@
 package commands.impl;
 
 import commands.Command;
+import commands.commandHelpers.ConferenceRegisterHelper;
 import databaseLogic.dao.RegisterDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Report;
@@ -18,37 +19,22 @@ public class ConferenceRegisterCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {
-        String page = ConfigManager.getProperty("futureReports");
+
         List<Report> reportList = (List<Report>) request.getSession().getAttribute("reportList");
         User user = (User) request.getSession().getAttribute("user");
         String sIndex = request.getParameter("index");
-        int index = Integer.parseInt(sIndex);
+        Map<Long, Integer> countOfVisitors = (Map<Long, Integer>) request.getSession().getAttribute("countOfVisitors");
 
-        Report r = reportList.get(index);
+        ConferenceRegisterHelper helper = new ConferenceRegisterHelper(reportList, user, sIndex, countOfVisitors);
+        String result = helper.handle();
+
         MessageManager message = new MessageManager();
-        MailManager mail = new MailManager();
+        if (result.equals("errorAlreadyRegistered")) {
+            request.setAttribute("reportId", helper.getReportId());
+            request.setAttribute(result, message.getProperty(result));
 
-        if (r.getIsUserRegistered()) {
-            request.setAttribute("errorAlreadyRegistered", message.getProperty("errorAlreadyRegistered"));
-            request.setAttribute("reportId", r.getId());
-            return page;
         }
+        return ConfigManager.getProperty("futureReports");
 
-        RegisterManager registerManager = new RegisterManager();
-        int result = registerManager.userRegister(user.getId(), reportList.get(index).getId());
-
-        if (result != 0) {
-            Report report = reportList.get(index);
-            registerManager.makeUserRegistered(report);
-            request.getSession().setAttribute("reportList", reportList);
-
-            Map<Long, Integer> countOfVisitors = (Map<Long, Integer>) request.getSession().getAttribute("countOfVisitors");
-            int count = countOfVisitors.get(report.getId());
-            countOfVisitors.put(report.getId(), ++count);
-            request.getSession().setAttribute("countOfVisitors", countOfVisitors);
-            mail.notifyUserRegistration(user, report);
-        }
-
-        return page;
     }
 }

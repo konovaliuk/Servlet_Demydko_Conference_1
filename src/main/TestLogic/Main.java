@@ -19,9 +19,8 @@ public class Main {
     private static final Logger log = Logger.getLogger(Main.class);
 
     public static void main(String[] args) throws ParseException {
-        Long a = 589L;
-        Long b = 59L;
-        System.out.println(a.equals(b));
+       File file=new File("D:\\Ваня\\програмирование\\Cyber Bionics\\Projects\\Conference\\src\\main\\webapp\\WEB-INF\\resources\\css\\background.jpg");
+        System.out.println(file.exists());
 
 
 

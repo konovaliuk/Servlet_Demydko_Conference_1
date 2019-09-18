@@ -1,25 +1,17 @@
 package databaseLogic.dao.impl;
 
-import databaseLogic.connection.DataSourceConference;
-import databaseLogic.connection.TestDataSource;
+import databaseLogic.connection.ConnectionPool;
 import databaseLogic.dao.AddressDao;
 import entity.Address;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class AddressDaoImpl implements AddressDao {
-    private DataSourceConference dataSource;                             // todo
+
     private Connection connection;
 
-    // private TestDataSource dataSource;
-
     public AddressDaoImpl() {
-        dataSource = DataSourceConference.getInstance();
-        this.connection = dataSource.getConnection();
-        //   dataSource = new TestDataSource();
+        connection = ConnectionPool.getConnection();
     }
 
     public AddressDaoImpl(Connection connection) {
@@ -27,32 +19,28 @@ public class AddressDaoImpl implements AddressDao {
     }
 
     @Override
-    public void addAddress(String city, String street, String building, String room) {
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement("INSERT address(city,street,building,room) values (?,?,?,?)");
+    public Long addAddress(String city, String street, String building, String room) {
+        Long id = null;
+        try (PreparedStatement statement =connection.prepareStatement("INSERT address" +
+                "(city,street,building,room) values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS)){
             statement.setString(1, city);
             statement.setString(2, street);
             statement.setString(3, building);
             statement.setString(4, room);
             statement.executeUpdate();
+            ResultSet rs = statement.getGeneratedKeys();
+            rs.next();
+            id = rs.getLong(1);
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (statement != null)
-                    statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();                           //todo
-            }
         }
-
+        return id;
     }
 
     @Override
-    public long getAddressId(Address address) {
+    public Long getAddressId(Address address) {
         PreparedStatement statement = null;
-        long id = -1;
+        Long id = null;
         try {
             statement = connection.prepareStatement("SELECT id FROM address " +
                     "where city=? and street=? and building=? and room=?");
@@ -62,7 +50,7 @@ public class AddressDaoImpl implements AddressDao {
             statement.setString(4, address.getRoom());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                id = rs.getInt(1);
+                id = rs.getLong(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,6 +101,6 @@ public class AddressDaoImpl implements AddressDao {
 
     @Override
     public void closeConnection() {
-        dataSource.closeConnection();
+        ConnectionPool.closeConnection(connection);
     }
 }

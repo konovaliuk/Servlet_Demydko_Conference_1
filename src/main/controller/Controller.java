@@ -16,7 +16,7 @@ import java.io.IOException;
 
 //@WebServlet("/controller")                               //todo
 public class Controller extends HttpServlet {
-    private static Logger logger = Logger.getLogger(Controller.class);
+    private  Logger logger = Logger.getLogger(Controller.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

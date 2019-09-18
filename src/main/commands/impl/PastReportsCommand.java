@@ -1,6 +1,7 @@
 package commands.impl;
 
 import commands.Command;
+import commands.commandHelpers.PastReportsHelper;
 import databaseLogic.dao.PresenceDao;
 import databaseLogic.dao.ReportDao;
 import databaseLogic.factory.DaoFactory;
@@ -22,53 +23,18 @@ public class PastReportsCommand implements Command {
 
         String requestOffset = request.getParameter("offsetPast");
         String requestMaxCount = request.getParameter("maxCountPast");
+        Integer sessionOffset = (Integer) request.getSession().getAttribute("offsetPast");
+        Integer sessionMaxCount = (Integer) request.getSession().getAttribute("maxCountPast");
 
-        ReportManager reportManager = new ReportManager();
-        PaginationManager paginationManager = new PaginationManager();
-        int countOfPastReports = reportManager.getCountOfPastReports();
-        int offset;
-        int maxCount;
-        List<Report> pastReportsList;
-        List<Integer> buttons;
+        PastReportsHelper helper = new PastReportsHelper(requestOffset, requestMaxCount, sessionOffset, sessionMaxCount);
+        helper.handle();
 
-        if (requestOffset == null && requestMaxCount == null) {
-            String sessionMaxCount = (String) request.getSession().getAttribute("maxCountPast");
-            maxCount = (sessionMaxCount != null) ? Integer.parseInt(sessionMaxCount) : 5;
-            Integer sessionOffset = (Integer) request.getSession().getAttribute("offsetPast");
-            offset = (sessionOffset != null) ? sessionOffset : 0;
-            pastReportsList = reportManager.getPastConference(offset, maxCount);
-            buttons = paginationManager.getButtons(countOfPastReports, maxCount);
-            request.getSession().setAttribute("buttonsPast", buttons);
-        } else {
-            if (requestMaxCount == null) {
-                String sessionMaxCount = (String) request.getSession().getAttribute("maxCountPast");
-                if (sessionMaxCount == null) {
-                    maxCount = 5;
-                } else {
-                    maxCount = Integer.parseInt(sessionMaxCount);
-                }
-            } else {
-                maxCount = Integer.parseInt(requestMaxCount);
-                request.getSession().setAttribute("maxCountPast", requestMaxCount);
-                buttons = paginationManager.getButtons(countOfPastReports, maxCount);
-                request.getSession().setAttribute("buttonsPast", buttons);
-            }
-            Integer sessionOffset = (Integer) request.getSession().getAttribute("offsetPast");
-            if (requestOffset != null) {
-                offset = Integer.parseInt(requestOffset) * maxCount - maxCount;
-            } else if (sessionOffset != null) {
-                offset = sessionOffset;
-            } else {
-                offset = 0;
-            }
-            request.getSession().setAttribute("offsetPast", offset);
-            pastReportsList = reportManager.getPastConference(offset, maxCount);
-        }
-
-        request.getSession().setAttribute("pastReportList", pastReportsList);
-        PresenceManager presenceManager = new PresenceManager();
-        Map<Long, Integer> pastReportPresence = presenceManager.getPresence(pastReportsList);
-        request.getSession().setAttribute("pastReportPresence", pastReportPresence);
+        request.getSession().setAttribute("pastReportList", helper.getPastConferenceList());
+        request.getSession().setAttribute("maxCountPast", helper.getMaxCount());
+        request.getSession().setAttribute("offsetPast", helper.getOffset());
+        request.getSession().setAttribute("pastReportPresence", helper.getPastReportPresence());
+        if (helper.getButtons() != null)
+            request.getSession().setAttribute("buttonsPast", helper.getButtons());
 
         return ConfigManager.getProperty("pastReports");
     }

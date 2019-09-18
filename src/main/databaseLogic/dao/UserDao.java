@@ -4,9 +4,9 @@ import entity.User;
 
 public interface UserDao {
 
-    int addUser(User user);
+    Long addUser(User user);
 
-    int setUserPosition(User user, String position);
+//    int setPositionForUser(User user, String position);
 
     User getUserByEmail(String email);
 

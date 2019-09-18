@@ -19,8 +19,8 @@
 <c:choose>
     <c:when test="${sessionScope.user.position=='Admin'}">
         <div>
-            <p><fmt:message key="label.assign" bundle="${rm}"/></p>
-            <form method="post" action="/Conference_war/controller?command=assignPosition">
+            <p><fmt:message key="label.assignToPosition" bundle="${rm}"/></p>
+            <form method="post" action="${pageContext.request.contextPath}/controller?command=assignPosition">
                 <p><input type="email" name="email" required
                           placeholder="<fmt:message key="label.userEmail" bundle="${rm}"/>" size="15"
                           pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
@@ -37,7 +37,7 @@
         </div>
         <div>
             <p><fmt:message key="label.addRatingToSpeaker" bundle="${rm}"/></p>
-            <form method="post" action="/Conference_war/controller?command=addSpeakerRating">
+            <form method="post" action="${pageContext.request.contextPath}/controller?command=addSpeakerRating">
                 <p><input type="email" name="email" required
                           placeholder="<fmt:message key="label.speakerEmail" bundle="${rm}"/>" size="15"
                           pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
@@ -60,7 +60,7 @@
         </div>
         <div>
             <p><fmt:message key="label.addBonusesToSpeaker" bundle="${rm}"/></p>
-            <form method="post" action="/Conference_war/controller?command=addBonuses">
+            <form method="post" action="${pageContext.request.contextPath}/controller?command=addBonuses">
                 <p><input type="email" name="email" required
                           placeholder="<fmt:message key="label.speakerEmail" bundle="${rm}"/>" size="15"
                           pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"/></p>
@@ -76,53 +76,48 @@
         <jsp:useBean id="now" class="java.util.Date"/>
         <div class="block1">
             <p><fmt:message key="label.addReport" bundle="${rm}"/></p>
-                <%--            <p>Добавить доклад</p>--%>
-            <form method="post" action="/Conference_war/controller?command=addreport">
+<%--            <form method="post" action="/Conference_war/controller?command=addReport">--%>
+            <form method="post" action="${pageContext.request.contextPath}/controller?command=addReport">
                 <p><fmt:message key="label.date" bundle="${rm}"/>: <input type="date" name="date"
                                                                         min="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd"/>"
                                                                         required></p>
                 <p><fmt:message key="label.time" bundle="${rm}"/>: <input type="time" name="time" required></p>
                 <p><textarea name="theme" placeholder="<fmt:message key="label.theme" bundle="${rm}"/>"
                              required></textarea></p>
-                <p><input type="text" name="city" size="30" placeholder="<fmt:message key="label.city" bundle="${rm}"/>"
-                          required/></p>
-                <p><input type="text" name="street" size="30"
-                          placeholder="<fmt:message key="label.street" bundle="${rm}"/>" required/></p>
-                <p><input type="text" name="building" size="30"
-                          placeholder="<fmt:message key="label.building" bundle="${rm}"/>" required/></p>
-                <p><input type="text" name="room" size="30" placeholder="<fmt:message key="label.room" bundle="${rm}"/>"
-                          required/></p>
-                <p><input type="email" name="speakerEmail" size="30"
-                          placeholder="<fmt:message key="label.choseSpeaker" bundle="${rm}"/>"
-                          required/></p>
+                <p><input type="text" name="city" size="30" pattern="[а-яА-Яa-zA-ZЇїЄєІі]{2,30}"
+                          placeholder="<fmt:message key="label.city" bundle="${rm}"/>" required/>
+                </p>
+                <p><input type="text" name="street" size="30" pattern="[а-яА-Яa-zA-ZЇїЄєІі\-\s]{2,50}"
+                          placeholder="<fmt:message key="label.street" bundle="${rm}"/>" required/>
+                </p>
+                <p><input type="text" name="building" size="30" pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9\s/-]{1,10}"
+                          placeholder="<fmt:message key="label.building" bundle="${rm}"/>" required/>
+                </p>
+                <p><input type="text" name="room" size="30" pattern="[а-яА-Яa-zA-ZЇїЄєІі0-9]{1,5}"
+                          placeholder="<fmt:message key="label.room" bundle="${rm}"/>" required/>
+                </p>
+                <p><input type="email" name="speakerEmail" size="30" pattern="[a-z0-9_%+-]+@[a-z0-9_]+\.[a-z]{2,}[\.a-z]{0,}"
+                          placeholder="<fmt:message key="label.choseSpeaker" bundle="${rm}"/>" required/>
+                </p>
                 <p><input type="submit" value="<fmt:message key="label.addReport" bundle="${rm}"/>"></p>
             </form>
         </div>
         <div class="block1">
-            <form method="post" action="/Conference_war/controller?command=showOfferedReports">
+            <form method="post" action="${pageContext.request.contextPath}/controller?command=showOfferedReports">
                 <p><input type="submit" value="<fmt:message key="label.offeredReports" bundle="${rm}"/>"></p>
             </form>
         </div>
     </c:when>
 
-
     <c:when test="${sessionScope.user.position=='Speaker'}">
         <div class="block1">
-            <form method="post" action="/Conference_war/controller?command=offerReport">
+            <form method="post" action="${pageContext.request.contextPath}/controller?command=offerReport">
                 <p><textarea name="theme" placeholder="<fmt:message key="label.theme" bundle="${rm}"/>"
                              required></textarea></p>
                 <p><input type="submit" value="<fmt:message key="label.offerReport" bundle="${rm}"/>"></p>
             </form>
         </div>
-<%--        <div class="block1">--%>
-<%--            <form method="post" action="/Conference_war/controller?command=showBonuses">--%>
-<%--                <p><input type="submit" value="<fmt:message key="label.seeBonuses" bundle="${rm}"/>"></p>--%>
-<%--            </form>--%>
-<%--        </div>--%>
     </c:when>
-    <c:otherwise>
-
-    </c:otherwise>
 </c:choose>
 
 <p>
@@ -138,6 +133,7 @@
         </c:when>
         <c:when test="${not empty errorPosition}">
             <fmt:message key="errorPosition" bundle="${rm}"/>
+            ${userPosition}
         </c:when>
         <c:when test="${not empty errorNumber}">
             <fmt:message key="errorNumber" bundle="${rm}"/>
@@ -165,22 +161,22 @@
 
 
 <div class="block11">
-    <form method="post" action="/Conference_war/controller?command=futureReports">
+    <form method="post" action="${pageContext.request.contextPath}/controller?command=futureReports">
         <p><input type="submit" value="<fmt:message key="label.futureReports" bundle="${rm}"/>"></p>
     </form>
 </div>
 
 <div class="block11">
-    <form method="post" action="/Conference_war/controller?command=pastReports">
+    <form method="post" action="${pageContext.request.contextPath}/controller?command=pastReports">
         <p><input type="submit" value="<fmt:message key="label.pastReports" bundle="${rm}"/>"></p>
     </form>
 </div>
 
-<div class="block11">
-    <form method="post" action="/Conference_war/controller?command=logout">
-        <p><input type="submit" value="<fmt:message key="label.exit" bundle="${rm}"/>"/></p>
-    </form>
-</div>
+<%--<div class="block11">--%>
+<%--    <form method="post" action="${pageContext.request.contextPath}/controller?command=logout">--%>
+<%--        <p><input type="submit" value="<fmt:message key="label.exit" bundle="${rm}"/>"/></p>--%>
+<%--    </form>--%>
+<%--</div>--%>
 
 
 </body>

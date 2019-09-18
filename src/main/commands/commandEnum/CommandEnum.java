@@ -98,6 +98,11 @@ public enum CommandEnum {
         {
             this.command = new ReportIndexCommand();
         }
+    },
+    ERROR {
+        {
+            this.command = new ErrorCommand();
+        }
     };
 
 

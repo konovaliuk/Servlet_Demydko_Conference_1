@@ -25,20 +25,26 @@
 <head>
     <title>Title</title>
     <style>
-        <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>
+        <c:import url="/WEB-INF/resources/css/styles.css"/>
     </style>
 </head>
 <body>
-
 <c:if test="${not empty sessionScope.user}">
     <p><fmt:message key="label.enterAs" bundle="${rm}"/> ${user.name} ${user.surname}</p>
-    <c:if test="${sessionScope.user.position=='Speaker'}">
-        <p><fmt:message key="bonuses" bundle="${rm}"/> <bonuses:getbonuses/></p>
-    </c:if>
-</c:if>
+        <c:if test="${sessionScope.user.position=='Speaker'}">
+            <p><fmt:message key="bonuses" bundle="${rm}"/> <bonuses:getbonuses/></p>
+        </c:if>
 
+        <form method="post" action="${pageContext.request.contextPath}/controller?command=logout">
+            <p><input type="submit" value="<fmt:message key="label.exit" bundle="${rm}"/>"/></p>
+        </form>
+        <form method="post" action="${pageContext.request.contextPath}/views/cabinet.jsp">
+            <p><input type="submit" value="<fmt:message key="label.cabinet" bundle="${rm}"/>"/></p>
+        </form>
+
+</c:if>
 <div class="blockTop">
-    <form method="post" action="/Conference_war/controller?command=changeLanguage">
+    <form method="post" action="${pageContext.request.contextPath}/controller?command=changeLanguage">
         <input type="hidden" name="requestURI" value="${pageContext.request.getRequestURI()}">
         <p>
             <select size="1" name="language">

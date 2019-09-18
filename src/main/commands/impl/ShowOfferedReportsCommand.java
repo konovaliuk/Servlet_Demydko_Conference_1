@@ -15,10 +15,6 @@ public class ShowOfferedReportsCommand implements Command {
     @Override
     public String execute(HttpServletRequest request) {
 
-//        ReportDao reportDao = DaoFactory.getReportDao();
-//        List<Report> list = reportDao.getOfferedConference();
-//        reportDao.closeConnection();
-
         ReportManager reportManager = new ReportManager();
         List<Report> list = reportManager.getOfferedConference();
         request.getSession().setAttribute("offeredReportList", list);

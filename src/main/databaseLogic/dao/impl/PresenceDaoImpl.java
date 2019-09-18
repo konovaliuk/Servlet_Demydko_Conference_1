@@ -1,6 +1,6 @@
 package databaseLogic.dao.impl;
 
-import databaseLogic.connection.DataSourceConference;
+import databaseLogic.connection.ConnectionPool;
 import databaseLogic.dao.PresenceDao;
 
 import java.sql.Connection;
@@ -10,14 +10,12 @@ import java.sql.SQLException;
 
 public class PresenceDaoImpl implements PresenceDao {
 
-    private DataSourceConference dataSource;                             // todo
+
     private Connection connection;
-    // private TestDataSource dataSource;
+
 
     public PresenceDaoImpl() {
-        dataSource = DataSourceConference.getInstance();
-        this.connection = dataSource.getConnection();
-        // dataSource = new TestDataSource();
+        connection = ConnectionPool.getConnection();
     }
 
     @Override
@@ -97,6 +95,6 @@ public class PresenceDaoImpl implements PresenceDao {
 
     @Override
     public void closeConnection() {
-        dataSource.closeConnection();
+        ConnectionPool.closeConnection(connection);
     }
 }

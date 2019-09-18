@@ -1,6 +1,6 @@
 package databaseLogic.dao.impl;
 
-import databaseLogic.connection.DataSourceConference;
+import databaseLogic.connection.ConnectionPool;
 import databaseLogic.dao.LanguageDao;
 import databaseLogic.dao.PositionDao;
 import databaseLogic.dao.SpeakerDao;
@@ -14,15 +14,10 @@ import java.sql.SQLException;
 
 public class SpeakerDaoImpl implements SpeakerDao {
 
-    private DataSourceConference dataSource;                             // todo
     private Connection connection;
-    //  private TestDataSource dataSource;                             // todo
-
 
     public SpeakerDaoImpl() {
-        dataSource = DataSourceConference.getInstance();
-        this.connection = dataSource.getConnection();
-        //dataSource = new TestDataSource();
+        connection = ConnectionPool.getConnection();
     }
 
     public SpeakerDaoImpl(Connection connection) {
@@ -32,13 +27,11 @@ public class SpeakerDaoImpl implements SpeakerDao {
 
     @Override
     public Speaker getSpeakerById(Long id) {
-        PreparedStatement statement = null;
         Speaker speaker = null;
-        PositionDao positionDao = DaoFactory.getPositionDao();
-        LanguageDao languageDao = DaoFactory.getLanguageDao();
-        try {
-            statement = connection.prepareStatement("SELECT id, name, surname, email, password, position,language,rating " +
-                    "FROM users u join speakerratings s on u.id=s.speakerId WHERE id=? AND position=?");
+        PositionDao positionDao = DaoFactory.getPositionDao(connection);
+        LanguageDao languageDao = DaoFactory.getLanguageDao(connection);
+        try (PreparedStatement statement = connection.prepareStatement("SELECT id, name, surname, email, password, position,language,rating " +
+                "FROM users u join speakerratings s on u.id=s.speakerId WHERE id=? AND position=?")) {
             statement.setLong(1, id);
             statement.setInt(2, positionDao.getPositionId("Speaker"));
             ResultSet rs = statement.executeQuery();
@@ -55,29 +48,18 @@ public class SpeakerDaoImpl implements SpeakerDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            positionDao.closeConnection();
-            languageDao.closeConnection();
-            try {
-                if (statement != null)
-                    statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();                           //todo
-            }
         }
         return speaker;
     }
 
     @Override
     public Speaker getSpeakerByEmail(String email) {
-        PreparedStatement statement = null;
         Speaker speaker = null;
-        PositionDao positionDao = DaoFactory.getPositionDao();
-        LanguageDao languageDao = DaoFactory.getLanguageDao();
-        try {
-            statement = connection.prepareStatement("SELECT id,name,surname,password,language,rating " +
-                    "from users u join speakerratings s " +
-                    "on u.id = s.speakerId where position=? and email=?");
+        PositionDao positionDao = DaoFactory.getPositionDao(connection);
+        LanguageDao languageDao = DaoFactory.getLanguageDao(connection);
+        try (PreparedStatement statement = connection.prepareStatement("SELECT id,name,surname,password,language,rating " +
+                "from users u join speakerratings s " +
+                "on u.id = s.speakerId where position=? and email=?")) {
             int position = positionDao.getPositionId("Speaker");
             statement.setInt(1, position);
             statement.setString(2, email);
@@ -95,16 +77,6 @@ public class SpeakerDaoImpl implements SpeakerDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();                                    //todo
-        } finally {
-            positionDao.closeConnection();
-            languageDao.closeConnection();
-            if (statement != null) {
-                try {
-                    statement.close();                              //todo
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return speaker;
     }
@@ -222,6 +194,6 @@ public class SpeakerDaoImpl implements SpeakerDao {
 
     @Override
     public void closeConnection() {
-        dataSource.closeConnection();
+        ConnectionPool.closeConnection(connection);
     }
 }

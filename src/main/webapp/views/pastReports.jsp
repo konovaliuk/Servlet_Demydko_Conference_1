@@ -52,7 +52,7 @@
             <fmt:message key="successfulChanges" bundle="${rm}"/>
         </c:when>
         <c:when test="${not empty errorNumber}">
-            <fmt:message key="errorNameOrSurname" bundle="${rm}"/>
+            <fmt:message key="errorNumber" bundle="${rm}"/>
         </c:when>
     </c:choose>
 </p>
@@ -89,6 +89,6 @@
 </div>
 
 
-<p><a href="views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>
+<%--<p><a href="views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>--%>
 </body>
 </html>
