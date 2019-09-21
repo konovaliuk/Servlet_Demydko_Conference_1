@@ -1,7 +1,7 @@
 package commands.impl;
 
 import commands.Command;
-import commands.commandHelpers.AddPresenceHelper;
+import commands.commandHelpers.impl.AddPresenceHelper;
 import entity.Report;
 import servises.configManager.ConfigManager;
 import servises.messageManager.MessageManager;

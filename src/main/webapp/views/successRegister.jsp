@@ -12,20 +12,9 @@
 <c:import url="header.jsp" charEncoding="utf-8"/>
 <html>
 <head>
-    <title><fmt:message key="label.registration" bundle="${rm}"/></title>
-    <%--    <style>--%>
-    <%--        <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>--%>
-    <%--    </style>--%>
+    <title>Title</title>
 </head>
 <body>
-
-<h2><fmt:message key="label.successRegister" bundle="${rm}"/> ${sessionScope.user.name}! </h2>
-
-<%--<p><a href="views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>--%>
-
-<%--<form method="post" action="/Conference_war/controller?command=logout">--%>
-<%--    <input type="submit" value="<fmt:message key="label.exit" bundle="${rm}"/>"/>--%>
-
-<%--</form>--%>
+<h2 align="center" style="margin-top: 10%"><fmt:message key="label.successRegister" bundle="${rm}"/> ${sessionScope.user.name}! </h2>
 </body>
 </html>

@@ -1,6 +1,8 @@
-package commands.commandHelpers;
+package commands.commandHelpers.impl;
 
+import commands.commandHelpers.CommandHelper;
 import entity.Report;
+import org.apache.log4j.Logger;
 import servises.parameterManager.ParameterManager;
 import servises.presenceManager.PresenceManager;
 
@@ -8,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class AddPresenceHelper implements CommandHelper {
-
+    private Logger logger = Logger.getLogger(AddPresenceHelper.class);
     private List<Report> pastReportList;
     private Map<Long, Integer> pastReportPresence;
     private String index;
@@ -26,6 +28,7 @@ public class AddPresenceHelper implements CommandHelper {
         Report report = pastReportList.get(Integer.parseInt(index));
         ParameterManager pm = new ParameterManager();
         if (!pm.isNumberCorrect(sCount)) {
+            logger.info("Number was input incorrectly: " + sCount);
             return "errorNumber";
         }
         int count = Integer.parseInt(sCount);
@@ -34,6 +37,7 @@ public class AddPresenceHelper implements CommandHelper {
 
         if (result != 0) {
             pastReportPresence.put(report.getId(), count);
+            logger.info("Was added presence  " + count + " to report with id " + report.getId());
         }
         return "successfulChanges";
     }

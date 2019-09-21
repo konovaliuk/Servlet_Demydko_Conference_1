@@ -1,13 +1,11 @@
 package entity;
 
 
-import servises.dateTimeManager.DateTimeManager;
-
 import java.util.Date;
 import java.sql.Time;
+import java.util.Objects;
 
 public class Report {
-
 
   private Long id;
   private String name;
@@ -84,14 +82,21 @@ public class Report {
   }
 
   @Override
-  public String toString() {
-    return "Report{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", address=" + address +
-            ", date=" + date +
-//          " "+  DateTimeManager.fromTimeToString(time) +
-            " , speaker=" + speaker +
-            '}';
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Report report = (Report) o;
+    return isUserRegistered == report.isUserRegistered &&
+            Objects.equals(id, report.id) &&
+            Objects.equals(name, report.name) &&
+            Objects.equals(address, report.address) &&
+            Objects.equals(date, report.date) &&
+            Objects.equals(time, report.time) &&
+            Objects.equals(speaker, report.speaker);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name, address, date, time, speaker, isUserRegistered);
   }
 }

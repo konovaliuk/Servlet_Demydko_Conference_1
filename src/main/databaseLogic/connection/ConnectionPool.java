@@ -1,5 +1,7 @@
 package databaseLogic.connection;
 
+import org.apache.log4j.Logger;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -8,10 +10,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ConnectionPool {
+    private static Logger logger = Logger.getLogger(ConnectionPool.class);
     private static DataSource dataSource;
-
-//    private static volatile ConnectionPool instance;
-    //    private Connection connection;
     private ConnectionPool() {
     }
 
@@ -22,37 +22,16 @@ public class ConnectionPool {
             Context envContext = (Context) initContext.lookup("java:/comp/env");
             dataSource = (DataSource) envContext.lookup("jdbc/ConferenceDb");
         } catch (NamingException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
-//    public static ConnectionPool getInstance() {
-//        if (instance == null) {
-//            synchronized (ConnectionPool.class) {
-//                if (instance == null) {
-//                    instance = new ConnectionPool();
-//                }
-//            }
-//        }
-//        return instance;
-//    }
-
-
     public static Connection getConnection() {
-//        Connection connection = null;
-//        try {
-//            Context initContext = new InitialContext();
-//            Context envContext = (Context) initContext.lookup("java:/comp/env");
-//            DataSource dataSource = (javax.sql.DataSource) envContext.lookup("jdbc/ConferenceDb");
-//            connection = dataSource.getConnection();
-//        } catch (SQLException | NamingException e) {
-//            e.printStackTrace();
-//        }
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return connection;
     }
@@ -63,10 +42,10 @@ public class ConnectionPool {
             if (!connection.isClosed()) {
                 connection.close();
             } else {
-                System.err.println("connection is closed");
+                logger.error("connection is closed");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 }

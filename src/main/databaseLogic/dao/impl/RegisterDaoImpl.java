@@ -5,6 +5,7 @@ import databaseLogic.dao.RegisterDao;
 import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
 import entity.User;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RegisterDaoImpl implements RegisterDao {
-
+    private Logger logger = Logger.getLogger(RegisterDaoImpl.class);
     private Connection connection;
 
     public RegisterDaoImpl() {
@@ -29,7 +30,7 @@ public class RegisterDaoImpl implements RegisterDao {
             statement.setLong(2, userId);
             result = statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();                         // todo
+            logger.error(e);
         }
         return result;
     }
@@ -45,7 +46,7 @@ public class RegisterDaoImpl implements RegisterDao {
                 list.add(id);
             }
         } catch (SQLException e) {
-            e.printStackTrace();                    //todo
+            logger.error(e);
         }
         return list;
     }
@@ -63,7 +64,7 @@ public class RegisterDaoImpl implements RegisterDao {
                 userList.add(user);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return userList;
     }
@@ -78,7 +79,7 @@ public class RegisterDaoImpl implements RegisterDao {
                 result = rs.getInt("sum");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return result;
     }

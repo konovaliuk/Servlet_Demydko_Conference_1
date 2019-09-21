@@ -1,6 +1,8 @@
 package entity;
 
 
+import java.util.Objects;
+
 public class Address {
 
   private Long id;
@@ -27,7 +29,6 @@ public class Address {
     this.id = id;
   }
 
-
   public String getCity() {
     return city;
   }
@@ -35,7 +36,6 @@ public class Address {
   public void setCity(String city) {
     this.city = city;
   }
-
 
   public String getStreet() {
     return street;
@@ -45,7 +45,6 @@ public class Address {
     this.street = street;
   }
 
-
   public String getBuilding() {
     return building;
   }
@@ -53,7 +52,6 @@ public class Address {
   public void setBuilding(String building) {
     this.building = building;
   }
-
 
   public String getRoom() {
     return room;
@@ -64,13 +62,19 @@ public class Address {
   }
 
   @Override
-  public String toString() {
-    return "Address{" +
-            "id=" + id +
-            ", city='" + city + '\'' +
-            ", street='" + street + '\'' +
-            ", building='" + building + '\'' +
-            ", room='" + room + '\'' +
-            '}';
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Address address = (Address) o;
+    return Objects.equals(id, address.id) &&
+            Objects.equals(city, address.city) &&
+            Objects.equals(street, address.street) &&
+            Objects.equals(building, address.building) &&
+            Objects.equals(room, address.room);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, city, street, building, room);
   }
 }

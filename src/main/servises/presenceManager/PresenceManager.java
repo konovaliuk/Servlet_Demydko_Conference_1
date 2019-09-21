@@ -8,9 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * This class encapsulated some methods from {@link PresenceDao}
+ */
 public class PresenceManager {
 
-    PresenceDao presenceDao;
+    private PresenceDao presenceDao;
 
     public Map<Long, Integer> getPresence(List<Report> pastReportsList) {
         presenceDao = DaoFactory.getPresenceDao();

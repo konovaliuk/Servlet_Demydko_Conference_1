@@ -1,16 +1,9 @@
 package commands.impl;
 
 import commands.Command;
-import commands.commandHelpers.AddBonusesHelper;
-import databaseLogic.dao.SpeakerDao;
-import databaseLogic.factory.DaoFactory;
-import entity.Speaker;
+import commands.commandHelpers.impl.AddBonusesHelper;
 import servises.configManager.ConfigManager;
-import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
-import servises.parameterManager.ParameterManager;
-import servises.spaekerManager.SpeakerManager;
-import servises.userManager.UserManager;
 
 import javax.servlet.http.HttpServletRequest;
 

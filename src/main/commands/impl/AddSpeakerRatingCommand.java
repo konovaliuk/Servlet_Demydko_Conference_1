@@ -1,7 +1,7 @@
 package commands.impl;
 
 import commands.Command;
-import commands.commandHelpers.AddSpeakerRatingHelper;
+import commands.commandHelpers.impl.AddSpeakerRatingHelper;
 import servises.configManager.ConfigManager;
 import servises.messageManager.MessageManager;
 import javax.servlet.http.HttpServletRequest;

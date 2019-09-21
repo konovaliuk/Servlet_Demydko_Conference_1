@@ -9,6 +9,11 @@ import servises.messageManager.MessageManager;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * {@code MailManager} is a class for notify all participants about
+ * some changes in conferences
+ */
+
 public class MailManager {
     private final ResourceBundle resourceBundle = ResourceBundle.getBundle("mail");
     private DateTimeManager dtm;
@@ -23,6 +28,13 @@ public class MailManager {
         return resourceBundle.getString(key);
     }
 
+    /**
+     * This method notify {@link Speaker} that he was assigned to
+     * some conferences.
+     * @param speaker is a <code>Speaker</code> who will be notified about assigment on conference.
+     * @param report is a <code>Report</code> that contains some information about conference.
+     *
+     */
     public void notifySpeakerAppointment(Speaker speaker, Report report) {
         message.setLocale(speaker.getLanguage());
         MailThread mailOperator = new MailThread(speaker.getEmail(), message.getProperty("conferenceAppointment"),
@@ -36,6 +48,12 @@ public class MailManager {
         mailOperator.start();
     }
 
+    /**
+     * This method notify {@link Speaker} that he was dismissed from holding
+     * the conference.
+     * @param speaker is a <code>Speaker</code> who will be notified about dismissing from conference.
+     * @param report is a <code>Report</code> that contains some information about conference.
+     */
     public void notifySpeakerDismiss(Speaker speaker, Report report) {
         message.setLocale(speaker.getLanguage());
         MailThread mailOperator = new MailThread(speaker.getEmail(), message.getProperty("dismissFromConference"),
@@ -49,6 +67,12 @@ public class MailManager {
         mailOperator.start();
     }
 
+    /**
+     * This method notify all participants about some changes in conference.
+     * @param newReport is a <code>Report</code> that that contains new information.
+     * @param oldReport is a <code>Report</code> that contains unchanged information.
+     * @param userList is a List of {@link User} who will be informed about changes in conference.
+     */
     public void notifyChangeConference(Report newReport, Report oldReport, List<User> userList) {
         for (User user : userList) {
             message.setLocale(user.getLanguage());
@@ -72,6 +96,11 @@ public class MailManager {
         }
     }
 
+    /**
+     * This method notify {@link User} that he was successfully registered in conference.
+     * @param user is a <code>User</code> who will be informed about details of conference .
+     * @param report is a <code>Report</code> that contains some information about conference.
+     */
     public void notifyUserRegistration(User user, Report report) {
         message.setLocale(user.getLanguage());
         MailThread mailOperator = new MailThread(user.getEmail(), message.getProperty("conferenceRegistration"),
@@ -85,6 +114,9 @@ public class MailManager {
         mailOperator.start();
     }
 
+    /**
+     * This method notify {@link User} that he was assigned to certain position.
+     */
     public void assignment(User user) {
         message.setLocale(user.getLanguage());
         MailThread mailOperator = new MailThread(user.getEmail(), message.getProperty("assigment"),

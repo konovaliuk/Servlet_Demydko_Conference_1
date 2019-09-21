@@ -13,30 +13,60 @@
 <html>
 <head>
     <title>Title</title>
-<%--    <style>--%>
-<%--        <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>--%>
-<%--    </style>--%>
 </head>
 <body>
 <h2 align="center"><fmt:message key="label.offeredReports" bundle="${rm}"/></h2>
-<c:forEach items="${sessionScope.offeredReportList}" var="report" varStatus="loop">
-    <div><p>id : ${report.id}</p>
-        <p><fmt:message key="label.theme" bundle="${rm}"/>: ${report.name}</p>
-        <p><fmt:message key="label.speaker" bundle="${rm}"/>: ${report.speaker.name} ${report.speaker.surname}</p>
-        <p>loop index = "${loop.index}"</p>
-
-        <form method="post" action="/Conference_war/controller?command=reportIndex">
-            <input type="hidden" name="index" value="${loop.index}">
-            <input type="hidden" name="requestURI" value="${pageContext.request.getRequestURI()}">
-            <input type="submit" value="<fmt:message key="label.makeChangesAndConfirm" bundle="${rm}"/>">
+<div class="center">
+    <c:forEach items="${sessionScope.offeredReportList}" var="report" varStatus="loop">
+        <div><p>id : ${report.id}</p>
+            <p><fmt:message key="label.theme" bundle="${rm}"/>: ${report.name}</p>
+            <p><fmt:message key="label.speaker" bundle="${rm}"/>: ${report.speaker.name} ${report.speaker.surname}</p>
+            <form method="post" action="${pageContext.request.contextPath}/controller?command=reportIndex">
+                <input type="hidden" name="index" value="${loop.index}">
+                <input type="hidden" name="requestURI" value="${pageContext.request.getRequestURI()}">
+                <input type="submit" value="<fmt:message key="label.makeChangesAndConfirm" bundle="${rm}"/>">
+            </form>
+            <form method="post" action="${pageContext.request.contextPath}/controller?command=deleteOfferedReport">
+                <input type="hidden" name="reportId" value="${report.id}">
+                <input type="submit" value="<fmt:message key="label.delete" bundle="${rm}"/>">
+            </form>
+        </div>
+    </c:forEach>
+</div>
+<div class="blockBottom">
+    <c:forEach items="${sessionScope.buttonsOffered}" var="button">
+        <form class="buttons" method="post"
+              action="${pageContext.request.contextPath}/controller?command=showOfferedReports">
+            <input type="hidden" name="button" value="${button}">
+            <c:choose>
+                <c:when test="${sessionScope.offeredButton==button}">
+                    <input class="b" type="submit" value="${button}">
+                </c:when>
+                <c:otherwise>
+                    <input type="submit" value="${button}">
+                </c:otherwise>
+            </c:choose>
         </form>
-        <form method="post" action="/Conference_war/controller?command=deleteOfferedReport">
-            <input type="hidden" name="reportId" value="${report.id}">
-            <input type="submit" value="<fmt:message key="label.delete" bundle="${rm}"/>">
-        </form>
-
-    </div>
-</c:forEach>
-<%--<p><a href="views/cabinet.jsp"><fmt:message key="label.cabinet" bundle="${rm}"/></a></p>--%>
+    </c:forEach>
+</div>
+<div class="elements">
+    <fmt:message key="label.amountElementsOnPage" bundle="${rm}"/>
+    <form method="post"
+          action="${pageContext.request.contextPath}/controller?command=showOfferedReports">
+        <select size="1" name="maxCount" onchange="submit()">
+            <option>${sessionScope.maxCountOffered}</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+        </select>
+    </form>
+</div>
 </body>
 </html>

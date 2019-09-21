@@ -6,6 +6,7 @@ import databaseLogic.dao.PositionDao;
 import databaseLogic.dao.SpeakerDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Speaker;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SpeakerDaoImpl implements SpeakerDao {
-
+    private Logger logger = Logger.getLogger(SpeakerDaoImpl.class);
     private Connection connection;
 
     public SpeakerDaoImpl() {
@@ -47,7 +48,7 @@ public class SpeakerDaoImpl implements SpeakerDao {
                 speaker.setRating(rs.getInt("rating"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return speaker;
     }
@@ -76,118 +77,71 @@ public class SpeakerDaoImpl implements SpeakerDao {
                 speaker.setPosition("Speaker");
             }
         } catch (SQLException e) {
-            e.printStackTrace();                                    //todo
+            logger.error(e);
         }
         return speaker;
     }
 
     @Override
     public void deleteSpeaker(Long speakerId) {
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement("DELETE from speakerratings where speakerId=?");
+        try (PreparedStatement statement = connection.prepareStatement("DELETE from speakerratings where speakerId=?")) {
             statement.setLong(1, speakerId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();                                   //todo
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            logger.error(e);
         }
     }
 
     @Override
     public int addSpeakerRating(Speaker speaker, int rating) {
-        PreparedStatement statement = null;
         int result = 0;
-        try {
-            statement = connection.prepareStatement("UPDATE speakerratings SET rating=? WHERE speakerId=?");
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE speakerratings SET rating=? WHERE speakerId=?")) {
             statement.setInt(1, rating);
             statement.setLong(2, speaker.getId());
             result = statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            logger.error(e);
         }
         return result;
     }
 
     @Override
     public int addBonusesToSpeaker(Speaker speaker, int bonuses) {
-        PreparedStatement statement = null;
         int result = 0;
-        try {
-            statement = connection.prepareStatement("UPDATE speakerratings " +
-                    "set bonuses=? where speakerId=?");
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE speakerratings " +
+                "set bonuses=? where speakerId=?")) {
             statement.setInt(1, getSpeakerBonuses(speaker) + bonuses);
             statement.setLong(2, speaker.getId());
             result = statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            logger.error(e);
         }
         return result;
     }
 
     @Override
     public int getSpeakerBonuses(Speaker speaker) {
-        PreparedStatement statement = null;
         int bonuses = 0;
-        try {
-            statement = connection.prepareStatement("SELECT bonuses " +
-                    "FROM speakerratings where speakerId=?");
+        try (PreparedStatement statement = connection.prepareStatement("SELECT bonuses " +
+                "FROM speakerratings where speakerId=?")) {
             statement.setLong(1, speaker.getId());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 bonuses = rs.getInt("bonuses");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            logger.error(e);
         }
         return bonuses;
     }
 
     @Override
     public void addSpeaker(Long speakerId) {
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement("INSERT speakerratings(speakerId) values (?)");
+        try (PreparedStatement statement = connection.prepareStatement("INSERT speakerratings(speakerId) values (?)")) {
             statement.setLong(1, speakerId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();                                 //todo
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            logger.error(e);
         }
     }
 

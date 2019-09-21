@@ -1,11 +1,14 @@
-package commands.commandHelpers;
+package commands.commandHelpers.impl;
 
+import commands.commandHelpers.CommandHelper;
 import entity.User;
+import org.apache.log4j.Logger;
 import servises.languageManager.LanguageManager;
 import servises.parameterManager.ParameterManager;
 import servises.userManager.UserManager;
 
 public class RegisterHelper implements CommandHelper {
+    private Logger logger = Logger.getLogger(RegisterHelper.class);
     private ParameterManager pm = new ParameterManager();
     private String email;
     private String password;
@@ -29,33 +32,40 @@ public class RegisterHelper implements CommandHelper {
     @Override
     public String handle() {
         if (pm.isEmpty(name, surname, position)) {
+            logger.info("Form was not filled out");
             return "errorEmptyForm";
         }
         if (!pm.isEmailCorrect(email)) {
+            logger.info("Email was imputed incorrectly: " + email);
             return "errorEmailForm";
         }
         if (!pm.isPasswordCorrect(password)) {
+            logger.info("Password was imputed incorrectly" + password);
             return "errorPassword";
         }
 
         if (!pm.isNameAndSurnameCorrect(name, surname)) {
+            logger.info("Name or surname were imputed incorrectly" + name + " " + surname);
             return "errorNameOrSurname";
         }
 
         if (pm.isUserExist(email)) {
+            logger.info("User intended to register under email " + email + " that already exists in system");
             return "errorUserExists";
         }
 
         LanguageManager languageManager = new LanguageManager();
         language = languageManager.setLanguageToUser(language);
+        logger.info(language + "language " + " was set to user " + user.getEmail());
         user = new User(name, surname, email, password, position, language);
         language = languageManager.setLanguageToSession(language);
+        logger.info(language + "language " + " was set to session");
 
         UserManager userManager = new UserManager();
         Long id = userManager.addUser(user);
         user.setId(id);
         user.setPassword(null);
-
+        logger.info("Registration of of user with email: " + email + " was successful.");
         return "success";
     }
 

@@ -1,14 +1,9 @@
 package commands.impl;
 import commands.Command;
-import commands.commandHelpers.AssignPositionHelper;
-import databaseLogic.dao.UserDao;
-import databaseLogic.factory.DaoFactory;
+import commands.commandHelpers.impl.AssignPositionHelper;
 import entity.User;
 import servises.configManager.ConfigManager;
-import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
-import servises.parameterManager.ParameterManager;
-import servises.userManager.UserManager;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -1,8 +1,10 @@
-package commands.commandHelpers;
+package commands.commandHelpers.impl;
 
+import commands.commandHelpers.CommandHelper;
 import entity.Address;
 import entity.Report;
 import entity.Speaker;
+import org.apache.log4j.Logger;
 import servises.dateTimeManager.DateTimeManager;
 import servises.mailManager.MailManager;
 import servises.parameterManager.ParameterManager;
@@ -13,7 +15,7 @@ import java.sql.Time;
 import java.util.List;
 
 public class EditReportHelper implements CommandHelper {
-
+    private Logger logger = Logger.getLogger(EditReportHelper.class);
     private String index;
     private String sDate;
     private String sTime;
@@ -39,10 +41,12 @@ public class EditReportHelper implements CommandHelper {
     public String handle() {
         ParameterManager parameterManager = new ParameterManager();
         if (parameterManager.isEmpty(sDate, sTime, city, street, building, room)) {
+            logger.info("Form was not filled out");
             return "errorEmptyForm";
         }
         Address address = new Address(city, street, building, room);
         if (!parameterManager.isAddressCorrect(address)) {
+            logger.info("Address was imputed incorrectly");
             return "errorAddress";
         }
         Report report = reportList.get(Integer.parseInt(index));
@@ -60,6 +64,7 @@ public class EditReportHelper implements CommandHelper {
             Speaker speaker = report.getSpeaker();
             mail.notifySpeakerAppointment(speaker, report);
         }
-        return "success";
+        logger.info("The report was successfully edited");
+        return "successfulChanges";
     }
 }

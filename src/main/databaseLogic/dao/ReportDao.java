@@ -18,15 +18,17 @@ public interface ReportDao {
 
     List<Report> getPastConference(int offset, int maxCount);
 
-    List<Report> getOfferedConference();
+    List<Report> getOfferedConference(int offset, int maxCount);
 
-    List<Report> getPastReports();
+//    List<Report> getPastReports();
 
     void setAddressForReport(Long addressId, Long reportId);
 
     int getCountOfFutureReports();                    // todo
 
     int getCountOfPastReports();
+
+    int getCountOfOfferedReports();
 
     int updateReport(Report report);
 

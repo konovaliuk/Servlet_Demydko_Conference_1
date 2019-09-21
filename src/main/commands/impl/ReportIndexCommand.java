@@ -2,7 +2,6 @@ package commands.impl;
 
 import commands.Command;
 import servises.configManager.ConfigManager;
-
 import javax.servlet.http.HttpServletRequest;
 
 public class ReportIndexCommand implements Command {

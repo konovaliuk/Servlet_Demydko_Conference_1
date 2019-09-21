@@ -15,10 +15,6 @@ public class DaoFactory {
         return new UserDaoImpl(connection);
     }
 
-    public static AddressDao getAddressDao() {
-        return new AddressDaoImpl();
-    }
-
     public static AddressDao getAddressDao(Connection connection) {
         return new AddressDaoImpl(connection);
     }
@@ -39,9 +35,6 @@ public class DaoFactory {
         return new PresenceDaoImpl();
     }
 
-    public static PositionDao getPositionDao() {
-        return new PositionDaoImpl();
-    }
     public static PositionDao getPositionDao(Connection connection) {
         return new PositionDaoImpl(connection);
     }

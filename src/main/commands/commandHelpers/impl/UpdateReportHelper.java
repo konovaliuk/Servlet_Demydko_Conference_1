@@ -1,10 +1,12 @@
-package commands.commandHelpers;
+package commands.commandHelpers.impl;
 
 
+import commands.commandHelpers.CommandHelper;
 import entity.Address;
 import entity.Report;
 import entity.Speaker;
 import entity.User;
+import org.apache.log4j.Logger;
 import servises.dateTimeManager.DateTimeManager;
 import servises.mailManager.MailManager;
 import servises.parameterManager.ParameterManager;
@@ -17,16 +19,17 @@ import java.sql.Time;
 import java.util.List;
 
 public class UpdateReportHelper implements CommandHelper {
-    String index;
-    String theme;
-    String sDate;
-    String sTime;
-    String city;
-    String street;
-    String building;
-    String room;
-    String email;
-    List<Report> reportList;
+    private Logger logger = Logger.getLogger(UpdateReportHelper.class);
+    private String index;
+    private String theme;
+    private String sDate;
+    private String sTime;
+    private String city;
+    private String street;
+    private String building;
+    private String room;
+    private String email;
+    private List<Report> reportList;
 
     public UpdateReportHelper(String index, String theme,
                               String sDate, String sTime, String city,
@@ -52,6 +55,7 @@ public class UpdateReportHelper implements CommandHelper {
         MailManager mail = new MailManager();
 
         if (parameterManager.isAllEmpty(theme, sDate, sTime, city, street, building, room, email)) {
+            logger.info("No action done");
             return "noActionDone";
         }
 
@@ -61,6 +65,7 @@ public class UpdateReportHelper implements CommandHelper {
         if (!email.isEmpty()) {
             newSpeaker = speakerManager.getSpeakerByEmail(email);
             if (newSpeaker == null) {
+                logger.info("Speaker with such " + email + " email does not exist");
                 return "errorSpeakerNotExists";
             }
         } else {
@@ -80,14 +85,17 @@ public class UpdateReportHelper implements CommandHelper {
         Time time = sTime.isEmpty() ? oldReport.getTime() : dateTimeManager.fromStringToTime(sTime);
 
         if (new java.util.Date().getTime() > date.getTime()) {
+            logger.info("The date was imputed incorrectly");
             return "errorDate";
         }
 
         if (!parameterManager.isAddressCorrect(newAddress)) {
+            logger.info("Address was imputed incorrectly");
             return "errorAddress";
         }
 
         if (!parameterManager.isThemeCorrect(newTheme)) {
+            logger.info("Selected incorrect name of theme: " + theme);
             return "errorTheme";
         }
 
@@ -106,6 +114,7 @@ public class UpdateReportHelper implements CommandHelper {
         if (result != 0) {
             reportList.set(Integer.parseInt(index), newReport);
         } else {
+            logger.info("No changes made");
             return "NoChangesMade";
         }
 
@@ -123,7 +132,7 @@ public class UpdateReportHelper implements CommandHelper {
             userList.add(newSpeaker);
             mail.notifyChangeConference(newReport, oldReport, userList);
         }
-
+        logger.info("Report with id: " + reportId + "  was successfully updated ");
         return "successfulChanges";
     }
 }

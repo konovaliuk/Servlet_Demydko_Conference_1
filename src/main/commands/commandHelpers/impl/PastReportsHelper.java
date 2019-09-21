@@ -1,28 +1,33 @@
-package commands.commandHelpers;
+package commands.commandHelpers.impl;
 
+import commands.commandHelpers.CommandHelper;
 import entity.Report;
+import org.apache.log4j.Logger;
 import servises.paginationManager.PaginationManager;
 import servises.presenceManager.PresenceManager;
-import servises.registerManager.RegisterManager;
 
 import java.util.List;
 import java.util.Map;
 
 
 public class PastReportsHelper implements CommandHelper {
-    private String requestOffset;
+    private Logger logger = Logger.getLogger(PastReportsHelper.class);
+    private String requestButton;
     private String requestMaxCount;
     private Integer sessionOffset;
     private Integer sessionMaxCount;
+    private Integer sessionButton;
 
     private List<Integer> buttons;
     private int offset;
     private List<Report> pastConferenceList;
     private Map<Long, Integer> pastReportPresence;
     private int maxCount;
+    private int currentButton;
 
-    public PastReportsHelper(String requestOffset, String requestMaxCount, Integer sessionOffset, Integer sessionMaxCount) {
-        this.requestOffset = requestOffset;
+    public PastReportsHelper(String requestButton, Integer sessionButton, String requestMaxCount, Integer sessionOffset, Integer sessionMaxCount) {
+        this.requestButton = requestButton;
+        this.sessionButton = sessionButton;
         this.requestMaxCount = requestMaxCount;
         this.sessionOffset = sessionOffset;
         this.sessionMaxCount = sessionMaxCount;
@@ -30,13 +35,15 @@ public class PastReportsHelper implements CommandHelper {
 
     @Override
     public String handle() {
-        PaginationManager pm = new PaginationManager(requestOffset, requestMaxCount, sessionOffset, sessionMaxCount);
+        PaginationManager pm = new PaginationManager(requestButton, sessionButton, requestMaxCount, sessionOffset, sessionMaxCount);
         pm.pagination("past");
         offset = pm.getOffset();
         maxCount = pm.getMaxCount();
         pastConferenceList = pm.getConferenceList();
         buttons = pm.getButtons();
+        currentButton = pm.getCurrentButton();
         presence();
+        logger.info("Were selected past reports to view");
         return "pastReports";
     }
 
@@ -51,6 +58,10 @@ public class PastReportsHelper implements CommandHelper {
 
     public int getOffset() {
         return offset;
+    }
+
+    public int getCurrentButton() {
+        return currentButton;
     }
 
     public List<Report> getPastConferenceList() {

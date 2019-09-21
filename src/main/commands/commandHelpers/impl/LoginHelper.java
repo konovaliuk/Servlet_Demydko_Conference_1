@@ -1,15 +1,14 @@
-package commands.commandHelpers;
+package commands.commandHelpers.impl;
 
+import commands.commandHelpers.CommandHelper;
 import entity.User;
-import servises.configManager.ConfigManager;
+import org.apache.log4j.Logger;
 import servises.languageManager.LanguageManager;
-import servises.messageManager.MessageManager;
 import servises.parameterManager.ParameterManager;
 import servises.userManager.UserManager;
 
-import javax.servlet.http.HttpSession;
-
 public class LoginHelper implements CommandHelper {
+    private Logger logger = Logger.getLogger(LoginHelper.class);
     private String email;
     private String password;
 
@@ -25,20 +24,24 @@ public class LoginHelper implements CommandHelper {
     public String handle() {
         ParameterManager pm = new ParameterManager();
         if (!pm.isEmailCorrect(email)) {
+            logger.info("Email was imputed incorrectly: " + email);
             return "errorEmailForm";
         }
         if (!pm.isPasswordCorrect(password)) {
+            logger.info("Password was imputed incorrectly");
             return "errorPassword";
         }
         UserManager userManager = new UserManager();
         user = userManager.getUserByEmail(email);
 
         if (user == null || !password.equals(user.getPassword())) {
+            logger.info("User input incorrect dada to login");
             return "errorUserNotExists";
         }
         user.setPassword(null);
         LanguageManager languageManager = new LanguageManager();
         language = languageManager.setLanguageToSession(user.getLanguage());
+        logger.info("User with email: " + email + " successfully login");
         return "success";
     }
 

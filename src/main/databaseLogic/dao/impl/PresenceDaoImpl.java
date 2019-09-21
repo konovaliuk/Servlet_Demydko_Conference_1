@@ -2,6 +2,7 @@ package databaseLogic.dao.impl;
 
 import databaseLogic.connection.ConnectionPool;
 import databaseLogic.dao.PresenceDao;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,10 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class PresenceDaoImpl implements PresenceDao {
-
-
+    private Logger logger = Logger.getLogger(PresenceDaoImpl.class);
     private Connection connection;
-
 
     public PresenceDaoImpl() {
         connection = ConnectionPool.getConnection();
@@ -35,13 +34,13 @@ public class PresenceDaoImpl implements PresenceDao {
                 result = statement.executeUpdate();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         } finally {
             if (statement != null)
                 try {
                     statement.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    logger.error(e);
                 }
         }
         return result;
@@ -49,46 +48,28 @@ public class PresenceDaoImpl implements PresenceDao {
 
     @Override
     public int getPresence(Long reportId) {
-        PreparedStatement statement = null;
         int result = 0;
-        try {
-            statement = connection.prepareStatement("SELECT count from presence where reportId=?");
+        try (PreparedStatement statement = connection.prepareStatement("SELECT count from presence where reportId=?")) {
             statement.setLong(1, reportId);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 result = rs.getInt("count");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            logger.error(e);
         }
         return result;
     }
 
     private boolean isReportPresent(Long reportId) {
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement("SELECT reportId FROM presence where reportId=?");
+        try (PreparedStatement statement = connection.prepareStatement("SELECT reportId FROM presence where reportId=?")) {
             statement.setLong(1, reportId);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 return true;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (statement != null)
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            logger.error(e);
         }
         return false;
     }

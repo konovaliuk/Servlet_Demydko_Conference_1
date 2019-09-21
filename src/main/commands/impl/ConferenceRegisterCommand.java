@@ -1,15 +1,11 @@
 package commands.impl;
 
 import commands.Command;
-import commands.commandHelpers.ConferenceRegisterHelper;
-import databaseLogic.dao.RegisterDao;
-import databaseLogic.factory.DaoFactory;
+import commands.commandHelpers.impl.ConferenceRegisterHelper;
 import entity.Report;
 import entity.User;
 import servises.configManager.ConfigManager;
-import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
-import servises.registerManager.RegisterManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

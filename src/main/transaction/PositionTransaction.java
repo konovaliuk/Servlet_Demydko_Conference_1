@@ -5,11 +5,16 @@ import databaseLogic.dao.PositionDao;
 import databaseLogic.dao.SpeakerDao;
 import databaseLogic.factory.DaoFactory;
 import entity.User;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * This class is used for transaction.
+ */
 public class PositionTransaction {
+    private Logger logger = Logger.getLogger(PositionTransaction.class);
     public int setPositionForUser(User user, String position) {
         int result = 0;
         if (user.getPosition().equals(position)) {
@@ -29,11 +34,11 @@ public class PositionTransaction {
             }
             connection.commit();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                logger.error(ex);
             }
         }finally {
             ConnectionPool.closeConnection(connection);

@@ -12,19 +12,21 @@
 <c:import url="header.jsp"/>
 <html>
 <head>
-    <title><fmt:message key="label.enter" bundle="${rm}"/></title>
-
+    <title>Title</title>
 </head>
 <body>
-<h1 align="center"><fmt:message key="label.enter" bundle="${rm}"/></h1>
-<div class="blockCenter">
-    <form method="post" action="/Conference_war/controller?command=login">
-        <p><input type="email" name="email" placeholder="Email" size="15" required/></p>
-        <p><input type="password" name="password" placeholder="<fmt:message key="label.password" bundle="${rm}"/>"
-                  size="15"
-                  pattern="[A-Za-zА-Яа-яЁёІіЄєЇї0-9]{5,}" required/></p>
-
-
+<h2 align="center"><fmt:message key="label.enter" bundle="${rm}"/></h2>
+<div class="center">
+    <div class="register">
+        <form method="post" action="${pageContext.request.contextPath}/controller?command=login">
+            <p><input type="email" name="email" placeholder="Email" size="22" required/></p>
+            <p><input type="password" name="password" placeholder="<fmt:message key="label.password" bundle="${rm}"/>"
+                      size="22"
+                      pattern="[A-Za-zА-Яа-яЁёІіЄєЇї0-9]{5,}" required/></p>
+            <p><input type="submit" value="<fmt:message key="label.signIn" bundle="${rm}"/>"/></p>
+        </form>
+    </div>
+    <p>
         <c:choose>
             <c:when test="${not empty errorEmailForm}">
                 <fmt:message key="errorEmailForm" bundle="${rm}"/>
@@ -36,10 +38,7 @@
                 <fmt:message key="errorUserNotExists" bundle="${rm}"/>
             </c:when>
         </c:choose>
-
-
-        <p><input type="submit" value="<fmt:message key="label.signIn" bundle="${rm}"/>"/></p>
-    </form>
+    </p>
 </div>
 </body>
 </html>

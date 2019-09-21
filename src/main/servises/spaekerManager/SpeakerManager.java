@@ -4,8 +4,12 @@ import databaseLogic.dao.SpeakerDao;
 import databaseLogic.factory.DaoFactory;
 import entity.Speaker;
 
+
+/**
+ * This class encapsulated some methods from {@link SpeakerDao}
+ */
 public class SpeakerManager {
-    SpeakerDao speakerDao;
+    private SpeakerDao speakerDao;
 
     public int setSpeakerBonuses(int bonuses, Speaker speaker) {
         if (speaker.getRating() == 0) {
@@ -41,5 +45,12 @@ public class SpeakerManager {
         Speaker speaker = speakerDao.getSpeakerById(speakerId);
         speakerDao.closeConnection();
         return speaker;
+    }
+
+    public int getSpeakerBonuses(Speaker speaker) {
+        speakerDao = DaoFactory.getSpeakerDao();
+        int bonuses = speakerDao.getSpeakerBonuses(speaker);
+        speakerDao.closeConnection();
+        return bonuses;
     }
 }

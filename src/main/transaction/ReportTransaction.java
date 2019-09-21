@@ -10,6 +10,9 @@ import org.apache.log4j.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * This class is used for transaction.
+ */
 public class ReportTransaction {
     private Logger logger = Logger.getLogger(ReportTransaction.class);
 
@@ -69,11 +72,11 @@ public class ReportTransaction {
             connection.commit();
             result++;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                logger.error(ex);
             }
         }
 

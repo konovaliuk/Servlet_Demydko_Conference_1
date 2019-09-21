@@ -9,8 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class encapsulated some methods from {@link RegisterDao}
+ */
+
 public class RegisterManager {
-    RegisterDao registerDao;
+    private RegisterDao registerDao;
 
     public List<Long> getReportsIdByUserId(User user) {
         registerDao = DaoFactory.getRegisterDao();
@@ -49,6 +53,10 @@ public class RegisterManager {
         return result;
     }
 
+    /**
+     * Sets registration for certain {@link User}
+     * @param report is a <code>Report</code> where user will be register.
+     */
     public void makeUserRegistered(Report report) {
         report.setIsUserRegistered(true);
     }

@@ -1,23 +1,34 @@
 package servises.languageManager;
 
-public class LanguageManager {
 
+import entity.User;
+
+public class LanguageManager {
+    /**
+     * Sets language to {@link User}
+     */
     public String setLanguageToUser(String language) {
         if (language == null) {
             return language = "EN";
-        } else {
-            switch (language) {
-                case "ua_UA":
-                    return language = "UA";
-                case "ru_RU":
-                    return language = "RU";
-                default:
-                    return language = "EN";
-            }
         }
+        switch (language) {
+            case "ua_UA":
+                return language = "UA";
+            case "ru_RU":
+                return language = "RU";
+            default:
+                return language = "EN";
+        }
+
     }
 
+    /**
+     * Sets language to session
+     */
     public String setLanguageToSession(String language) {
+        if (language == null) {
+            return language = "EN";
+        }
         switch (language) {
             case "UA":
                 return language = "ua_UA";
@@ -27,4 +38,6 @@ public class LanguageManager {
                 return language = "en_US";
         }
     }
+
+
 }

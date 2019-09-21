@@ -1,24 +1,11 @@
 package commands.impl;
 
 import commands.Command;
-import commands.commandHelpers.AddReportHelper;
-import databaseLogic.dao.ReportDao;
-import databaseLogic.dao.SpeakerDao;
-import databaseLogic.factory.DaoFactory;
-import entity.Address;
-import entity.Report;
-import entity.Speaker;
+import commands.commandHelpers.impl.AddReportHelper;
 import servises.configManager.ConfigManager;
-import servises.dateTimeManager.DateTimeManager;
-import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
-import servises.parameterManager.ParameterManager;
-import servises.reportManager.ReportManager;
-import servises.spaekerManager.SpeakerManager;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Time;
-import java.sql.Date;
 
 public class AddReportCommand implements Command {
 

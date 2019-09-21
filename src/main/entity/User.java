@@ -32,7 +32,6 @@ public class User {
     this.id = id;
   }
 
-
   public String getName() {
     return name;
   }
@@ -40,7 +39,6 @@ public class User {
   public void setName(String name) {
     this.name = name;
   }
-
 
   public String getSurname() {
     return surname;
@@ -50,7 +48,6 @@ public class User {
     this.surname = surname;
   }
 
-
   public String getEmail() {
     return email;
   }
@@ -58,7 +55,6 @@ public class User {
   public void setEmail(String email) {
     this.email = email;
   }
-
 
   public String getPosition() {
     return position;
@@ -84,16 +80,6 @@ public class User {
     this.language = language;
   }
 
-  @Override
-  public String toString() {
-    return "User{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", surname='" + surname + '\'' +
-            ", email='" + email + '\'' +
-            ", position='" + position + '\'' +
-            '}';
-  }
 
   @Override
   public boolean equals(Object o) {

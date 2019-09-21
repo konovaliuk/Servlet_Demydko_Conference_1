@@ -2,7 +2,6 @@ package filters;
 
 import entity.User;
 import servises.configManager.ConfigManager;
-
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +19,6 @@ public class ControllerFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         httpRequest.setCharacterEncoding("UTF-8");
         User user = (User) httpRequest.getSession().getAttribute("user");
-        String position = user == null ? null : user.getPosition();               // todo
         String command = httpRequest.getParameter("command");
 
         if (user == null && (!command.equals("login") && !command.equals("register")&& !command.equals("changeLanguage"))) {

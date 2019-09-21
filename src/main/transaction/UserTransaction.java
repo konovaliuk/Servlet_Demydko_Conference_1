@@ -7,13 +7,14 @@ import databaseLogic.dao.UserDao;
 import databaseLogic.factory.DaoFactory;
 import entity.User;
 import org.apache.log4j.Logger;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * This class is used for transaction.
+ */
 public class UserTransaction {
     private Logger logger = Logger.getLogger(UserTransaction.class);
-
 
     public Long addUser(User user) {
         Connection connection = ConnectionPool.getConnection();

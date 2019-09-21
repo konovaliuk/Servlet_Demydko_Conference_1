@@ -1,21 +1,21 @@
-package commands.commandHelpers;
+package commands.commandHelpers.impl;
 
+import commands.commandHelpers.CommandHelper;
 import entity.Report;
 import entity.User;
+import org.apache.log4j.Logger;
 import servises.mailManager.MailManager;
-import servises.messageManager.MessageManager;
 import servises.registerManager.RegisterManager;
 
 import java.util.List;
 import java.util.Map;
 
 public class ConferenceRegisterHelper implements CommandHelper {
-
+    private Logger logger = Logger.getLogger(DeleteOfferedReportHelper.class);
     private List<Report> reportList;
     private User user;
     private String sIndex;
     private Map<Long, Integer> countOfVisitors;
-
     private Long reportId;
 
     public ConferenceRegisterHelper(List<Report> reportList, User user, String sIndex, Map<Long, Integer> countOfVisitors) {
@@ -34,6 +34,7 @@ public class ConferenceRegisterHelper implements CommandHelper {
 
         if (r.getIsUserRegistered()) {
             reportId = r.getId();
+            logger.info("User  " + user.getEmail() + " try to register again");
             return "errorAlreadyRegistered";
         }
 
@@ -46,8 +47,8 @@ public class ConferenceRegisterHelper implements CommandHelper {
             int count = countOfVisitors.get(report.getId());
             countOfVisitors.put(report.getId(), ++count);
             mail.notifyUserRegistration(user, report);
+            logger.info("User  " + user.getEmail() + " has successfully registered on conference with id " + report.getId());
         }
-
         return "success";
     }
 

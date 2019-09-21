@@ -1,7 +1,9 @@
 package entity;
 
+import java.util.Objects;
+
 public class Speaker extends User {
-    int rating;
+    private int rating;
 
     public int getRating() {
         return rating;
@@ -11,21 +13,17 @@ public class Speaker extends User {
         this.rating = rating;
     }
 
-//    @Override
-//    public String toString() {
-//        return super.toString() + rating;
-//    }
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Speaker speaker = (Speaker) o;
+        return rating == speaker.rating;
+    }
 
     @Override
-    public String toString() {
-        return "Speaker{" +
-                "id=" + getId() +
-                ", name='" + getName() + '\'' +
-                ", surname='" + getSurname() + '\'' +
-                ", email='" + getEmail() + '\'' +
-                ", position='" + getPosition() + '\'' +
-                ", rating='" + getRating() + '\'' +
-                '}';
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), rating);
     }
 }

@@ -10,7 +10,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ParameterManager {
-
+    /**
+     * Checks if all items are empty
+     */
     public boolean isAllEmpty(String... parameters) {
         int count = 0;
         for (String p : parameters) {
@@ -20,6 +22,9 @@ public class ParameterManager {
         return count == parameters.length;
     }
 
+    /**
+     * Checks if at list one item is empty
+     */
     public boolean isEmpty(String... parameters) {
         for (String p : parameters) {
             if (p == null || p.isEmpty()) {

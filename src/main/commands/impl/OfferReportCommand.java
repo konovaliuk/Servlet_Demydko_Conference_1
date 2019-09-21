@@ -1,17 +1,10 @@
 package commands.impl;
 
 import commands.Command;
-import commands.commandHelpers.OfferReportHelper;
-import databaseLogic.dao.ReportDao;
-import databaseLogic.dao.SpeakerDao;
-import databaseLogic.factory.DaoFactory;
-import entity.Speaker;
+import commands.commandHelpers.impl.OfferReportHelper;
 import entity.User;
 import servises.configManager.ConfigManager;
 import servises.messageManager.MessageManager;
-import servises.parameterManager.ParameterManager;
-import servises.reportManager.ReportManager;
-import servises.spaekerManager.SpeakerManager;
 
 import javax.servlet.http.HttpServletRequest;
 

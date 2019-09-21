@@ -7,9 +7,11 @@ import entity.Speaker;
 import transaction.ReportTransaction;
 
 import java.util.List;
-
+/**
+ * This class encapsulated some methods from {@link ReportDao}
+ */
 public class ReportManager {
-    ReportDao reportDao;
+    private ReportDao reportDao;
 
     public List<Report> getFutureConference(int offset, int maxCount) {
         reportDao = DaoFactory.getReportDao();
@@ -38,18 +40,6 @@ public class ReportManager {
         reportDao.closeConnection();
         return reportList;
     }
-
-//    public int addReport(Report report) {
-//        int result = 0;
-//        reportDao = DaoFactory.getReportDao();
-//        Long id= reportDao.addReport(report);
-//        reportDao.closeConnection();
-//        if (id != null) {
-//            result++;
-//        }
-//        return result;
-//    }
-
 
     public int addReport(Report report) {
         ReportTransaction transaction = new ReportTransaction();
@@ -80,22 +70,22 @@ public class ReportManager {
         }
     }
 
-//    public int updateReport(Report report) {
-//        reportDao = DaoFactory.getReportDao();
-//        int result = reportDao.updateReport(report);
-//        reportDao.closeConnection();
-//        return result;
-//    }
-
     public int updateReport(Report report) {
         ReportTransaction transaction = new ReportTransaction();
         return transaction.updateReport(report);
     }
 
-    public List<Report> getOfferedConference() {
+    public List<Report> getOfferedConference(int offset, int maxCount) {
         reportDao = DaoFactory.getReportDao();
-        List<Report> offeredConference = reportDao.getOfferedConference();
+        List<Report> offeredConference = reportDao.getOfferedConference(offset, maxCount);
         reportDao.closeConnection();
         return offeredConference;
+    }
+
+    public int getCountOfOfferedReports() {
+        reportDao = DaoFactory.getReportDao();
+        int count = reportDao.getCountOfOfferedReports();
+        reportDao.closeConnection();
+        return count;
     }
 }

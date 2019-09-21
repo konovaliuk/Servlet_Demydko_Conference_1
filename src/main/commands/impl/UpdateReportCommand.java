@@ -2,26 +2,12 @@ package commands.impl;
 
 
 import commands.Command;
-import commands.commandHelpers.UpdateReportHelper;
-import databaseLogic.dao.RegisterDao;
-import databaseLogic.dao.ReportDao;
-import databaseLogic.dao.SpeakerDao;
-import databaseLogic.factory.DaoFactory;
-import entity.Address;
+import commands.commandHelpers.impl.UpdateReportHelper;
 import entity.Report;
-import entity.Speaker;
-import entity.User;
 import servises.configManager.ConfigManager;
-import servises.dateTimeManager.DateTimeManager;
-import servises.mailManager.MailManager;
 import servises.messageManager.MessageManager;
-import servises.parameterManager.ParameterManager;
-import servises.reportManager.ReportManager;
-import servises.spaekerManager.SpeakerManager;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Date;
-import java.sql.Time;
 import java.util.List;
 
 public class UpdateReportCommand implements Command {

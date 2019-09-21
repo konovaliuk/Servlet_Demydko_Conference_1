@@ -3,6 +3,9 @@ package servises.messageManager;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * This class is used for forming messages
+ */
 public class MessageManager {
     private Locale locale = new Locale("en", "US");
     ;

@@ -1,6 +1,8 @@
 package servises.mailManager;
 
 
+import org.apache.log4j.Logger;
+
 import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -8,8 +10,11 @@ import javax.mail.internet.MimeMessage;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-
+/**
+ * This class is used by {@link MailManager} to send emails.
+ */
 public class MailThread extends Thread {
+    private Logger logger = Logger.getLogger(MailThread.class);
     private MimeMessage message;
     private String sendToEmail;
     private String mailSubject;
@@ -48,11 +53,9 @@ public class MailThread extends Thread {
             message.setFrom(new InternetAddress(APIKey,"Conference"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(sendToEmail));
         } catch (AddressException | UnsupportedEncodingException e) {
-            System.err.print("Incorrect address:" + sendToEmail + " " + e);
-// in log file
+           logger.error("Incorrect address:" + sendToEmail + " " + e);
         } catch (MessagingException e) {
-            System.err.print("Error of forming message" + e);
-// in log file
+            logger.error("Error of forming message" + e);
         }
     }
 
@@ -63,8 +66,7 @@ public class MailThread extends Thread {
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
-            System.err.print("Send error" + e);
-// in log file
+            logger.error("Send error" + e);
         }
     }
 }

@@ -1,119 +1,131 @@
 body {
-    /*margin: 0; !* Убираем отступы *!*/
-    /*height: 100%; !* Высота страницы *!*/
-    background: url(https://img.freepik.com/free-photo/_53876-89448.jpg?size=626&ext=jpg); /* Параметры фона */
-    background-size: cover; /* Фон занимает всю доступную площадь */
+    background: url(https://img.freepik.com/free-photo/_53876-89448.jpg?size=626&ext=jpg);
+    background-size: cover;
     font-family: cursive;
 }
 
-/*html {*/
-/*    background: url(background.jpg); ;*/
-/*}*/
-
-/*a img, form, fieldset {*/
-/*    height: content-box;*/
-/*    width: content-box;*/
-/*    border: 6pt;*/
-/*    !*background: burlywood;*!*/
-/*}*/
-
-
-
-/*body {*/
-/*    background: beige;*/
-/*}*/
-
 
 div {
-    /*margin: auto;*/
     border: solid 2px black;
-    width: 200px;
+    width: 220px;
     padding: 5px;
     display: inline-block;
-    /*font-family: cursive;*/
     background-color: aliceblue;
 }
-.blockHeader{
+
+.headerLeft {
+    float: left;
+    margin-top: 0;
+    margin-left: 6px;
+}
+
+.headerRight {
+    float: right;
+    padding-right: 30px;
+}
+
+.header {
+    position: fixed;
+    left: 0;
+    top: 0;
     width: 100%;
-    height: 20px;
+    display: inline-block;
+    background-color: powderblue;
+    height: 40px;
+    border: none;
 }
 
 .block1 {
-    width: 300px;
-    background: #cbb9cc;
-    padding: 5px;
-    padding-right: 20px;
+    width: 250px;
+    background: powderblue;
+    padding: 5px 20px 5px 5px;
     border: solid 1px black;
-    /*float: left;*/
 }
 
-.block11 {
-    width: 300px;
-    padding: 5px;
-    padding-right: 20px;
+.blockForButtons {
+    width: 200px;
+    padding: 5px 20px 5px 5px;
     border: none;
-    /*float: left;*/
+    background: none;
 }
 
-.block2 {
-    width: 5px;
-    height: 5px;
-    background: #ccc;
-    padding: 5px;
-    padding-right: 20px;
+.elements {
+    position: absolute;
+    text-align: center;
+    top: 0;
+    right: 10%;
+    height: 40px;
+    width: 260px;
+    background: none;
     border: solid 1px black;
-    display: inline-block;
-    /*float: left;*/
 }
 
-.block3 {
-    background: #ccc;
-    /*border: solid 0px black;*/
-    display: inline-block;
-    /*float: left;*/
-}
-
-.blockTop {
-    position: absolute;
-    top: 0;
-    right: 0;
+.index{
     width: 200px;
+    margin-top: 10%;
+    border: solid 1px black;
+    text-align: center;
+    background: aliceblue;
 }
 
-.blockTop2 {
-    position: absolute;
-    top: 0;
-    right: 220px;
-    width: 200px;
+.register{
+     width: 200px;
+     margin-top: 10%;
+     border: solid 1px black;
+     text-align: center;
+     background: powderblue;
+ }
+
+.assign{
+    width: 250px;
+    margin-top: 5%;
+    border: solid 1px black;
+    text-align: center;
+    background: powderblue;
 }
 
 .blockBottom {
-    position: absolute;
-    /*top:50%;*/
-    bottom: 10%;
-    right: 50%;
-    width: max-content;
+    position: relative;
+    text-align: center;
+    width: 99%;
+    bottom: 0;
+    left: 0;
+    background: none;
     border: none;
-
 }
 
-.blockCenter {
-    position: absolute;
-    /*top:50%;*/
-    bottom: 50%;
-    right: 50%;
-    width: max-content;
-    border: solid 1px black;
-    background-color: cornflowerblue;
+.buttons {
+    margin: 1px;
+    display: inline-block;
+}
+
+.b {
+    background: #ffcd90
+}
+
+.center {
+    /*position: fixed;*/
+    position: relative;
+    width: 99%;
+    left: 0;
+    margin-top: 60px;
+    text-align: center;
+    border: none;
+    background: none;
+}
+
+.futureReports{
+    height: 450px;
 }
 
 .blockUpdateReport {
-    position: absolute;
-    /*top:50%;*/
-    bottom: 5%;
-    right: 45%;
-    width: 300px;
+    width: 570px;
+    text-align: center;
     border: solid 1px black;
-    background-color: aliceblue;
+    background-color: powderblue;
 }
 
+h2 {
+    margin-top: 50px;
+    width: 100%;
+}

@@ -11,14 +11,16 @@
 <head>
     <title>Error</title>
     <style>
-        <c:import url="/WEB-INF/resources/css/styles.css" charEncoding="utf-8"/>
+        body{
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-<div class="blockCenter">
-    <h1>Ops something wrong</h1>
+
+    <h1>Oops something went wrong</h1>
     <h3 align="center">Request from "${wrongAction}" is failed</h3>
-</div>
+<img src="https://cdn.dribbble.com/users/129991/screenshots/3970015/error-page.png">
 </body>
 </html>

@@ -1,19 +1,12 @@
 package commands.impl;
 
 import commands.Command;
-import commands.commandHelpers.RegisterHelper;
-import databaseLogic.dao.UserDao;
-import databaseLogic.factory.DaoFactory;
-import entity.User;
+import commands.commandHelpers.impl.RegisterHelper;
 
 import servises.configManager.ConfigManager;
-import servises.languageManager.LanguageManager;
 import servises.messageManager.MessageManager;
-import servises.parameterManager.ParameterManager;
-import servises.userManager.UserManager;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 public class RegisterCommand implements Command {
     @Override
@@ -32,9 +25,8 @@ public class RegisterCommand implements Command {
 
         request.getSession().setAttribute("language", helper.getLanguage());
         request.getSession().setAttribute("user", helper.getUser());
-
         if (result.equals("success")) {
-            return ConfigManager.getProperty("success");
+            return ConfigManager.getProperty("successRegister");
         }
         request.setAttribute(result, message.getProperty(result));
         return ConfigManager.getProperty("register");
